@@ -1,1 +1,1 @@
-# space-warfare-simulator
+# Space Warfare
