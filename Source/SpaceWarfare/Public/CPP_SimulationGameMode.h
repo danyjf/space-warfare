@@ -16,7 +16,7 @@ class SPACEWARFARE_API ACPP_SimulationGameMode : public AGameModeBase
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void ApplyGravity(TArray<AActor*> actors, TArray<float> masses, float gravitationalConstant);
+	void ApplyGravity(TArray<AActor*> actors, TArray<float> masses, float gravitationalConstant, float deltaTime);
 
 private:
 	FVector GravitationalForce(FVector location1, FVector location2, float mass1, float mass2, float gravitationalConstant);

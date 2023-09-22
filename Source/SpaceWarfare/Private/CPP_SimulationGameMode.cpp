@@ -3,7 +3,7 @@
 
 #include "CPP_SimulationGameMode.h"
 
-void ACPP_SimulationGameMode::ApplyGravity(TArray<AActor*> actors, TArray<float> masses, float gravitationalConstant)
+void ACPP_SimulationGameMode::ApplyGravity(TArray<AActor*> actors, TArray<float> masses, float gravitationalConstant, float deltaTime)
 {
 	for (int i = 0; i < actors.Num(); i++)
 	{
@@ -14,7 +14,7 @@ void ACPP_SimulationGameMode::ApplyGravity(TArray<AActor*> actors, TArray<float>
 
 			FVector force = GravitationalForce(actors[i]->GetActorLocation(), actors[j]->GetActorLocation(), masses[i], masses[j], gravitationalConstant);
 
-			actors[i]->GetComponentByClass<UStaticMeshComponent>()->AddForce(force);
+			actors[i]->GetComponentByClass<UStaticMeshComponent>()->AddForce(force * deltaTime);
 		}
 	}
 }
