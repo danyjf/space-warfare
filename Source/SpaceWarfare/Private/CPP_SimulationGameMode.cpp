@@ -14,7 +14,7 @@ void ACPP_SimulationGameMode::ApplyGravity(TArray<AActor*> actors, TArray<float>
 
 			FVector force = GravitationalForce(actors[i]->GetActorLocation(), actors[j]->GetActorLocation(), masses[i], masses[j], gravitationalConstant);
 
-			actors[i]->GetComponentByClass<UStaticMeshComponent>()->AddForce(force * deltaTime);
+			actors[i]->GetComponentByClass<UStaticMeshComponent>()->AddForce(force);
 		}
 	}
 }
