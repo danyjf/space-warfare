@@ -6,6 +6,9 @@
 #include "GameFramework/GameModeBase.h"
 #include "CPP_SimulationGameMode.generated.h"
 
+// Forward Declarations
+class ACPP_GravityActor;
+
 /**
  * 
  */
@@ -15,9 +18,6 @@ class SPACEWARFARE_API ACPP_SimulationGameMode : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable)
-	void ApplyGravity(TArray<AActor*> actors, TArray<float> masses, float gravitationalConstant);
-
-private:
-	FVector GravitationalForce(FVector location1, FVector location2, float mass1, float mass2, float gravitationalConstant);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<ACPP_GravityActor*> GravityActors;
 };
