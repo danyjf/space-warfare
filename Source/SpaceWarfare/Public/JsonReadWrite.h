@@ -15,7 +15,7 @@ class SPACEWARFARE_API UJsonReadWrite : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 	
 public:
-	static TSharedPtr<FJsonObject> ReadJson(FString JsonPath);
+	static TSharedPtr<FJsonObject> ReadJson(FString JsonPath, bool& bOutSuccess, FString& OutInfoMessage);
 
-	static void WriteJson(FString JsonPath, TSharedPtr<FJsonObject> JsonObject);
+	static void WriteJson(FString JsonPath, TSharedPtr<FJsonObject> JsonObject, bool& bOutSuccess, FString& OutInfoMessage);
 };
