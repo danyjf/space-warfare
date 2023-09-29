@@ -22,11 +22,12 @@ void ACPP_GravityActor::BeginPlay()
 
 	if (this->GetName() == "BP_Earth_C_0") 
 	{
-		GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), 5.972 * pow(10, 24));
+		GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), 1000);
 	}
 	else if (this->GetName() == "BP_Satellite_C_0")
 	{
-		GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), 2415);
+		GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), 10);
+		GetComponentByClass<UStaticMeshComponent>()->SetPhysicsLinearVelocity(FVector(506.65949 * 2, 0.0, 0.0));
 	}
 }
 
@@ -42,7 +43,8 @@ void ACPP_GravityActor::Tick(float DeltaTime)
 
 		FVector Force = Gravity(SimulationGameMode->GravityActors[i]);
 
-		GetComponentByClass<UStaticMeshComponent>()->AddForce(Force * 60);
+		//UKismetSystemLibrary::PrintString(this, Force.ToString());
+		GetComponentByClass<UStaticMeshComponent>()->AddForce(Force);
 	}
 }
 
@@ -56,7 +58,7 @@ FVector ACPP_GravityActor::Gravity(ACPP_GravityActor* Other)
 	FVector Direction = OtherLocation - MyLocation;
 
 	double Force = (G * MyMass * OtherMass) / Direction.SquaredLength();
-	UKismetSystemLibrary::PrintString(this, FString::SanitizeFloat(Force));
+	//UKismetSystemLibrary::PrintString(this, FString::SanitizeFloat(Force));
 
 	Direction.Normalize();
 
