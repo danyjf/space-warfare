@@ -28,7 +28,7 @@ public:
 
 private:
 	ACPP_SimulationGameMode* SimulationGameMode;
-	double G = 6.6743 * pow(10, -11);
+	double G = 66743 * 4;
 
 	FVector Gravity(ACPP_GravityActor* Actor);
 };
