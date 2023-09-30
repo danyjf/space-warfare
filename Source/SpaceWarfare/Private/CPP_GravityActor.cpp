@@ -27,7 +27,7 @@ void ACPP_GravityActor::BeginPlay()
 	else if (this->GetName() == "BP_Satellite_C_0")
 	{
 		GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), 10);
-		GetComponentByClass<UStaticMeshComponent>()->SetPhysicsLinearVelocity(FVector(506.65949 * 2, 0.0, 0.0));
+		GetComponentByClass<UStaticMeshComponent>()->SetPhysicsLinearVelocity(FVector(506.65949 * 3, 0.0, 0.0));
 	}
 }
 
