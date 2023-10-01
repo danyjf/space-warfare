@@ -3,8 +3,11 @@
 
 #include "CPP_GravityActor.h"
 #include "CPP_SimulationGameMode.h"
+
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h" 
+#include "PhysicsProxy/SingleParticlePhysicsProxy.h"
+
 
 // Sets default values
 ACPP_GravityActor::ACPP_GravityActor()
@@ -27,7 +30,7 @@ void ACPP_GravityActor::BeginPlay()
 	else if (this->GetName() == "BP_Satellite_C_0")
 	{
 		GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), 10);
-		GetComponentByClass<UStaticMeshComponent>()->SetPhysicsLinearVelocity(FVector(506.65949 * 3, 0.0, 0.0));
+		GetComponentByClass<UStaticMeshComponent>()->SetPhysicsLinearVelocity(FVector(506.65949 * 2, 0.0, 0.0));
 	}
 }
 
@@ -35,32 +38,34 @@ void ACPP_GravityActor::BeginPlay()
 void ACPP_GravityActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
 
+// Called at a fixed DeltaTime to update physics
+void ACPP_GravityActor::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
+{
+	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
+
+	FBodyInstanceAsyncPhysicsTickHandle MyBodyInstance = GetComponentByClass<UStaticMeshComponent>()->GetBodyInstanceAsyncPhysicsTickHandle();
+	FTransform MyTransform = FTransform(MyBodyInstance->R(), MyBodyInstance->X());
 	for (int i = 0; i < SimulationGameMode->GravityActors.Num(); i++)
 	{
 		if (this == SimulationGameMode->GravityActors[i])
 			continue;
 
-		FVector Force = Gravity(SimulationGameMode->GravityActors[i]);
+		FBodyInstanceAsyncPhysicsTickHandle OtherBodyInstance = SimulationGameMode->GravityActors[i]->GetComponentByClass<UStaticMeshComponent>()->GetBodyInstanceAsyncPhysicsTickHandle();
+		FTransform OtherTransform = FTransform(OtherBodyInstance->R(), OtherBodyInstance->X());
 
-		//UKismetSystemLibrary::PrintString(this, Force.ToString());
-		GetComponentByClass<UStaticMeshComponent>()->AddForce(Force);
+		FVector MyLocation = MyTransform.GetLocation();
+		FVector OtherLocation = OtherTransform.GetLocation();
+		float MyMass = MyBodyInstance->M();
+		float OtherMass = OtherBodyInstance->M();
+		
+		FVector Direction = OtherLocation - MyLocation;
+
+		double Force = (G * MyMass * OtherMass) / Direction.SquaredLength();
+
+		Direction.Normalize();
+
+		MyBodyInstance->AddForce(Force * Direction);
 	}
-}
-
-FVector ACPP_GravityActor::Gravity(ACPP_GravityActor* Other)
-{
-	FVector MyLocation = GetActorLocation();
-	FVector OtherLocation = Other->GetActorLocation();
-	float MyMass = GetComponentByClass<UStaticMeshComponent>()->GetMass();
-	float OtherMass = Other->GetComponentByClass<UStaticMeshComponent>()->GetMass();
-
-	FVector Direction = OtherLocation - MyLocation;
-
-	double Force = (G * MyMass * OtherMass) / Direction.SquaredLength();
-	//UKismetSystemLibrary::PrintString(this, FString::SanitizeFloat(Force));
-
-	Direction.Normalize();
-
-	return Force * Direction;
 }

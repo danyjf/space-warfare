@@ -6,8 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "CPP_GravityActor.generated.h"
 
+
 // Forward Declarations
 class ACPP_SimulationGameMode;
+
 
 UCLASS()
 class SPACEWARFARE_API ACPP_GravityActor : public AActor
@@ -26,9 +28,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Called at a fixed DeltaTime to update physics
+	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
+
 private:
 	ACPP_SimulationGameMode* SimulationGameMode;
-	double G = 66743 * 9;
-
-	FVector Gravity(ACPP_GravityActor* Actor);
+	double G = 66743 * 4;
 };
