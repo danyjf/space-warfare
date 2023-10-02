@@ -1,0 +1,16 @@
+{
+    "time": 0,
+    "gravitationalConstant": 66743,
+    "earth": {
+        "mass": 0,
+        "position": {"x": 0, "y": 0, "z": 0},
+        "initialVelocity": {"x": 0, "y": 0, "z": 0}
+    },
+    "satellites": [
+        {
+            "mass": 0,
+            "position": {"x": 0, "y": 260, "z": 0},
+            "initialVelocity": {"x": 506.65949, "y": 0, "z": 0}
+        }
+    ]
+}

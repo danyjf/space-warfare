@@ -11,6 +11,40 @@
 class ACPP_GravityActor;
 
 
+USTRUCT(BlueprintType)
+struct GravityBodyStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	double Mass;
+
+	UPROPERTY()
+	FVector Position;
+
+	UPROPERTY()
+	FVector InitialVelocity;
+};
+
+USTRUCT(BlueprintType)
+struct SimulationConfigStruct
+{
+	GENERATED_BODY()
+	
+	UPROPERTY()
+	int Time;
+
+	UPROPERTY()
+	double GravitationalConstant;
+
+	UPROPERTY()
+	GravityBodyStruct Earth;
+
+	UPROPERTY()
+	TArray<GravityBodyStruct> Satellites;
+};
+
+
 /**
  * 
  */
@@ -20,6 +54,8 @@ class SPACEWARFARE_API ACPP_SimulationGameMode : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
+	virtual void BeginPlay() override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<ACPP_GravityActor*> GravityActors;
 };
