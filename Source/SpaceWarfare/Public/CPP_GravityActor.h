@@ -32,6 +32,20 @@ public:
 	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
 
 private:
+	// Reference to the GameMode object
 	ACPP_SimulationGameMode* SimulationGameMode;
-	double G = 66743 * 4;
+	
+	/*
+	* Object that holds the representation of this actor in the physics simulation
+	* 
+	* This is necessary to get the correct values of the objects position in
+	* the async physics tick
+	*/
+	FBodyInstanceAsyncPhysicsTickHandle RigidBody;
+	
+	double G;
+
+	// Get the vector representing the force of gravity pointing from this object
+	// to the Other
+	FVector GetGravityForce(ACPP_GravityActor* Other);
 };

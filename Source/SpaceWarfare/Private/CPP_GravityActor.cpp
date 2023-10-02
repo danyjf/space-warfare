@@ -14,6 +14,8 @@ ACPP_GravityActor::ACPP_GravityActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	G = 66743 * 4;
 }
 
 // Called when the game starts or when spawned
@@ -22,6 +24,7 @@ void ACPP_GravityActor::BeginPlay()
 	Super::BeginPlay();
 
 	SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	RigidBody = GetComponentByClass<UStaticMeshComponent>()->GetBodyInstanceAsyncPhysicsTickHandle();
 
 	if (this->GetName() == "BP_Earth_C_0") 
 	{
@@ -45,27 +48,31 @@ void ACPP_GravityActor::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 
-	FBodyInstanceAsyncPhysicsTickHandle MyBodyInstance = GetComponentByClass<UStaticMeshComponent>()->GetBodyInstanceAsyncPhysicsTickHandle();
-	FTransform MyTransform = FTransform(MyBodyInstance->R(), MyBodyInstance->X());
-	for (int i = 0; i < SimulationGameMode->GravityActors.Num(); i++)
+	for (ACPP_GravityActor* const Other : SimulationGameMode->GravityActors)
 	{
-		if (this == SimulationGameMode->GravityActors[i])
+		if (this == Other)
+		{
 			continue;
+		}
 
-		FBodyInstanceAsyncPhysicsTickHandle OtherBodyInstance = SimulationGameMode->GravityActors[i]->GetComponentByClass<UStaticMeshComponent>()->GetBodyInstanceAsyncPhysicsTickHandle();
-		FTransform OtherTransform = FTransform(OtherBodyInstance->R(), OtherBodyInstance->X());
+		FVector GravityForce = GetGravityForce(Other);
 
-		FVector MyLocation = MyTransform.GetLocation();
-		FVector OtherLocation = OtherTransform.GetLocation();
-		float MyMass = MyBodyInstance->M();
-		float OtherMass = OtherBodyInstance->M();
-		
-		FVector Direction = OtherLocation - MyLocation;
-
-		double Force = (G * MyMass * OtherMass) / Direction.SquaredLength();
-
-		Direction.Normalize();
-
-		MyBodyInstance->AddForce(Force * Direction);
+		RigidBody->AddForce(GravityForce);
 	}
+}
+
+FVector ACPP_GravityActor::GetGravityForce(ACPP_GravityActor* Other)
+{
+	FVector MyLocation = RigidBody->X();
+	FVector OtherLocation = Other->RigidBody->X();
+	float MyMass = RigidBody->M();
+	float OtherMass = Other->RigidBody->M();
+
+	FVector Direction = OtherLocation - MyLocation;
+
+	double Force = (G * MyMass * OtherMass) / Direction.SquaredLength();
+
+	Direction.Normalize();
+
+	return Force * Direction;
 }
