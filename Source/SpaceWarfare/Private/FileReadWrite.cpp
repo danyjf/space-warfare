@@ -5,6 +5,7 @@
 
 #include "HAL/PlatformFileManager.h"
 
+
 FString UFileReadWrite::ReadFile(FString FilePath, bool& bOutSuccess, FString& OutInfoMessage)
 {
 	if (!FPlatformFileManager::Get().GetPlatformFile().FileExists(*FilePath))
