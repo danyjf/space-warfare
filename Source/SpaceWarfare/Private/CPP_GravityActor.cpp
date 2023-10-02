@@ -47,7 +47,7 @@ void ACPP_GravityActor::Tick(float DeltaTime)
 void ACPP_GravityActor::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
-
+	
 	for (ACPP_GravityActor* const Other : SimulationGameMode->GravityActors)
 	{
 		if (this == Other)

@@ -12,7 +12,7 @@ class ACPP_GravityActor;
 
 
 USTRUCT(BlueprintType)
-struct GravityBodyStruct
+struct FGravityBodyStruct
 {
 	GENERATED_BODY()
 
@@ -27,7 +27,7 @@ struct GravityBodyStruct
 };
 
 USTRUCT(BlueprintType)
-struct SimulationConfigStruct
+struct FSimulationConfigStruct
 {
 	GENERATED_BODY()
 	
@@ -38,10 +38,10 @@ struct SimulationConfigStruct
 	double GravitationalConstant;
 
 	UPROPERTY()
-	GravityBodyStruct Earth;
+	FGravityBodyStruct Earth;
 
 	UPROPERTY()
-	TArray<GravityBodyStruct> Satellites;
+	TArray<FGravityBodyStruct> Satellites;
 };
 
 
