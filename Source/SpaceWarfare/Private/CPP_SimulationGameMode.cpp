@@ -8,18 +8,21 @@
 #include "Kismet/KismetSystemLibrary.h"
 
 
-void ACPP_SimulationGameMode::BeginPlay()
+ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 {
-	Super::BeginPlay();
-
-	/*bool bSuccess;
+	bool bSuccess;
 	FString InfoMessage;
 	TSharedPtr<FJsonObject> JsonObject = UJsonReadWrite::ReadJson("C:/Dev/SpaceWarfare/Content/SpaceWarfare/Data/SimulationConfig.json", bSuccess, InfoMessage);
-
-	FSimulationConfigStruct SimulationConfig;
 
 	if (!FJsonObjectConverter::JsonObjectToUStruct<FSimulationConfigStruct >(JsonObject.ToSharedRef(), &SimulationConfig))
 	{
 		UKismetSystemLibrary::PrintString(this, "Read struct json failed - Was not able to convert the json object to the desired structure. Is it the right format / struct?");
-	}*/
+	}
+
+	G = SimulationConfig.GravitationalConstant;
+}
+
+void ACPP_SimulationGameMode::BeginPlay()
+{
+	Super::BeginPlay();
 }

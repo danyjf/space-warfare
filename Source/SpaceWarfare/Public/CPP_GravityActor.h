@@ -42,8 +42,6 @@ private:
 	* the async physics tick
 	*/
 	FBodyInstanceAsyncPhysicsTickHandle RigidBody;
-	
-	double G;
 
 	// Get the vector representing the force of gravity pointing from this object
 	// to the Other

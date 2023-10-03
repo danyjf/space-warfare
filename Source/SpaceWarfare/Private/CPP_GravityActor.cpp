@@ -14,8 +14,6 @@ ACPP_GravityActor::ACPP_GravityActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	G = 66743 * 4;
 }
 
 // Called when the game starts or when spawned
@@ -28,12 +26,12 @@ void ACPP_GravityActor::BeginPlay()
 
 	if (this->GetName() == "BP_Earth_C_0") 
 	{
-		GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), 1000);
+		GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), SimulationGameMode->SimulationConfig.Earth.Mass);
 	}
 	else if (this->GetName() == "BP_Satellite_C_0")
 	{
-		GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), 10);
-		GetComponentByClass<UStaticMeshComponent>()->SetPhysicsLinearVelocity(FVector(506.65949 * 2, 0.0, 0.0));
+		GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), SimulationGameMode->SimulationConfig.Satellites[0].Mass);
+		GetComponentByClass<UStaticMeshComponent>()->SetPhysicsLinearVelocity(SimulationGameMode->SimulationConfig.Satellites[0].InitialVelocity);
 	}
 }
 
@@ -70,7 +68,7 @@ FVector ACPP_GravityActor::GetGravityForce(ACPP_GravityActor* Other)
 
 	FVector Direction = OtherLocation - MyLocation;
 
-	double Force = (G * MyMass * OtherMass) / Direction.SquaredLength();
+	double Force = (SimulationGameMode->G * MyMass * OtherMass) / Direction.SquaredLength();
 
 	Direction.Normalize();
 
