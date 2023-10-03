@@ -20,7 +20,7 @@ struct FGravityBodyStruct
 	double Mass;
 
 	UPROPERTY()
-	FVector Position;
+	FVector Location;
 
 	UPROPERTY()
 	FVector InitialVelocity;
@@ -56,7 +56,8 @@ class SPACEWARFARE_API ACPP_SimulationGameMode : public AGameModeBase
 public:
 	ACPP_SimulationGameMode();
 
-	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintCallable)
+	void InitializeSimulationVariables();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<ACPP_GravityActor*> GravityActors;

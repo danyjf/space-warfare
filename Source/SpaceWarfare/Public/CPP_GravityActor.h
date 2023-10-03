@@ -31,6 +31,10 @@ public:
 	// Called at a fixed DeltaTime to update physics
 	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
 
+	void SetMass(double Mass);
+	void SetLocation(FVector Location);
+	void SetInitialVelocity(FVector InitialVelocity);
+
 private:
 	// Reference to the GameMode object
 	ACPP_SimulationGameMode* SimulationGameMode;

@@ -24,6 +24,10 @@ void ACPP_GravityActor::BeginPlay()
 	SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	RigidBody = GetComponentByClass<UStaticMeshComponent>()->GetBodyInstanceAsyncPhysicsTickHandle();
 
+	/*if (this->GetName() == "BP_Earth_C_0") 
+	{
+		GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), SimulationGameMode->SimulationConfig.Earth.Mass);
+	}*/
 	if (this->GetName() == "BP_Satellite_C_0")
 	{
 		GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), SimulationGameMode->SimulationConfig.Satellites[0].Mass);
@@ -78,10 +82,10 @@ void ACPP_GravityActor::SetMass(double Mass)
 
 void ACPP_GravityActor::SetLocation(FVector Location)
 {
-	SetActorLocation(Location);
+
 }
 
 void ACPP_GravityActor::SetInitialVelocity(FVector InitialVelocity)
 {
-	GetComponentByClass<UStaticMeshComponent>()->SetPhysicsLinearVelocity(InitialVelocity);
+
 }
