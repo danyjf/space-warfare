@@ -23,23 +23,12 @@ ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()
 {
-	G = SimulationConfig.GravitationalConstant * SimulationConfig.Time * SimulationConfig.Time;
+	G = SimulationConfig.GravitationalConstant;
 	for (ACPP_GravityActor* GravityActor : GravityActors)
 	{
 		if (GravityActor->ActorHasTag("Earth"))
 		{
 			GravityActor->SetMass(SimulationConfig.Earth.Mass);
-			GravityActor->SetLocation(SimulationConfig.Earth.Location);
-			GravityActor->SetInitialVelocity(SimulationConfig.Earth.InitialVelocity * SimulationConfig.Time);
-			continue;
-		}
-
-		for (FGravityBodyStruct& SatelliteConfig : SimulationConfig.Satellites)
-		{
-			// TODO: check if it is the right satellite
-			GravityActor->SetMass(SatelliteConfig.Mass);
-			GravityActor->SetLocation(SatelliteConfig.Location);
-			GravityActor->SetInitialVelocity(SatelliteConfig.InitialVelocity * SimulationConfig.Time);
 		}
 	}
 }
