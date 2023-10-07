@@ -47,6 +47,8 @@ private:
 	*/
 	FBodyInstanceAsyncPhysicsTickHandle RigidBody;
 
+	float GM;
+
 	// Get the vector representing the force of gravity pointing from this object
 	// to the Other
 	FVector GetGravityForce(ACPP_GravityActor* Other);
