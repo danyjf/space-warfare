@@ -20,6 +20,9 @@ struct FGravityBodyStruct
 	double Mass;
 
 	UPROPERTY()
+	float Size;
+
+	UPROPERTY()
 	FVector Location;
 
 	UPROPERTY()
@@ -65,4 +68,7 @@ public:
 	FSimulationConfigStruct SimulationConfig;
 
 	double G;
+
+private:
+	FSimulationConfigStruct ReadSimulationConfigJson(const FString& SimulationConfigPath);
 };

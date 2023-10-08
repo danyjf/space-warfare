@@ -32,6 +32,7 @@ public:
 	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
 
 	void SetMass(double Mass);
+	void SetSize(float Size);
 	void SetLocation(FVector Location);
 	void SetInitialVelocity(FVector InitialVelocity);
 
@@ -46,6 +47,8 @@ private:
 	* the async physics tick
 	*/
 	FBodyInstanceAsyncPhysicsTickHandle RigidBody;
+
+	float GM;
 
 	// Get the vector representing the force of gravity pointing from this object
 	// to the Other

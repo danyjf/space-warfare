@@ -11,14 +11,35 @@
 
 ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 {
+	SimulationConfig = ReadSimulationConfigJson("SimulationConfig.json");
+}
+
+FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const FString& SimulationConfigPath)
+{
 	bool bSuccess;
 	FString InfoMessage;
-	TSharedPtr<FJsonObject> JsonObject = UJsonReadWrite::ReadJson("C:/Dev/SpaceWarfare/Content/SpaceWarfare/Data/SimulationConfig.json", bSuccess, InfoMessage);
+	TSharedPtr<FJsonObject> JsonObject = UJsonReadWrite::ReadJson(
+		FPaths::Combine(
+			FPaths::ProjectContentDir(), 
+			"SpaceWarfare/Data/", 
+			SimulationConfigPath
+		), 
+		bSuccess, 
+		InfoMessage
+	);
 
-	if (!FJsonObjectConverter::JsonObjectToUStruct<FSimulationConfigStruct >(JsonObject.ToSharedRef(), &SimulationConfig))
+	if (!bSuccess)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s"), *FString(InfoMessage));
+	}
+
+	FSimulationConfigStruct Config;
+	if (!FJsonObjectConverter::JsonObjectToUStruct<FSimulationConfigStruct >(JsonObject.ToSharedRef(), &Config))
 	{
 		UKismetSystemLibrary::PrintString(this, "Read struct json failed - Was not able to convert the json object to the desired structure. Is it the right format / struct?");
 	}
+
+	return Config;
 }
 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()
@@ -29,6 +50,7 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 		if (GravityActor->ActorHasTag("Earth"))
 		{
 			GravityActor->SetMass(SimulationConfig.Earth.Mass);
+			GravityActor->SetSize(SimulationConfig.Earth.Size);
 			GravityActor->SetLocation(SimulationConfig.Earth.Location);
 			GravityActor->SetInitialVelocity(SimulationConfig.Earth.InitialVelocity * SimulationConfig.Time);
 			continue;
@@ -38,6 +60,7 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 		{
 			// TODO: check if it is the right satellite
 			GravityActor->SetMass(SatelliteConfig.Mass);
+			GravityActor->SetSize(SatelliteConfig.Size);
 			GravityActor->SetLocation(SatelliteConfig.Location);
 			GravityActor->SetInitialVelocity(SatelliteConfig.InitialVelocity * SimulationConfig.Time);
 		}
