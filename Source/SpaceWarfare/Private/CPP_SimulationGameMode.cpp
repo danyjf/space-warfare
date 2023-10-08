@@ -6,12 +6,65 @@
 #include "JsonReadWrite.h"
 
 #include "JsonObjectConverter.h"	// JsonUtilities module
+#include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 
 ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 {
 	SimulationConfig = ReadSimulationConfigJson("SimulationConfig.json");
+}
+
+// Called at a fixed DeltaTime to update physics
+void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
+{
+	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
+
+	for (int i = 0; i < GravityActors.Num(); i++)
+	{
+		for (int j = 0; j < GravityActors.Num(); j++)
+		{
+			if (i == j)
+			{
+				continue;
+			}
+
+			FVector GravityForce = CalculateGravityForce(GravityActors[i], GravityActors[j]);
+
+			GravityActors[i]->AddForce(GravityForce);
+		}
+	}
+
+	for (ACPP_GravityActor* GravityActor : GravityActors)
+	{
+		GravityActor->UpdateVelocity(DeltaTime);
+	}
+
+	for (ACPP_GravityActor* GravityActor : GravityActors)
+	{
+		GravityActor->UpdatePosition(DeltaTime);
+	}
+
+	for (ACPP_GravityActor* GravityActor : GravityActors)
+	{
+		GravityActor->ResetForces();
+	}
+}
+
+FVector ACPP_SimulationGameMode::CalculateGravityForce(ACPP_GravityActor* OnActor, ACPP_GravityActor* ByActor)
+{
+	FVector MyLocation = OnActor->RigidBody->X();
+	FVector OtherLocation = ByActor->RigidBody->X();
+	float MyMass = OnActor->RigidBody->M();
+	float OtherMass = ByActor->RigidBody->M();
+
+	FVector Direction = OtherLocation - MyLocation;
+
+	double Force = (G * MyMass * OtherMass) / Direction.SquaredLength();
+
+	Direction.Normalize();
+
+	return Force * Direction;
 }
 
 FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const FString& SimulationConfigPath)
