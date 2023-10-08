@@ -13,7 +13,7 @@ ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 {
 	bool bSuccess;
 	FString InfoMessage;
-	TSharedPtr<FJsonObject> JsonObject = UJsonReadWrite::ReadJson("C:/Dev/SpaceWarfare/Content/SpaceWarfare/Data/SimulationConfig.json", bSuccess, InfoMessage);
+	TSharedPtr<FJsonObject> JsonObject = UJsonReadWrite::ReadJson(FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/SimulationConfig.json"), bSuccess, InfoMessage);
 
 	if (!FJsonObjectConverter::JsonObjectToUStruct<FSimulationConfigStruct >(JsonObject.ToSharedRef(), &SimulationConfig))
 	{
@@ -29,6 +29,7 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 		if (GravityActor->ActorHasTag("Earth"))
 		{
 			GravityActor->SetMass(SimulationConfig.Earth.Mass);
+			GravityActor->SetSize(SimulationConfig.Earth.Size);
 			GravityActor->SetLocation(SimulationConfig.Earth.Location);
 			GravityActor->SetInitialVelocity(SimulationConfig.Earth.InitialVelocity * SimulationConfig.Time);
 			continue;
@@ -38,6 +39,7 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 		{
 			// TODO: check if it is the right satellite
 			GravityActor->SetMass(SatelliteConfig.Mass);
+			GravityActor->SetSize(SatelliteConfig.Size);
 			GravityActor->SetLocation(SatelliteConfig.Location);
 			GravityActor->SetInitialVelocity(SatelliteConfig.InitialVelocity * SimulationConfig.Time);
 		}

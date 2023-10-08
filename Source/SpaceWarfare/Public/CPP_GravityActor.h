@@ -32,6 +32,7 @@ public:
 	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
 
 	void SetMass(double Mass);
+	void SetSize(float Size);
 	void SetLocation(FVector Location);
 	void SetInitialVelocity(FVector InitialVelocity);
 

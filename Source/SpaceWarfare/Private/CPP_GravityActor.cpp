@@ -70,6 +70,11 @@ void ACPP_GravityActor::SetMass(double Mass)
 	GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), Mass);
 }
 
+void ACPP_GravityActor::SetSize(float Size)
+{
+	SetActorScale3D(FVector(Size));
+}
+
 void ACPP_GravityActor::SetLocation(FVector Location)
 {
 	SetActorLocation(Location);

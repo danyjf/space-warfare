@@ -20,6 +20,9 @@ struct FGravityBodyStruct
 	double Mass;
 
 	UPROPERTY()
+	float Size;
+
+	UPROPERTY()
 	FVector Location;
 
 	UPROPERTY()
