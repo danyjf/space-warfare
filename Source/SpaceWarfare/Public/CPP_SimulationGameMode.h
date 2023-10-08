@@ -68,4 +68,7 @@ public:
 	FSimulationConfigStruct SimulationConfig;
 
 	double G;
+
+private:
+	FSimulationConfigStruct ReadSimulationConfigJson(const FString& SimulationConfigPath);
 };

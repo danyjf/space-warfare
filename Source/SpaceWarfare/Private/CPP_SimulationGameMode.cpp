@@ -11,14 +11,35 @@
 
 ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 {
+	SimulationConfig = ReadSimulationConfigJson("SimulationConfig.json");
+}
+
+FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const FString& SimulationConfigPath)
+{
 	bool bSuccess;
 	FString InfoMessage;
-	TSharedPtr<FJsonObject> JsonObject = UJsonReadWrite::ReadJson(FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/SimulationConfig.json"), bSuccess, InfoMessage);
+	TSharedPtr<FJsonObject> JsonObject = UJsonReadWrite::ReadJson(
+		FPaths::Combine(
+			FPaths::ProjectContentDir(), 
+			"SpaceWarfare/Data/", 
+			SimulationConfigPath
+		), 
+		bSuccess, 
+		InfoMessage
+	);
 
-	if (!FJsonObjectConverter::JsonObjectToUStruct<FSimulationConfigStruct >(JsonObject.ToSharedRef(), &SimulationConfig))
+	if (!bSuccess)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s"), *FString(InfoMessage));
+	}
+
+	FSimulationConfigStruct Config;
+	if (!FJsonObjectConverter::JsonObjectToUStruct<FSimulationConfigStruct >(JsonObject.ToSharedRef(), &Config))
 	{
 		UKismetSystemLibrary::PrintString(this, "Read struct json failed - Was not able to convert the json object to the desired structure. Is it the right format / struct?");
 	}
+
+	return Config;
 }
 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()
