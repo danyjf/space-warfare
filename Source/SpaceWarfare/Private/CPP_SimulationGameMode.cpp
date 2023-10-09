@@ -12,7 +12,8 @@
 
 ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 {
-	SimulationConfig = ReadSimulationConfigJson("SimulationConfig.json");
+	//SimulationConfig = ReadSimulationConfigJson("SimulationConfig.json");
+	SimulationConfig = ReadSimulationConfigJson("ISSSimulationConfig.json");
 }
 
 // Called at a fixed DeltaTime to update physics
