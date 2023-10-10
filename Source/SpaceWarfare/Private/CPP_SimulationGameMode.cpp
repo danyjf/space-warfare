@@ -33,6 +33,7 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 			FVector GravityForce = CalculateGravityForce(GravityActors[i], GravityActors[j]);
 
 			GravityActors[i]->AddForce(GravityForce);
+			//GravityActors[i]->RigidBody->AddForce(GravityForce);
 		}
 	}
 
