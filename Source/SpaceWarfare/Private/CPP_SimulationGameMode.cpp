@@ -4,14 +4,43 @@
 #include "CPP_SimulationGameMode.h"
 #include "CPP_GravityActor.h"
 #include "JsonReadWrite.h"
+#include "Gravity.h"
 
 #include "JsonObjectConverter.h"	// JsonUtilities module
+#include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 
 ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 {
-	SimulationConfig = ReadSimulationConfigJson("SimulationConfig.json");
+	//SimulationConfig = ReadSimulationConfigJson("SimulationConfig.json");
+	SimulationConfig = ReadSimulationConfigJson("ISSSimulationConfig.json");
+}
+
+// Called at a fixed DeltaTime to update physics
+void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
+{
+	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
+
+	for (int i = 0; i < GravityActors.Num(); i++)
+	{
+		for (int j = 0; j < GravityActors.Num(); j++)
+		{
+			if (i == j)
+			{
+				continue;
+			}
+
+			FVector GravityForce = UGravity::CalculateGravityForce(GravityActors[i], GravityActors[j], G);
+
+			GravityActors[i]->AddForce(GravityForce);
+		}
+	}
+
+	for (ACPP_GravityActor* GravityActor : GravityActors)
+	{
+		UGravity::SemiImplicitEulerIntegrator(GravityActor, DeltaTime);
+	}
 }
 
 FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const FString& SimulationConfigPath)

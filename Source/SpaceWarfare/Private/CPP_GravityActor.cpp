@@ -14,6 +14,8 @@ ACPP_GravityActor::ACPP_GravityActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	TotalForces = FVector(0.0);
 }
 
 // Called when the game starts or when spawned
@@ -31,38 +33,25 @@ void ACPP_GravityActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-// Called at a fixed DeltaTime to update physics
-void ACPP_GravityActor::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
+void ACPP_GravityActor::AddForce(FVector Force)
 {
-	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
-	
-	for (ACPP_GravityActor* const Other : SimulationGameMode->GravityActors)
-	{
-		if (this == Other)
-		{
-			continue;
-		}
-
-		FVector GravityForce = GetGravityForce(Other);
-
-		RigidBody->AddForce(GravityForce);
-	}
+	TotalForces += Force;
 }
 
-FVector ACPP_GravityActor::GetGravityForce(ACPP_GravityActor* Other)
+void ACPP_GravityActor::ResetForces()
 {
-	FVector MyLocation = RigidBody->X();
-	FVector OtherLocation = Other->RigidBody->X();
-	float MyMass = RigidBody->M();
-	float OtherMass = Other->RigidBody->M();
+	TotalForces.Set(0.0, 0.0, 0.0);
+}
 
-	FVector Direction = OtherLocation - MyLocation;
+void ACPP_GravityActor::UpdateVelocity(float DeltaTime)
+{
+	FVector Acceleration = TotalForces / RigidBody->M();
+	Velocity += Acceleration * DeltaTime;
+}
 
-	double Force = (SimulationGameMode->G * MyMass * OtherMass) / Direction.SquaredLength();
-
-	Direction.Normalize();
-
-	return Force * Direction;
+void ACPP_GravityActor::UpdatePosition(float DeltaTime)
+{
+	RigidBody->SetX(RigidBody->X() + Velocity * DeltaTime);
 }
 
 void ACPP_GravityActor::SetMass(double Mass)
@@ -82,5 +71,5 @@ void ACPP_GravityActor::SetLocation(FVector Location)
 
 void ACPP_GravityActor::SetInitialVelocity(FVector InitialVelocity)
 {
-	GetComponentByClass<UStaticMeshComponent>()->SetPhysicsLinearVelocity(InitialVelocity);
+	Velocity = InitialVelocity;
 }

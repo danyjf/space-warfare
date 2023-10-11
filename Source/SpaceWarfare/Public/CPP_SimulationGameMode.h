@@ -59,6 +59,9 @@ class SPACEWARFARE_API ACPP_SimulationGameMode : public AGameModeBase
 public:
 	ACPP_SimulationGameMode();
 
+	// Called at a fixed DeltaTime to update physics
+	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
+
 	UFUNCTION(BlueprintCallable)
 	void InitializeSimulationVariables();
 

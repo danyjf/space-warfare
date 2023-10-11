@@ -28,29 +28,27 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called at a fixed DeltaTime to update physics
-	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
-
 	void SetMass(double Mass);
 	void SetSize(float Size);
 	void SetLocation(FVector Location);
 	void SetInitialVelocity(FVector InitialVelocity);
 
-private:
-	// Reference to the GameMode object
-	ACPP_SimulationGameMode* SimulationGameMode;
-	
 	/*
 	* Object that holds the representation of this actor in the physics simulation
-	* 
+	*
 	* This is necessary to get the correct values of the objects position in
 	* the async physics tick
 	*/
 	FBodyInstanceAsyncPhysicsTickHandle RigidBody;
 
-	float GM;
+	void AddForce(FVector Force);
+	void ResetForces();
+	void UpdateVelocity(float DeltaTime);
+	void UpdatePosition(float DeltaTime);
 
-	// Get the vector representing the force of gravity pointing from this object
-	// to the Other
-	FVector GetGravityForce(ACPP_GravityActor* Other);
+private:
+	// Reference to the GameMode object
+	ACPP_SimulationGameMode* SimulationGameMode;
+	FVector TotalForces;
+	FVector Velocity;
 };
