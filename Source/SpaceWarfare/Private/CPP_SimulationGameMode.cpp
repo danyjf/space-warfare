@@ -4,6 +4,7 @@
 #include "CPP_SimulationGameMode.h"
 #include "CPP_GravityActor.h"
 #include "JsonReadWrite.h"
+#include "Gravity.h"
 
 #include "JsonObjectConverter.h"	// JsonUtilities module
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
@@ -30,43 +31,16 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 				continue;
 			}
 
-			FVector GravityForce = CalculateGravityForce(GravityActors[i], GravityActors[j]);
+			FVector GravityForce = UGravity::CalculateGravityForce(GravityActors[i], GravityActors[j], G);
 
 			GravityActors[i]->AddForce(GravityForce);
-			//GravityActors[i]->RigidBody->AddForce(GravityForce);
 		}
 	}
 
 	for (ACPP_GravityActor* GravityActor : GravityActors)
 	{
-		GravityActor->UpdateVelocity(DeltaTime);
+		UGravity::SemiImplicitEulerIntegrator(GravityActor, DeltaTime);
 	}
-
-	for (ACPP_GravityActor* GravityActor : GravityActors)
-	{
-		GravityActor->UpdatePosition(DeltaTime);
-	}
-
-	for (ACPP_GravityActor* GravityActor : GravityActors)
-	{
-		GravityActor->ResetForces();
-	}
-}
-
-FVector ACPP_SimulationGameMode::CalculateGravityForce(ACPP_GravityActor* OnActor, ACPP_GravityActor* ByActor)
-{
-	FVector MyLocation = OnActor->RigidBody->X();
-	FVector OtherLocation = ByActor->RigidBody->X();
-	float MyMass = OnActor->RigidBody->M();
-	float OtherMass = ByActor->RigidBody->M();
-
-	FVector Direction = OtherLocation - MyLocation;
-
-	double Force = (G * MyMass * OtherMass) / Direction.SquaredLength();
-
-	Direction.Normalize();
-
-	return Force * Direction;
 }
 
 FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const FString& SimulationConfigPath)

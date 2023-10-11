@@ -74,6 +74,4 @@ public:
 
 private:
 	FSimulationConfigStruct ReadSimulationConfigJson(const FString& SimulationConfigPath);
-
-	FVector CalculateGravityForce(ACPP_GravityActor* ExertedOn, ACPP_GravityActor* ExertedBy);
 };

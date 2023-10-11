@@ -71,6 +71,5 @@ void ACPP_GravityActor::SetLocation(FVector Location)
 
 void ACPP_GravityActor::SetInitialVelocity(FVector InitialVelocity)
 {
-	//GetComponentByClass<UStaticMeshComponent>()->SetPhysicsLinearVelocity(InitialVelocity);
 	Velocity = InitialVelocity;
 }
