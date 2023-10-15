@@ -15,6 +15,19 @@ ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 {
 	//SimulationConfig = ReadSimulationConfigJson("SimulationConfig.json");
 	SimulationConfig = ReadSimulationConfigJson("ISSSimulationConfig.json");
+
+	FOrbitalElements OrbitalElements;
+	OrbitalElements.e = 0.0004875;
+	OrbitalElements.a = 6787;
+	OrbitalElements.i = 0.9013229323;
+	OrbitalElements.O = 1.6259801471;
+	OrbitalElements.w = 1.8686751609;
+	OrbitalElements.M = 5.6834692322;
+	double GM = SimulationConfig.GravitationalConstant * SimulationConfig.Earth.Mass;
+
+	FOrbitalState OrbitalState = UGravity::ConvertOrbitalElementsToOrbitalState(OrbitalElements, GM);
+	UE_LOG(LogTemp, Warning, TEXT("Location: %s; Distance: %f"), *OrbitalState.Location.ToString(), OrbitalState.Location.Length());
+	UE_LOG(LogTemp, Warning, TEXT("Velocity: %s; Magnitude: %f"), *OrbitalState.Velocity.ToString(), OrbitalState.Velocity.Length());
 }
 
 // Called at a fixed DeltaTime to update physics
