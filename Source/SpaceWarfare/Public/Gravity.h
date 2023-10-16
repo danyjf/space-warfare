@@ -11,40 +11,32 @@
 class ACPP_GravityActor;
 
 
-USTRUCT(BlueprintType)
 struct FOrbitalState
 {
-	GENERATED_BODY()
-
-	UPROPERTY()
 	FVector Location;
-
-	UPROPERTY()
 	FVector Velocity;
 };
 
-USTRUCT(BlueprintType)
+/** Group of six orbital elements necessary to uniquely describe an orbit */
 struct FOrbitalElements
 {
-	GENERATED_BODY()
+	/** Eccentricity */
+	float e;
 
-	UPROPERTY()
-	float e;	// Eccentricity	
+	/** Semi-major axis */
+	float a;
 
-	UPROPERTY()
-	float a;	// Semi-major axis
+	/** Inclination in radians */
+	float i;
 
-	UPROPERTY()
-	float i;	// Inclination
+	/** Longitude of ascending node in radians */
+	float O;
 
-	UPROPERTY()
-	float O;	// Longitude of ascending node
+	/** Argument of periapsis in radians */
+	float w;
 
-	UPROPERTY()
-	float w;	// Argument of periapsis
-
-	UPROPERTY()
-	float M;	// Mean anomaly at epoch
+	/** Mean anomaly at epoch in radians */
+	float M;
 };
 
 

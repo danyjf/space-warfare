@@ -52,13 +52,11 @@ FOrbitalState UGravity::ConvertOrbitalElementsToOrbitalState(FOrbitalElements OE
 
 	// Use the eccentric anomaly to get the distance to the central body
 	float rc = OE.a * (1 - OE.e * cos(E));
-	UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), rc);
 
 	// Obtain the position and velocity vectors in the orbital frame
 	FVector OrbitalPosition(rc * cos(v), rc * sin(v), 0);
 	FVector OrbitalVelocity(-sin(E), sqrt(1 - OE.e * OE.e) * cos(E), 0);
 	OrbitalVelocity = (sqrt(GM * OE.a) / rc) * OrbitalVelocity;
-	UE_LOG(LogTemp, Warning, TEXT("Orbital Location: %s"), *OrbitalPosition.ToString());
 
 	// Transform the position and velocity vectors to the inertial frame
 	FOrbitalState OrbitalState;
