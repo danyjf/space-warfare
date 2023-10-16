@@ -82,5 +82,9 @@ FOrbitalState UGravity::ConvertOrbitalElementsToOrbitalState(FOrbitalElements Or
 	OrbitalState.Velocity.Z = OrbitalVelocity.X * (sin(w) * sin(i)) +
 		OrbitalVelocity.Y * (cos(w) * sin(i));
 
+	// Transform to left hand coordinate system
+	OrbitalState.Location.Y *= -1;
+	OrbitalState.Velocity.Y *= -1;
+
 	return OrbitalState;
 }
