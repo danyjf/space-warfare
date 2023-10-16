@@ -30,16 +30,23 @@ void UGravity::SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, floa
 	GravityActor->ResetForces();
 }
 
-FOrbitalState UGravity::ConvertOrbitalElementsToOrbitalState(FOrbitalElements OE, double GM)
+FOrbitalState UGravity::ConvertOrbitalElementsToOrbitalState(FOrbitalElements OrbitalElements, double GM)
 {
+	float e = OrbitalElements.Eccentricity;
+	float a = OrbitalElements.SemiMajorAxis;
+	float i = OrbitalElements.Inclination;
+	float O = OrbitalElements.LongitudeOfAscendingNode;
+	float w = OrbitalElements.ArgumentOfPeriapsis;
+	float M = OrbitalElements.MeanAnomaly;
+
 	// Solve Kepler’s Equation for the eccentric anomaly using Newton's method
-	float E = OE.M;
-	float F = E - OE.e * sin(E) - OE.M;
+	float E = M;
+	float F = E - e * sin(E) - M;
 	float Delta = 0.000001;
-	for (int i = 0; i < 30; i++)
+	for (int j = 0; j < 30; j++)
 	{
-		E = E - F / (1 - OE.e * cos(E));
-		F = E - OE.e * sin(E) - OE.M;
+		E = E - F / (1 - e * cos(E));
+		F = E - e * sin(E) - M;
 
 		if (abs(F) < Delta)
 		{
@@ -48,32 +55,32 @@ FOrbitalState UGravity::ConvertOrbitalElementsToOrbitalState(FOrbitalElements OE
 	}
 
 	// Obtain the true anomaly
-	float v = 2 * atan2(sqrt(1 + OE.e) * sin(E / 2), sqrt(1 - OE.e) * cos(E / 2));
+	float v = 2 * atan2(sqrt(1 + e) * sin(E / 2), sqrt(1 - e) * cos(E / 2));
 
 	// Use the eccentric anomaly to get the distance to the central body
-	float rc = OE.a * (1 - OE.e * cos(E));
+	float rc = a * (1 - e * cos(E));
 
 	// Obtain the position and velocity vectors in the orbital frame
 	FVector OrbitalPosition(rc * cos(v), rc * sin(v), 0);
-	FVector OrbitalVelocity(-sin(E), sqrt(1 - OE.e * OE.e) * cos(E), 0);
-	OrbitalVelocity = (sqrt(GM * OE.a) / rc) * OrbitalVelocity;
+	FVector OrbitalVelocity(-sin(E), sqrt(1 - e * e) * cos(E), 0);
+	OrbitalVelocity = (sqrt(GM * a) / rc) * OrbitalVelocity;
 
 	// Transform the position and velocity vectors to the inertial frame
 	FOrbitalState OrbitalState;
 
-	OrbitalState.Location.X = OrbitalPosition.X * (cos(OE.w) * cos(OE.O) - sin(OE.w) * cos(OE.i) * sin(OE.O)) -
-		OrbitalPosition.Y * (sin(OE.w) * cos(OE.O) + cos(OE.w) * cos(OE.i) * sin(OE.O));
-	OrbitalState.Location.Y = OrbitalPosition.X * (cos(OE.w) * sin(OE.O) + sin(OE.w) * cos(OE.i) * cos(OE.O)) +
-		OrbitalPosition.Y * (cos(OE.w) * cos(OE.i) * cos(OE.O) - sin(OE.w) * sin(OE.O));
-	OrbitalState.Location.Z = OrbitalPosition.X * (sin(OE.w) * sin(OE.i)) + 
-		OrbitalPosition.Y * (cos(OE.w) * sin(OE.i));
+	OrbitalState.Location.X = OrbitalPosition.X * (cos(w) * cos(O) - sin(w) * cos(i) * sin(O)) -
+		OrbitalPosition.Y * (sin(w) * cos(O) + cos(w) * cos(i) * sin(O));
+	OrbitalState.Location.Y = OrbitalPosition.X * (cos(w) * sin(O) + sin(w) * cos(i) * cos(O)) +
+		OrbitalPosition.Y * (cos(w) * cos(i) * cos(O) - sin(w) * sin(O));
+	OrbitalState.Location.Z = OrbitalPosition.X * (sin(w) * sin(i)) + 
+		OrbitalPosition.Y * (cos(w) * sin(i));
 
-	OrbitalState.Velocity.X = OrbitalVelocity.X * (cos(OE.w) * cos(OE.O) - sin(OE.w) * cos(OE.i) * sin(OE.O)) -
-		OrbitalVelocity.Y * (sin(OE.w) * cos(OE.O) + cos(OE.w) * cos(OE.i) * sin(OE.O));
-	OrbitalState.Velocity.Y = OrbitalVelocity.X * (cos(OE.w) * sin(OE.O) + sin(OE.w) * cos(OE.i) * cos(OE.O)) +
-		OrbitalVelocity.Y * (cos(OE.w) * cos(OE.i) * cos(OE.O) - sin(OE.w) * sin(OE.O));
-	OrbitalState.Velocity.Z = OrbitalVelocity.X * (sin(OE.w) * sin(OE.i)) +
-		OrbitalVelocity.Y * (cos(OE.w) * sin(OE.i));
+	OrbitalState.Velocity.X = OrbitalVelocity.X * (cos(w) * cos(O) - sin(w) * cos(i) * sin(O)) -
+		OrbitalVelocity.Y * (sin(w) * cos(O) + cos(w) * cos(i) * sin(O));
+	OrbitalState.Velocity.Y = OrbitalVelocity.X * (cos(w) * sin(O) + sin(w) * cos(i) * cos(O)) +
+		OrbitalVelocity.Y * (cos(w) * cos(i) * cos(O) - sin(w) * sin(O));
+	OrbitalState.Velocity.Z = OrbitalVelocity.X * (sin(w) * sin(i)) +
+		OrbitalVelocity.Y * (cos(w) * sin(i));
 
 	return OrbitalState;
 }

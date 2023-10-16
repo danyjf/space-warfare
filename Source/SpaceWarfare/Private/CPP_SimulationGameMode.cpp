@@ -4,7 +4,6 @@
 #include "CPP_SimulationGameMode.h"
 #include "CPP_GravityActor.h"
 #include "JsonReadWrite.h"
-#include "Gravity.h"
 
 #include "JsonObjectConverter.h"	// JsonUtilities module
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
@@ -73,40 +72,28 @@ FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const 
 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()
 {
-	FOrbitalElements OrbitalElements;
-	OrbitalElements.e = 0.0004875;
-	OrbitalElements.a = 6787;
-	OrbitalElements.i = 0.9013229323;
-	OrbitalElements.O = 1.6259801471;
-	OrbitalElements.w = 1.8686751609;
-	OrbitalElements.M = 5.6834692322;
-	double GM = SimulationConfig.GravitationalConstant * SimulationConfig.Earth.Mass;
-
-	FOrbitalState OrbitalState = UGravity::ConvertOrbitalElementsToOrbitalState(OrbitalElements, GM);
-	UE_LOG(LogTemp, Warning, TEXT("Location: %s; Distance: %f"), *OrbitalState.Location.ToString(), OrbitalState.Location.Length());
-	UE_LOG(LogTemp, Warning, TEXT("Velocity: %s; Magnitude: %f"), *OrbitalState.Velocity.ToString(), OrbitalState.Velocity.Length());
-
-	G = SimulationConfig.GravitationalConstant * SimulationConfig.Time * SimulationConfig.Time;
+	G = SimulationConfig.GravitationalConstant * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
 	for (ACPP_GravityActor* GravityActor : GravityActors)
 	{
 		if (GravityActor->ActorHasTag("Earth"))
 		{
 			GravityActor->SetMass(SimulationConfig.Earth.Mass);
 			GravityActor->SetSize(SimulationConfig.Earth.Size);
-			GravityActor->SetLocation(SimulationConfig.Earth.Location);
-			GravityActor->SetInitialVelocity(SimulationConfig.Earth.InitialVelocity * SimulationConfig.Time);
+			GravityActor->SetLocation(FVector(0.0f));
+			GravityActor->SetInitialVelocity(FVector(0.0f));
 			continue;
 		}
 
-		for (FGravityBodyStruct& SatelliteConfig : SimulationConfig.Satellites)
+		for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
 		{
 			// TODO: check if it is the right satellite
+
 			GravityActor->SetMass(SatelliteConfig.Mass);
 			GravityActor->SetSize(SatelliteConfig.Size);
-			//GravityActor->SetLocation(SatelliteConfig.Location);
-			//GravityActor->SetInitialVelocity(SatelliteConfig.InitialVelocity * SimulationConfig.Time);
+
+			FOrbitalState OrbitalState = UGravity::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Earth.GM);
 			GravityActor->SetLocation(OrbitalState.Location);
-			GravityActor->SetInitialVelocity(OrbitalState.Velocity * SimulationConfig.Time);
+			GravityActor->SetInitialVelocity(OrbitalState.Velocity * SimulationConfig.TimeScale);
 		}
 	}
 }
