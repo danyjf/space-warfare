@@ -37,19 +37,19 @@ struct FOrbitalElements
 	UPROPERTY()
 	float SemiMajorAxis;
 
-	/** Inclination in radians */
+	/** Inclination in degrees */
 	UPROPERTY()
 	float Inclination;
 
-	/** Longitude of ascending node in radians */
+	/** Longitude of ascending node in degrees */
 	UPROPERTY()
 	float LongitudeOfAscendingNode;
 
-	/** Argument of periapsis in radians */
+	/** Argument of periapsis in degrees */
 	UPROPERTY()
 	float ArgumentOfPeriapsis;
 
-	/** Mean anomaly at epoch in radians */
+	/** Mean anomaly at epoch in degrees */
 	UPROPERTY()
 	float MeanAnomaly;
 };

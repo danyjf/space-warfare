@@ -5,6 +5,7 @@
 #include "CPP_GravityActor.h"
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 FVector UGravity::CalculateGravityForce(ACPP_GravityActor* OnActor, ACPP_GravityActor* ByActor, double GravitationalConstant)
@@ -34,10 +35,10 @@ FOrbitalState UGravity::ConvertOrbitalElementsToOrbitalState(FOrbitalElements Or
 {
 	float e = OrbitalElements.Eccentricity;
 	float a = OrbitalElements.SemiMajorAxis;
-	float i = OrbitalElements.Inclination;
-	float O = OrbitalElements.LongitudeOfAscendingNode;
-	float w = OrbitalElements.ArgumentOfPeriapsis;
-	float M = OrbitalElements.MeanAnomaly;
+	float i = UKismetMathLibrary::DegreesToRadians(OrbitalElements.Inclination);
+	float O = UKismetMathLibrary::DegreesToRadians(OrbitalElements.LongitudeOfAscendingNode);
+	float w = UKismetMathLibrary::DegreesToRadians(OrbitalElements.ArgumentOfPeriapsis);
+	float M = UKismetMathLibrary::DegreesToRadians(OrbitalElements.MeanAnomaly);
 
 	// Solve Kepler’s Equation for the eccentric anomaly using Newton's method
 	float E = M;

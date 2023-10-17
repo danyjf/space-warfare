@@ -4,7 +4,6 @@
     "earth": {
         "mass": 5972000000000000000000000,
         "size": 12742,
-
         "gm": 398589.196
     },
     "satellites": [
@@ -14,10 +13,10 @@
             "orbitalElements": {
                 "Eccentricity": 0.0004875,
                 "SemiMajorAxis": 6787,
-                "Inclination": 0.9013229323,
-                "LongitudeOfAscendingNode": 1.6259801471,
-                "ArgumentOfPeriapsis": 1.8686751609,
-                "MeanAnomaly": 5.6834692322
+                "Inclination": 51.6417,
+                "LongitudeOfAscendingNode": 84.1259,
+                "ArgumentOfPeriapsis": 109.6068,
+                "MeanAnomaly": 64.6052
             }
         }
     ]
