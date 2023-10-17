@@ -3,6 +3,7 @@
 
 #include "Gravity.h"
 #include "CPP_GravityActor.h"
+#include "CPP_Planet.h"
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -10,6 +11,10 @@
 
 FVector UGravity::CalculateGravityForce(ACPP_GravityActor* OnActor, ACPP_GravityActor* ByActor, double GravitationalConstant)
 {
+	// TODO: to avoid all the comparisons and casting, maybe calculate all 
+	// forces with the planet first on a different function and then do the 
+	// forces between everything else
+
 	FVector MyLocation = OnActor->RigidBody->X();
 	FVector OtherLocation = ByActor->RigidBody->X();
 	float MyMass = OnActor->RigidBody->M();
@@ -17,7 +22,21 @@ FVector UGravity::CalculateGravityForce(ACPP_GravityActor* OnActor, ACPP_Gravity
 
 	FVector Direction = OtherLocation - MyLocation;
 
-	double Force = (GravitationalConstant * MyMass * OtherMass) / Direction.SquaredLength();
+	double Force;
+	if (OnActor->ActorHasTag("Earth"))
+	{
+		ACPP_Planet* Planet = Cast<ACPP_Planet>(OnActor);
+		Force = (Planet->GM * OtherMass) / Direction.SquaredLength();
+	}
+	else if (ByActor->ActorHasTag("Earth"))
+	{
+		ACPP_Planet* Planet = Cast<ACPP_Planet>(ByActor);
+		Force = (Planet->GM * MyMass) / Direction.SquaredLength();
+	}
+	else
+	{
+		Force = (GravitationalConstant * MyMass * OtherMass) / Direction.SquaredLength();
+	}
 
 	Direction.Normalize();
 

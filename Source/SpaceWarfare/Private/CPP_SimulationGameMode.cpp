@@ -3,6 +3,7 @@
 
 #include "CPP_SimulationGameMode.h"
 #include "CPP_GravityActor.h"
+#include "CPP_Planet.h"
 #include "JsonReadWrite.h"
 
 #include "JsonObjectConverter.h"	// JsonUtilities module
@@ -77,10 +78,12 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 	{
 		if (GravityActor->ActorHasTag("Earth"))
 		{
-			GravityActor->SetMass(SimulationConfig.Earth.Mass);
-			GravityActor->SetSize(SimulationConfig.Earth.Size);
-			GravityActor->SetLocation(FVector(0.0f));
-			GravityActor->SetInitialVelocity(FVector(0.0f));
+			ACPP_Planet* Earth = Cast<ACPP_Planet>(GravityActor);
+			Earth->SetMass(SimulationConfig.Earth.Mass);
+			Earth->SetSize(SimulationConfig.Earth.Size);
+			Earth->SetLocation(FVector(0.0f));
+			Earth->SetInitialVelocity(FVector(0.0f));
+			Earth->GM = SimulationConfig.Earth.GM * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
 			continue;
 		}
 
