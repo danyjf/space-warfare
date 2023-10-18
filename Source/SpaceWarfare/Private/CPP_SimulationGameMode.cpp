@@ -3,8 +3,8 @@
 
 #include "CPP_SimulationGameMode.h"
 #include "CPP_GravityActor.h"
+#include "CPP_Planet.h"
 #include "JsonReadWrite.h"
-#include "Gravity.h"
 
 #include "JsonObjectConverter.h"	// JsonUtilities module
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
@@ -73,25 +73,30 @@ FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const 
 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()
 {
-	G = SimulationConfig.GravitationalConstant * SimulationConfig.Time * SimulationConfig.Time;
+	G = SimulationConfig.GravitationalConstant * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
 	for (ACPP_GravityActor* GravityActor : GravityActors)
 	{
 		if (GravityActor->ActorHasTag("Earth"))
 		{
-			GravityActor->SetMass(SimulationConfig.Earth.Mass);
-			GravityActor->SetSize(SimulationConfig.Earth.Size);
-			GravityActor->SetLocation(SimulationConfig.Earth.Location);
-			GravityActor->SetInitialVelocity(SimulationConfig.Earth.InitialVelocity * SimulationConfig.Time);
+			ACPP_Planet* Earth = Cast<ACPP_Planet>(GravityActor);
+			Earth->SetMass(SimulationConfig.Earth.Mass);
+			Earth->SetSize(SimulationConfig.Earth.Size);
+			Earth->SetLocation(FVector(0.0f));
+			Earth->SetInitialVelocity(FVector(0.0f));
+			Earth->GM = SimulationConfig.Earth.GM * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
 			continue;
 		}
 
-		for (FGravityBodyStruct& SatelliteConfig : SimulationConfig.Satellites)
+		for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
 		{
 			// TODO: check if it is the right satellite
+
 			GravityActor->SetMass(SatelliteConfig.Mass);
 			GravityActor->SetSize(SatelliteConfig.Size);
-			GravityActor->SetLocation(SatelliteConfig.Location);
-			GravityActor->SetInitialVelocity(SatelliteConfig.InitialVelocity * SimulationConfig.Time);
+
+			FOrbitalState OrbitalState = UGravity::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Earth.GM);
+			GravityActor->SetLocation(OrbitalState.Location);
+			GravityActor->SetInitialVelocity(OrbitalState.Velocity * SimulationConfig.TimeScale);
 		}
 	}
 }

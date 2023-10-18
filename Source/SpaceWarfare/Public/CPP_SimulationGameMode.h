@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Gravity.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "CPP_SimulationGameMode.generated.h"
@@ -12,9 +14,9 @@ class ACPP_GravityActor;
 
 
 USTRUCT(BlueprintType)
-struct FGravityBodyStruct
+struct FPlanetStruct
 {
-	GENERATED_BODY()
+	GENERATED_BODY();
 
 	UPROPERTY()
 	double Mass;
@@ -23,28 +25,40 @@ struct FGravityBodyStruct
 	float Size;
 
 	UPROPERTY()
-	FVector Location;
+	double GM;
+};
+
+USTRUCT(BlueprintType)
+struct FSatelliteStruct
+{
+	GENERATED_BODY();
 
 	UPROPERTY()
-	FVector InitialVelocity;
+	double Mass;
+
+	UPROPERTY()
+	float Size;
+
+	UPROPERTY()
+	FOrbitalElements OrbitalElements;
 };
 
 USTRUCT(BlueprintType)
 struct FSimulationConfigStruct
 {
-	GENERATED_BODY()
-	
+	GENERATED_BODY();
+
 	UPROPERTY()
-	int Time;
+	int TimeScale;
 
 	UPROPERTY()
 	double GravitationalConstant;
 
 	UPROPERTY()
-	FGravityBodyStruct Earth;
+	FPlanetStruct Earth;
 
 	UPROPERTY()
-	TArray<FGravityBodyStruct> Satellites;
+	TArray<FSatelliteStruct> Satellites;
 };
 
 

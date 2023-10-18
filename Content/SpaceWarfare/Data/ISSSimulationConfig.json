@@ -1,18 +1,23 @@
 {
-    "time": 1000,
+    "timeScale": 1000,
     "gravitationalConstant": 0.000000000000000000066743,
     "earth": {
         "mass": 5972000000000000000000000,
         "size": 12742,
-        "location": {"x": 0, "y": 0, "z": 0},
-        "initialVelocity": {"x": 0, "y": 0, "z": 0}
+        "gm": 398589.196
     },
     "satellites": [
         {
             "mass": 420000,
             "size": 50,
-            "location": {"x": 0, "y": 6784, "z": 0},
-            "initialVelocity": {"x": 7.66461877, "y": 0, "z": 0}
+            "orbitalElements": {
+                "Eccentricity": 0.0004875,
+                "SemiMajorAxis": 6787,
+                "Inclination": 51.6417,
+                "LongitudeOfAscendingNode": 84.1259,
+                "ArgumentOfPeriapsis": 109.6068,
+                "MeanAnomaly": 64.6052
+            }
         }
     ]
 }
