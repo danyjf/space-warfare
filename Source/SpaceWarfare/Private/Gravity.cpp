@@ -46,7 +46,7 @@ FVector UGravity::CalculateGravityForce(ACPP_GravityActor* OnActor, ACPP_Gravity
 void UGravity::SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime)
 {
 	GravityActor->UpdateVelocity(DeltaTime);
-	GravityActor->UpdatePosition(DeltaTime);
+	GravityActor->UpdateLocation(DeltaTime);
 	GravityActor->ResetForces();
 }
 

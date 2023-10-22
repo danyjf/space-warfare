@@ -1,7 +1,7 @@
 {
     "timeScale": 1000,
     "gravitationalConstant": 0.000000000000000000066743,
-    "earth": {
+    "planet": {
         "mass": 5972000000000000000000000,
         "size": 12742,
         "gm": 398589.196
