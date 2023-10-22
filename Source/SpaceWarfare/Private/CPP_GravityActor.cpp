@@ -49,7 +49,7 @@ void ACPP_GravityActor::UpdateVelocity(float DeltaTime)
 	Velocity += Acceleration * DeltaTime;
 }
 
-void ACPP_GravityActor::UpdatePosition(float DeltaTime)
+void ACPP_GravityActor::UpdateLocation(float DeltaTime)
 {
 	RigidBody->SetX(RigidBody->X() + Velocity * DeltaTime);
 }

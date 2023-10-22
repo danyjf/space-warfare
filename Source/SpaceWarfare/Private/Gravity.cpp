@@ -4,39 +4,37 @@
 #include "Gravity.h"
 #include "CPP_GravityActor.h"
 #include "CPP_Planet.h"
+#include "CPP_Satellite.h"
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
-FVector UGravity::CalculateGravityForce(ACPP_GravityActor* OnActor, ACPP_GravityActor* ByActor, double GravitationalConstant)
+FVector UGravity::CalculateGravityForce(ACPP_GravityActor* ExertedOn, ACPP_GravityActor* ExertedBy, double GravitationalConstant)
 {
-	// TODO: to avoid all the comparisons and casting, maybe calculate all 
-	// forces with the planet first on a different function and then do the 
-	// forces between everything else
-
-	FVector MyLocation = OnActor->RigidBody->X();
-	FVector OtherLocation = ByActor->RigidBody->X();
-	float MyMass = OnActor->RigidBody->M();
-	float OtherMass = ByActor->RigidBody->M();
+	FVector MyLocation = ExertedOn->RigidBody->X();
+	FVector OtherLocation = ExertedBy->RigidBody->X();
+	float MyMass = ExertedOn->RigidBody->M();
+	float OtherMass = ExertedBy->RigidBody->M();
 
 	FVector Direction = OtherLocation - MyLocation;
 
-	double Force;
-	if (OnActor->ActorHasTag("Earth"))
-	{
-		ACPP_Planet* Planet = Cast<ACPP_Planet>(OnActor);
-		Force = (Planet->GM * OtherMass) / Direction.SquaredLength();
-	}
-	else if (ByActor->ActorHasTag("Earth"))
-	{
-		ACPP_Planet* Planet = Cast<ACPP_Planet>(ByActor);
-		Force = (Planet->GM * MyMass) / Direction.SquaredLength();
-	}
-	else
-	{
-		Force = (GravitationalConstant * MyMass * OtherMass) / Direction.SquaredLength();
-	}
+	double Force = (GravitationalConstant * MyMass * OtherMass) / Direction.SquaredLength();
+
+	Direction.Normalize();
+
+	return Force * Direction;
+}
+
+FVector UGravity::CalculateGravityForce(ACPP_Satellite* Satellite, ACPP_Planet* Planet)
+{
+	FVector SatelliteLocation = Satellite->RigidBody->X();
+	FVector PlanetLocation = Planet->RigidBody->X();
+	float SatelliteMass = Satellite->RigidBody->M();
+
+	FVector Direction = PlanetLocation - SatelliteLocation;
+
+	double Force = (Planet->GM * SatelliteMass) / Direction.SquaredLength();
 
 	Direction.Normalize();
 
@@ -46,7 +44,7 @@ FVector UGravity::CalculateGravityForce(ACPP_GravityActor* OnActor, ACPP_Gravity
 void UGravity::SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime)
 {
 	GravityActor->UpdateVelocity(DeltaTime);
-	GravityActor->UpdatePosition(DeltaTime);
+	GravityActor->UpdateLocation(DeltaTime);
 	GravityActor->ResetForces();
 }
 

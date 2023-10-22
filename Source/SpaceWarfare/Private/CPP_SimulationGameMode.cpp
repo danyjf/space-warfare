@@ -4,6 +4,7 @@
 #include "CPP_SimulationGameMode.h"
 #include "CPP_GravityActor.h"
 #include "CPP_Planet.h"
+#include "CPP_Satellite.h"
 #include "JsonReadWrite.h"
 
 #include "JsonObjectConverter.h"	// JsonUtilities module
@@ -22,24 +23,32 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 
-	for (int i = 0; i < GravityActors.Num(); i++)
+	// Calculate gravity forces between planet and all satellites
+	for (ACPP_Satellite* Satellite : Satellites)
 	{
-		for (int j = 0; j < GravityActors.Num(); j++)
+		FVector GravityForce = UGravity::CalculateGravityForce(Satellite, Planet);
+
+		Satellite->AddForce(GravityForce);
+		Planet->AddForce(-GravityForce);
+	}
+
+	// Calculate gravity forces between all satellites
+	for (int i = 0; i < Satellites.Num(); i++)
+	{
+		for (int j = i + 1; j < Satellites.Num(); j++)
 		{
-			if (i == j)
-			{
-				continue;
-			}
+			FVector GravityForce = UGravity::CalculateGravityForce(Satellites[i], Satellites[j], G);
 
-			FVector GravityForce = UGravity::CalculateGravityForce(GravityActors[i], GravityActors[j], G);
-
-			GravityActors[i]->AddForce(GravityForce);
+			Satellites[i]->AddForce(GravityForce);
+			Satellites[j]->AddForce(-GravityForce);
 		}
 	}
 
-	for (ACPP_GravityActor* GravityActor : GravityActors)
+	// Apply the forces with semi implicit euler integrator
+	UGravity::SemiImplicitEulerIntegrator(Planet, DeltaTime);
+	for (ACPP_Satellite* Satellite : Satellites)
 	{
-		UGravity::SemiImplicitEulerIntegrator(GravityActor, DeltaTime);
+		UGravity::SemiImplicitEulerIntegrator(Satellite, DeltaTime);
 	}
 }
 
@@ -74,29 +83,22 @@ FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()
 {
 	G = SimulationConfig.GravitationalConstant * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
-	for (ACPP_GravityActor* GravityActor : GravityActors)
-	{
-		if (GravityActor->ActorHasTag("Earth"))
-		{
-			ACPP_Planet* Earth = Cast<ACPP_Planet>(GravityActor);
-			Earth->SetMass(SimulationConfig.Earth.Mass);
-			Earth->SetSize(SimulationConfig.Earth.Size);
-			Earth->SetLocation(FVector(0.0f));
-			Earth->SetInitialVelocity(FVector(0.0f));
-			Earth->GM = SimulationConfig.Earth.GM * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
-			continue;
-		}
 
+	Planet->SetMass(SimulationConfig.Planet.Mass);
+	Planet->SetSize(SimulationConfig.Planet.Size);
+	Planet->SetLocation(FVector(0.0f));
+	Planet->SetInitialVelocity(FVector(0.0f));
+	Planet->GM = SimulationConfig.Planet.GM * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
+
+	for (ACPP_Satellite* Satellite : Satellites)
+	{
 		for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
 		{
 			// TODO: check if it is the right satellite
 
-			GravityActor->SetMass(SatelliteConfig.Mass);
-			GravityActor->SetSize(SatelliteConfig.Size);
-
-			FOrbitalState OrbitalState = UGravity::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Earth.GM);
-			GravityActor->SetLocation(OrbitalState.Location);
-			GravityActor->SetInitialVelocity(OrbitalState.Velocity * SimulationConfig.TimeScale);
+			FOrbitalState OrbitalState = UGravity::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
+			Satellite->SetLocation(OrbitalState.Location);
+			Satellite->SetInitialVelocity(OrbitalState.Velocity * SimulationConfig.TimeScale);
 		}
 	}
 }

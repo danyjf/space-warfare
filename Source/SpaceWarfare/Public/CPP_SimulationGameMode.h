@@ -11,6 +11,8 @@
 
 // Forward Declarations
 class ACPP_GravityActor;
+class ACPP_Planet;
+class ACPP_Satellite;
 
 
 USTRUCT(BlueprintType)
@@ -55,7 +57,7 @@ struct FSimulationConfigStruct
 	double GravitationalConstant;
 
 	UPROPERTY()
-	FPlanetStruct Earth;
+	FPlanetStruct Planet;
 
 	UPROPERTY()
 	TArray<FSatelliteStruct> Satellites;
@@ -80,7 +82,10 @@ public:
 	void InitializeSimulationVariables();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<ACPP_GravityActor*> GravityActors;
+	ACPP_Planet* Planet;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<ACPP_Satellite*> Satellites;
 
 	FSimulationConfigStruct SimulationConfig;
 

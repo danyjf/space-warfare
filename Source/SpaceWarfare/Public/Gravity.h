@@ -10,6 +10,7 @@
 // Forward Declarations
 class ACPP_GravityActor;
 class ACPP_Planet;
+class ACPP_Satellite;
 
 
 USTRUCT(BlueprintType)
@@ -81,6 +82,7 @@ class SPACEWARFARE_API UGravity : public UBlueprintFunctionLibrary
 	
 public:
 	static FVector CalculateGravityForce(ACPP_GravityActor* ExertedOn, ACPP_GravityActor* ExertedBy, double GravitationalConstant);
+	static FVector CalculateGravityForce(ACPP_Satellite* Satellite, ACPP_Planet* Planet);
 	static void SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime);
 	static FOrbitalState ConvertOrbitalElementsToOrbitalState(FOrbitalElements OrbitalElements, double GM);
 

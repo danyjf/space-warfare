@@ -39,7 +39,7 @@ public:
 	void AddForce(FVector Force);
 	void ResetForces();
 	void UpdateVelocity(float DeltaTime);
-	void UpdatePosition(float DeltaTime);
+	void UpdateLocation(float DeltaTime);
 
 protected:
 	// Called when the game starts or when spawned
