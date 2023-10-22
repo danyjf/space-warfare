@@ -11,7 +11,7 @@
         {
             "name": "ISS",
             "mass": 420000,
-            "size": 50,
+            "size": 100,
             "orbitalElements": {
                 "Eccentricity": 0.0004875,
                 "SemiMajorAxis": 6787,
@@ -19,6 +19,32 @@
                 "LongitudeOfAscendingNode": 84.1259,
                 "ArgumentOfPeriapsis": 109.6068,
                 "MeanAnomaly": 64.6052
+            }
+        },
+        {
+            "name": "ISS2",
+            "mass": 420000,
+            "size": 100,
+            "orbitalElements": {
+                "Eccentricity": 0.0004875,
+                "SemiMajorAxis": 6787,
+                "Inclination": 10,
+                "LongitudeOfAscendingNode": 84.1259,
+                "ArgumentOfPeriapsis": 109.6068,
+                "MeanAnomaly": 80
+            }
+        },
+        {
+            "name": "ISS3",
+            "mass": 420000,
+            "size": 100,
+            "orbitalElements": {
+                "Eccentricity": 0.0004875,
+                "SemiMajorAxis": 6787,
+                "Inclination": -35,
+                "LongitudeOfAscendingNode": 84.1259,
+                "ArgumentOfPeriapsis": 109.6068,
+                "MeanAnomaly": 15
             }
         }
     ]

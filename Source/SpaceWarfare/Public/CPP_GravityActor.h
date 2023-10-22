@@ -34,10 +34,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SetMass(double Mass);
-	void SetSize(float Size);
-	void SetLocation(FVector Location);
-	void SetInitialVelocity(FVector InitialVelocity);
+	void Initialize(FString Name, double Mass, float Size, FVector Location, FVector InitialVelocity);
 
 	void AddForce(FVector Force);
 	void ResetForces();

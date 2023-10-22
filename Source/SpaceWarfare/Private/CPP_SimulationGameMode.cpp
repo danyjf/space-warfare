@@ -84,25 +84,49 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 {
 	GravitationalConstant = SimulationConfig.GravitationalConstant * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
 
-	Planet->SetMass(SimulationConfig.Planet.Mass);
-	Planet->SetSize(SimulationConfig.Planet.Size);
-	Planet->SetLocation(FVector(0.0f));
-	Planet->SetInitialVelocity(FVector(0.0f));
-	Planet->GM = SimulationConfig.Planet.GM * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
-	Planet->Name = SimulationConfig.Planet.Name;
+	Planet->Initialize(
+		SimulationConfig.Planet.Name, 
+		SimulationConfig.Planet.Mass, 
+		SimulationConfig.Planet.Size, 
+		SimulationConfig.Planet.GM * SimulationConfig.TimeScale * SimulationConfig.TimeScale
+	);
 
-	for (ACPP_Satellite* Satellite : Satellites)
+	for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
 	{
-		for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
+		bool SatelliteExists = false;
+		for (ACPP_Satellite* Satellite : Satellites)
 		{
 			if (Satellite->Name != SatelliteConfig.Name)
 			{
 				continue;
 			}
 
+			SatelliteExists = true;
 			FOrbitalState OrbitalState = UGravity::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
-			Satellite->SetLocation(OrbitalState.Location);
-			Satellite->SetInitialVelocity(OrbitalState.Velocity * SimulationConfig.TimeScale);
+			Satellite->Initialize(
+				SatelliteConfig.Name, 
+				SatelliteConfig.Mass, 
+				SatelliteConfig.Size, 
+				OrbitalState.Location, 
+				OrbitalState.Velocity * SimulationConfig.TimeScale
+			);
+		}
+
+		if (!SatelliteExists)
+		{
+			ACPP_Satellite* NewSatellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
+			NewSatellite->OrbitingPlanet = Planet;
+
+			FOrbitalState OrbitalState = UGravity::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
+			NewSatellite->Initialize(
+				SatelliteConfig.Name, 
+				SatelliteConfig.Mass, 
+				SatelliteConfig.Size, 
+				OrbitalState.Location, 
+				OrbitalState.Velocity * SimulationConfig.TimeScale
+			);
+
+			Satellites.Add(NewSatellite);
 		}
 	}
 }

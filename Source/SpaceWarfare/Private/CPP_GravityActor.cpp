@@ -33,6 +33,15 @@ void ACPP_GravityActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ACPP_GravityActor::Initialize(FString aName, double Mass, float Size, FVector Location, FVector InitialVelocity)
+{
+	Name = aName;
+	GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), Mass);
+	SetActorScale3D(FVector(Size));
+	SetActorLocation(Location);
+	Velocity = InitialVelocity;
+}
+
 void ACPP_GravityActor::AddForce(FVector Force)
 {
 	TotalForces += Force;
@@ -52,24 +61,4 @@ void ACPP_GravityActor::UpdateVelocity(float DeltaTime)
 void ACPP_GravityActor::UpdateLocation(float DeltaTime)
 {
 	RigidBody->SetX(RigidBody->X() + Velocity * DeltaTime);
-}
-
-void ACPP_GravityActor::SetMass(double Mass)
-{
-	GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), Mass);
-}
-
-void ACPP_GravityActor::SetSize(float Size)
-{
-	SetActorScale3D(FVector(Size));
-}
-
-void ACPP_GravityActor::SetLocation(FVector Location)
-{
-	SetActorLocation(Location);
-}
-
-void ACPP_GravityActor::SetInitialVelocity(FVector InitialVelocity)
-{
-	Velocity = InitialVelocity;
 }

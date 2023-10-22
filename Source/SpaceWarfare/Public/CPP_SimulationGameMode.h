@@ -79,6 +79,18 @@ class SPACEWARFARE_API ACPP_SimulationGameMode : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ACPP_Planet* Planet;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<ACPP_Satellite*> Satellites;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> SatelliteBlueprintClass;	// Satellite BP used to spawn satellites on initialization from config
+
+	FSimulationConfigStruct SimulationConfig;
+	double GravitationalConstant;
+
 	ACPP_SimulationGameMode();
 
 	// Called at a fixed DeltaTime to update physics
@@ -86,16 +98,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void InitializeSimulationVariables();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ACPP_Planet* Planet;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<ACPP_Satellite*> Satellites;
-
-	FSimulationConfigStruct SimulationConfig;
-
-	double GravitationalConstant;
 
 private:
 	FSimulationConfigStruct ReadSimulationConfigJson(const FString& SimulationConfigPath);
