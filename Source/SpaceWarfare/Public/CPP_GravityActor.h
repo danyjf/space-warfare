@@ -16,7 +16,18 @@ class SPACEWARFARE_API ACPP_GravityActor : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Name;
+
+	/*
+	* Object that holds the representation of this actor in the physics simulation
+	*
+	* This is necessary to get the correct values of the objects position in
+	* the async physics tick
+	*/
+	FBodyInstanceAsyncPhysicsTickHandle RigidBody;
+
 	// Sets default values for this actor's properties
 	ACPP_GravityActor();
 
@@ -27,14 +38,6 @@ public:
 	void SetSize(float Size);
 	void SetLocation(FVector Location);
 	void SetInitialVelocity(FVector InitialVelocity);
-
-	/*
-	* Object that holds the representation of this actor in the physics simulation
-	*
-	* This is necessary to get the correct values of the objects position in
-	* the async physics tick
-	*/
-	FBodyInstanceAsyncPhysicsTickHandle RigidBody;
 
 	void AddForce(FVector Force);
 	void ResetForces();

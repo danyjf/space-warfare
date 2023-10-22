@@ -37,7 +37,7 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 	{
 		for (int j = i + 1; j < Satellites.Num(); j++)
 		{
-			FVector GravityForce = UGravity::CalculateGravityForce(Satellites[i], Satellites[j], G);
+			FVector GravityForce = UGravity::CalculateGravityForce(Satellites[i], Satellites[j], GravitationalConstant);
 
 			Satellites[i]->AddForce(GravityForce);
 			Satellites[j]->AddForce(-GravityForce);
@@ -82,19 +82,23 @@ FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const 
 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()
 {
-	G = SimulationConfig.GravitationalConstant * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
+	GravitationalConstant = SimulationConfig.GravitationalConstant * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
 
 	Planet->SetMass(SimulationConfig.Planet.Mass);
 	Planet->SetSize(SimulationConfig.Planet.Size);
 	Planet->SetLocation(FVector(0.0f));
 	Planet->SetInitialVelocity(FVector(0.0f));
 	Planet->GM = SimulationConfig.Planet.GM * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
+	Planet->Name = SimulationConfig.Planet.Name;
 
 	for (ACPP_Satellite* Satellite : Satellites)
 	{
 		for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
 		{
-			// TODO: check if it is the right satellite
+			if (Satellite->Name != SatelliteConfig.Name)
+			{
+				continue;
+			}
 
 			FOrbitalState OrbitalState = UGravity::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
 			Satellite->SetLocation(OrbitalState.Location);

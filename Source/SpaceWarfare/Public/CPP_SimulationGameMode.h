@@ -21,6 +21,9 @@ struct FPlanetStruct
 	GENERATED_BODY();
 
 	UPROPERTY()
+	FString Name;
+
+	UPROPERTY()
 	double Mass;
 
 	UPROPERTY()
@@ -34,6 +37,9 @@ USTRUCT(BlueprintType)
 struct FSatelliteStruct
 {
 	GENERATED_BODY();
+
+	UPROPERTY()
+	FString Name;
 
 	UPROPERTY()
 	double Mass;
@@ -89,7 +95,7 @@ public:
 
 	FSimulationConfigStruct SimulationConfig;
 
-	double G;
+	double GravitationalConstant;
 
 private:
 	FSimulationConfigStruct ReadSimulationConfigJson(const FString& SimulationConfigPath);
