@@ -108,3 +108,19 @@ FOrbitalState UGravity::ConvertOrbitalElementsToOrbitalState(FOrbitalElements Or
 
 	return OrbitalState;
 }
+
+FGeographicCoordinates UGravity::ConvertECILocationToGeographicCoordinates(ACPP_Planet* Planet, FVector Location)
+{
+	FGeographicCoordinates GeographicCoordinates;
+
+	GeographicCoordinates.Latitude = atan(Location.Z / sqrt(pow(Location.X, 2) + pow(Location.Y, 2)));
+	GeographicCoordinates.Latitude = UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Latitude);
+	
+	float GreenwichMeanSiderealTime = acos(FVector::DotProduct(FVector(1, 0, 0), Planet->GetActorForwardVector()));
+	GeographicCoordinates.Longitude = atan(-1 * Location.Y / Location.X) - GreenwichMeanSiderealTime;
+	GeographicCoordinates.Longitude = UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Longitude);
+
+	GeographicCoordinates.Altitude = Location.Length() - (Planet->GetActorScale().X / 2);
+
+	return GeographicCoordinates;
+}

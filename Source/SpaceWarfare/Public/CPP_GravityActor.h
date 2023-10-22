@@ -20,11 +20,6 @@ public:
 	// Sets default values for this actor's properties
 	ACPP_GravityActor();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -45,6 +40,10 @@ public:
 	void ResetForces();
 	void UpdateVelocity(float DeltaTime);
 	void UpdatePosition(float DeltaTime);
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 private:
 	// Reference to the GameMode object
