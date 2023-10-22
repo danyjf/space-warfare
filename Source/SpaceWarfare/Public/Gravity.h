@@ -9,6 +9,7 @@
 
 // Forward Declarations
 class ACPP_GravityActor;
+class ACPP_Planet;
 
 
 USTRUCT(BlueprintType)
@@ -54,6 +55,21 @@ struct FOrbitalElements
 	float MeanAnomaly;
 };
 
+USTRUCT(BlueprintType)
+struct FGeographicCoordinates
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	float Latitude;
+
+	UPROPERTY(BlueprintReadWrite)
+	float Longitude;
+
+	UPROPERTY(BlueprintReadWrite)
+	float Altitude;
+};
+
 
 /**
  * 
@@ -67,4 +83,7 @@ public:
 	static FVector CalculateGravityForce(ACPP_GravityActor* ExertedOn, ACPP_GravityActor* ExertedBy, double GravitationalConstant);
 	static void SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime);
 	static FOrbitalState ConvertOrbitalElementsToOrbitalState(FOrbitalElements OrbitalElements, double GM);
+
+	UFUNCTION(BlueprintCallable)
+	static FGeographicCoordinates ConvertECILocationToGeographicCoordinates(ACPP_Planet* Planet, FVector Location);
 };
