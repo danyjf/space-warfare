@@ -26,7 +26,7 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 	// Calculate gravity forces between planet and all satellites
 	for (ACPP_Satellite* Satellite : Satellites)
 	{
-		FVector GravityForce = UGravity::CalculateGravityForce(Satellite, Planet, G);
+		FVector GravityForce = UGravity::CalculateGravityForce(Satellite, Planet);
 
 		Satellite->AddForce(GravityForce);
 		Planet->AddForce(-GravityForce);
