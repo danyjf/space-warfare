@@ -13,12 +13,13 @@
             "mass": 420000,
             "size": 100,
             "orbitalElements": {
-                "Eccentricity": 0.0004875,
-                "SemiMajorAxis": 6787,
-                "Inclination": 51.6417,
-                "LongitudeOfAscendingNode": 84.1259,
-                "ArgumentOfPeriapsis": 109.6068,
-                "MeanAnomaly": 64.6052
+                "eccentricity": 0.0000779,
+                "semiMajorAxis": 6787,
+                "inclination": 51.6439,
+                "longitudeOfAscendingNode": 52.8975,
+                "argumentOfPeriapsis": 104.7676,
+                "meanAnomaly": 353.6048,
+                "epoch": "23 October 2023 12:19:43"
             }
         },
         {
@@ -26,12 +27,13 @@
             "mass": 420000,
             "size": 100,
             "orbitalElements": {
-                "Eccentricity": 0.0004875,
-                "SemiMajorAxis": 6787,
-                "Inclination": 10,
-                "LongitudeOfAscendingNode": 84.1259,
-                "ArgumentOfPeriapsis": 109.6068,
-                "MeanAnomaly": 80
+                "eccentricity": 0.0008875,
+                "semiMajorAxis": 8928,
+                "inclination": 10,
+                "longitudeOfAscendingNode": 30.1259,
+                "argumentOfPeriapsis": 59.6068,
+                "meanAnomaly": 80,
+                "epoch": "23 October 2023 12:19:43"
             }
         },
         {
@@ -39,12 +41,13 @@
             "mass": 420000,
             "size": 100,
             "orbitalElements": {
-                "Eccentricity": 0.0004875,
-                "SemiMajorAxis": 6787,
-                "Inclination": -35,
-                "LongitudeOfAscendingNode": 84.1259,
-                "ArgumentOfPeriapsis": 109.6068,
-                "MeanAnomaly": 15
+                "eccentricity": 0.0001875,
+                "semiMajorAxis": 7394,
+                "inclination": -35,
+                "longitudeOfAscendingNode": 84.1259,
+                "argumentOfPeriapsis": 160.6068,
+                "meanAnomaly": 15,
+                "epoch": "23 October 2023 12:19:43"
             }
         }
     ]
