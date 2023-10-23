@@ -37,7 +37,7 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 	{
 		for (int j = i + 1; j < Satellites.Num(); j++)
 		{
-			FVector GravityForce = UGravity::CalculateGravityForce(Satellites[i], Satellites[j], G);
+			FVector GravityForce = UGravity::CalculateGravityForce(Satellites[i], Satellites[j], GravitationalConstant);
 
 			Satellites[i]->AddForce(GravityForce);
 			Satellites[j]->AddForce(-GravityForce);
@@ -82,23 +82,51 @@ FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const 
 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()
 {
-	G = SimulationConfig.GravitationalConstant * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
+	GravitationalConstant = SimulationConfig.GravitationalConstant * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
 
-	Planet->SetMass(SimulationConfig.Planet.Mass);
-	Planet->SetSize(SimulationConfig.Planet.Size);
-	Planet->SetLocation(FVector(0.0f));
-	Planet->SetInitialVelocity(FVector(0.0f));
-	Planet->GM = SimulationConfig.Planet.GM * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
+	Planet->Initialize(
+		SimulationConfig.Planet.Name, 
+		SimulationConfig.Planet.Mass, 
+		SimulationConfig.Planet.Size, 
+		SimulationConfig.Planet.GM * SimulationConfig.TimeScale * SimulationConfig.TimeScale
+	);
 
-	for (ACPP_Satellite* Satellite : Satellites)
+	for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
 	{
-		for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
+		bool SatelliteExists = false;
+		for (ACPP_Satellite* Satellite : Satellites)
 		{
-			// TODO: check if it is the right satellite
+			if (Satellite->Name != SatelliteConfig.Name)
+			{
+				continue;
+			}
+
+			SatelliteExists = true;
+			FOrbitalState OrbitalState = UGravity::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
+			Satellite->Initialize(
+				SatelliteConfig.Name, 
+				SatelliteConfig.Mass, 
+				SatelliteConfig.Size, 
+				OrbitalState.Location, 
+				OrbitalState.Velocity * SimulationConfig.TimeScale
+			);
+		}
+
+		if (!SatelliteExists)
+		{
+			ACPP_Satellite* NewSatellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
+			NewSatellite->OrbitingPlanet = Planet;
 
 			FOrbitalState OrbitalState = UGravity::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
-			Satellite->SetLocation(OrbitalState.Location);
-			Satellite->SetInitialVelocity(OrbitalState.Velocity * SimulationConfig.TimeScale);
+			NewSatellite->Initialize(
+				SatelliteConfig.Name, 
+				SatelliteConfig.Mass, 
+				SatelliteConfig.Size, 
+				OrbitalState.Location, 
+				OrbitalState.Velocity * SimulationConfig.TimeScale
+			);
+
+			Satellites.Add(NewSatellite);
 		}
 	}
 }

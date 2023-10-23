@@ -16,17 +16,9 @@ class SPACEWARFARE_API ACPP_GravityActor : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
-	// Sets default values for this actor's properties
-	ACPP_GravityActor();
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	void SetMass(double Mass);
-	void SetSize(float Size);
-	void SetLocation(FVector Location);
-	void SetInitialVelocity(FVector InitialVelocity);
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Name;
 
 	/*
 	* Object that holds the representation of this actor in the physics simulation
@@ -35,6 +27,14 @@ public:
 	* the async physics tick
 	*/
 	FBodyInstanceAsyncPhysicsTickHandle RigidBody;
+
+	// Sets default values for this actor's properties
+	ACPP_GravityActor();
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	void Initialize(FString Name, double Mass, float Size, FVector Location, FVector InitialVelocity);
 
 	void AddForce(FVector Force);
 	void ResetForces();
