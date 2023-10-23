@@ -25,7 +25,7 @@ struct FOrbitalState
 	FVector Velocity;
 };
 
-/** Group of six orbital elements necessary to uniquely describe an orbit */
+/** Group of orbital elements necessary to uniquely describe an orbit */
 USTRUCT(BlueprintType)
 struct FOrbitalElements
 {
@@ -54,6 +54,10 @@ struct FOrbitalElements
 	/** Mean anomaly at epoch in degrees */
 	UPROPERTY()
 	float MeanAnomaly;
+
+	/** Time at which the body starts orbiting */
+	UPROPERTY()
+	FString Epoch;
 };
 
 USTRUCT(BlueprintType)
