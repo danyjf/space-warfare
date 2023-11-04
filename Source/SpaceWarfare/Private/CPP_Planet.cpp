@@ -16,5 +16,5 @@ void ACPP_Planet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	AddActorLocalRotation(RotationSpeed * DeltaTime);
+	SetActorRotation(GetActorRotation() + (RotationSpeed * DeltaTime));
 }

@@ -1,18 +1,55 @@
 {
-    "time": 10,
-    "gravitationalConstant": 66743,
-    "earth": {
-        "mass": 10000,
-        "size": 200,
-        "location": {"x": 0, "y": 0, "z": 0},
-        "initialVelocity": {"x": 0, "y": 0, "z": 0}
+    "timeScale": 864,
+    "gravitationalConstant": 0.000000000000000000066743,
+    "planet": {
+        "name": "Earth",
+        "mass": 5972000000000000000000000,
+        "size": 12742,
+        "gm": 398589.196,
+        "rotationSpeed": 0.004167
     },
     "satellites": [
         {
-            "mass": 10,
-            "size": 50,
-            "location": {"x": 0, "y": 1000, "z": 0},
-            "initialVelocity": {"x": 817.3722714, "y": 0, "z": 0}
+            "name": "ISS",
+            "mass": 420000,
+            "size": 100,
+            "orbitalElements": {
+                "eccentricity": 0.0000779,
+                "semiMajorAxis": 6787,
+                "inclination": 51.6439,
+                "longitudeOfAscendingNode": 52.8975,
+                "argumentOfPeriapsis": 104.7676,
+                "meanAnomaly": 353.6048,
+                "epoch": "23 October 2023 12:19:43"
+            }
+        },
+        {
+            "name": "ISS2",
+            "mass": 420000,
+            "size": 100,
+            "orbitalElements": {
+                "eccentricity": 0.0008875,
+                "semiMajorAxis": 8928,
+                "inclination": 10,
+                "longitudeOfAscendingNode": 30.1259,
+                "argumentOfPeriapsis": 59.6068,
+                "meanAnomaly": 80,
+                "epoch": "23 October 2023 12:19:43"
+            }
+        },
+        {
+            "name": "ISS3",
+            "mass": 420000,
+            "size": 100,
+            "orbitalElements": {
+                "eccentricity": 0.0001875,
+                "semiMajorAxis": 7394,
+                "inclination": -35,
+                "longitudeOfAscendingNode": 84.1259,
+                "argumentOfPeriapsis": 160.6068,
+                "meanAnomaly": 15,
+                "epoch": "23 October 2023 12:19:43"
+            }
         }
     ]
 }
