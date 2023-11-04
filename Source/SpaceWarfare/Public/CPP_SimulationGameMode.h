@@ -24,13 +24,16 @@ struct FPlanetStruct
 	FString Name;
 
 	UPROPERTY()
-	double Mass;
+	double Mass;			// kilograms
 
 	UPROPERTY()
-	float Size;
+	float Size;				// kilometers
 
 	UPROPERTY()
 	double GM;
+
+	UPROPERTY()
+	double RotationSpeed;	// degrees per second
 };
 
 USTRUCT(BlueprintType)
@@ -42,10 +45,10 @@ struct FSatelliteStruct
 	FString Name;
 
 	UPROPERTY()
-	double Mass;
+	double Mass;	// kilograms
 
 	UPROPERTY()
-	float Size;
+	float Size;		// kilometers
 
 	UPROPERTY()
 	FOrbitalElements OrbitalElements;
@@ -57,7 +60,7 @@ struct FSimulationConfigStruct
 	GENERATED_BODY();
 
 	UPROPERTY()
-	int TimeScale;
+	int TimeScale;	// seconds
 
 	UPROPERTY()
 	double GravitationalConstant;

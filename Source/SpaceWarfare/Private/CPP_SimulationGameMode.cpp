@@ -88,7 +88,8 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 		SimulationConfig.Planet.Name, 
 		SimulationConfig.Planet.Mass, 
 		SimulationConfig.Planet.Size, 
-		SimulationConfig.Planet.GM * SimulationConfig.TimeScale * SimulationConfig.TimeScale
+		SimulationConfig.Planet.GM * SimulationConfig.TimeScale * SimulationConfig.TimeScale,
+		SimulationConfig.Planet.RotationSpeed * SimulationConfig.TimeScale
 	);
 
 	for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)

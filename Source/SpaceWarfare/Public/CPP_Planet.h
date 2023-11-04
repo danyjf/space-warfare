@@ -17,5 +17,10 @@ class SPACEWARFARE_API ACPP_Planet : public ACPP_GravityActor
 public:
 	double GM;
 
-	void Initialize(FString Name, double Mass, float Size, double GM);
+	virtual void Tick(float DeltaTime) override;
+
+	void Initialize(FString Name, double Mass, float Size, double GM, double aRotationSpeed);
+
+private:
+	FRotator RotationSpeed;
 };
