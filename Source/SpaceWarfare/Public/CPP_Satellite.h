@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gravity.h"
+#include "Universe.h"
 
 #include "CoreMinimal.h"
 #include "CPP_GravityActor.h"

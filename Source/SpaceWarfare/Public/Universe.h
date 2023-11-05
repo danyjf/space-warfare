@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Gravity.generated.h"
+#include "Universe.generated.h"
 
 
 // Forward Declarations
@@ -80,7 +80,7 @@ struct FGeographicCoordinates
  * 
  */
 UCLASS()
-class SPACEWARFARE_API UGravity : public UBlueprintFunctionLibrary
+class SPACEWARFARE_API UUniverse : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	

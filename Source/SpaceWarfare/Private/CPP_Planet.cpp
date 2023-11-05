@@ -2,7 +2,7 @@
 
 
 #include "CPP_Planet.h"
-#include "Gravity.h"
+#include "Universe.h"
 
 
 void ACPP_Planet::Initialize(FString aName, double Mass, float Size, double aGM, double aRotationSpeed, FString Epoch)
@@ -15,7 +15,7 @@ void ACPP_Planet::Initialize(FString aName, double Mass, float Size, double aGM,
 	FDateTime::ParseIso8601(*Epoch, OutEpoch);
 
 	//UE_LOG(LogTemp, Warning, TEXT("%f"), OutEpoch.GetJulianDay());
-	FRotator EpochRotationAngle = FRotator(0, -UGravity::GetEarthRotationAngle(OutEpoch.GetJulianDay()), 0);
+	FRotator EpochRotationAngle = FRotator(0, -UUniverse::GetEarthRotationAngle(OutEpoch.GetJulianDay()), 0);
 	SetActorRotation(EpochRotationAngle);
 }
 

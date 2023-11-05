@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Gravity.h"
+#include "Universe.h"
 #include "CPP_GravityActor.h"
 #include "CPP_Planet.h"
 #include "CPP_Satellite.h"
@@ -10,7 +10,7 @@
 #include "Kismet/KismetMathLibrary.h"
 
 
-FVector UGravity::CalculateGravityForce(ACPP_GravityActor* ExertedOn, ACPP_GravityActor* ExertedBy, double GravitationalConstant)
+FVector UUniverse::CalculateGravityForce(ACPP_GravityActor* ExertedOn, ACPP_GravityActor* ExertedBy, double GravitationalConstant)
 {
 	FVector MyLocation = ExertedOn->RigidBody->X();
 	FVector OtherLocation = ExertedBy->RigidBody->X();
@@ -26,7 +26,7 @@ FVector UGravity::CalculateGravityForce(ACPP_GravityActor* ExertedOn, ACPP_Gravi
 	return Force * Direction;
 }
 
-FVector UGravity::CalculateGravityForce(ACPP_Satellite* Satellite, ACPP_Planet* Planet)
+FVector UUniverse::CalculateGravityForce(ACPP_Satellite* Satellite, ACPP_Planet* Planet)
 {
 	FVector SatelliteLocation = Satellite->RigidBody->X();
 	FVector PlanetLocation = Planet->RigidBody->X();
@@ -41,14 +41,14 @@ FVector UGravity::CalculateGravityForce(ACPP_Satellite* Satellite, ACPP_Planet* 
 	return Force * Direction;
 }
 
-void UGravity::SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime)
+void UUniverse::SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime)
 {
 	GravityActor->UpdateVelocity(DeltaTime);
 	GravityActor->UpdateLocation(DeltaTime);
 	GravityActor->ResetForces();
 }
 
-FOrbitalState UGravity::ConvertOrbitalElementsToOrbitalState(FOrbitalElements OrbitalElements, double GM)
+FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(FOrbitalElements OrbitalElements, double GM)
 {
 	float e = OrbitalElements.Eccentricity;
 	float a = OrbitalElements.SemiMajorAxis;
@@ -107,7 +107,7 @@ FOrbitalState UGravity::ConvertOrbitalElementsToOrbitalState(FOrbitalElements Or
 	return OrbitalState;
 }
 
-FGeographicCoordinates UGravity::ConvertECILocationToGeographicCoordinates(ACPP_Planet* Planet, FVector Location)
+FGeographicCoordinates UUniverse::ConvertECILocationToGeographicCoordinates(ACPP_Planet* Planet, FVector Location)
 {
 	FGeographicCoordinates GeographicCoordinates;
 
@@ -123,7 +123,7 @@ FGeographicCoordinates UGravity::ConvertECILocationToGeographicCoordinates(ACPP_
 	return GeographicCoordinates;
 }
 
-double UGravity::GetEarthRotationAngle(double JulianDay)
+double UUniverse::GetEarthRotationAngle(double JulianDay)
 {
 	return UKismetMathLibrary::RadiansToDegrees(2 * PI * (0.7790572732640 + 1.00273781191135448 * (JulianDay - 2451545.0)));
 }
