@@ -55,7 +55,7 @@ struct FOrbitalElements
 	UPROPERTY()
 	float MeanAnomaly;
 
-	/** Time at which the body starts orbiting */
+	/** Time at which the body starts orbiting in ISO 8601 */
 	UPROPERTY()
 	FString Epoch;
 };
@@ -89,6 +89,7 @@ public:
 	static FVector CalculateGravityForce(ACPP_Satellite* Satellite, ACPP_Planet* Planet);
 	static void SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime);
 	static FOrbitalState ConvertOrbitalElementsToOrbitalState(FOrbitalElements OrbitalElements, double GM);
+	static double GetEarthRotationAngle(double JulianDay);
 
 	UFUNCTION(BlueprintCallable)
 	static FGeographicCoordinates ConvertECILocationToGeographicCoordinates(ACPP_Planet* Planet, FVector Location);

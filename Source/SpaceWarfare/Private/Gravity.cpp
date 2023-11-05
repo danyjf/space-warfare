@@ -114,11 +114,16 @@ FGeographicCoordinates UGravity::ConvertECILocationToGeographicCoordinates(ACPP_
 	GeographicCoordinates.Latitude = atan(Location.Z / sqrt(pow(Location.X, 2) + pow(Location.Y, 2)));
 	GeographicCoordinates.Latitude = UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Latitude);
 	
-	float GreenwichMeanSiderealTime = acos(FVector::DotProduct(FVector(1, 0, 0), Planet->GetActorForwardVector()));
-	GeographicCoordinates.Longitude = atan(-1 * Location.Y / Location.X) - GreenwichMeanSiderealTime;
+	float EarthRotationAngle = acos(FVector::DotProduct(FVector(1, 0, 0), Planet->GetActorForwardVector()));
+	GeographicCoordinates.Longitude = atan(-1 * Location.Y / Location.X) - EarthRotationAngle;
 	GeographicCoordinates.Longitude = UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Longitude);
 
 	GeographicCoordinates.Altitude = Location.Length() - (Planet->GetActorScale().X / 2);
 
 	return GeographicCoordinates;
+}
+
+double UGravity::GetEarthRotationAngle(double JulianDay)
+{
+	return UKismetMathLibrary::RadiansToDegrees(2 * PI * (0.7790572732640 + 1.00273781191135448 * (JulianDay - 2451545.0)));
 }
