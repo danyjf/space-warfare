@@ -110,12 +110,27 @@ FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(FOrbitalElements O
 FGeographicCoordinates UUniverse::ConvertECILocationToGeographicCoordinates(ACPP_Planet* Planet, FVector Location)
 {
 	FGeographicCoordinates GeographicCoordinates;
+	
+	Location.Y = -Location.Y;	// transform location to right hand coordinate system
 
 	GeographicCoordinates.Latitude = atan(Location.Z / sqrt(pow(Location.X, 2) + pow(Location.Y, 2)));
 	GeographicCoordinates.Latitude = UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Latitude);
 	
-	float EarthRotationAngle = acos(FVector::DotProduct(FVector(1, 0, 0), Planet->GetActorForwardVector()));
-	GeographicCoordinates.Longitude = atan(-1 * Location.Y / Location.X) - EarthRotationAngle;
+	float EarthRotationAngle = -acos(FVector::DotProduct(FVector(1, 0, 0), Planet->GetActorForwardVector()));
+	
+	if (Location.X >= 0)
+	{
+		GeographicCoordinates.Longitude = atan(Location.Y / Location.X) - EarthRotationAngle;
+	}
+	else
+	{
+		GeographicCoordinates.Longitude = PI + atan(Location.Y / Location.X) - EarthRotationAngle;
+	}
+
+	if (GeographicCoordinates.Longitude > PI)
+	{
+		GeographicCoordinates.Longitude -= 2 * PI;
+	}
 	GeographicCoordinates.Longitude = UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Longitude);
 
 	GeographicCoordinates.Altitude = Location.Length() - (Planet->GetActorScale().X / 2);
