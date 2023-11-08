@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Gravity.h"
+#include "Universe.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
@@ -34,6 +34,9 @@ struct FPlanetStruct
 
 	UPROPERTY()
 	double RotationSpeed;	// degrees per second
+
+	UPROPERTY()
+	FString Epoch;			// epoch for earth rotation in ISO 8601
 };
 
 USTRUCT(BlueprintType)

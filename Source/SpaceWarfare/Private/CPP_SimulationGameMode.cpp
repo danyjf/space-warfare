@@ -26,7 +26,7 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 	// Calculate gravity forces between planet and all satellites
 	for (ACPP_Satellite* Satellite : Satellites)
 	{
-		FVector GravityForce = UGravity::CalculateGravityForce(Satellite, Planet);
+		FVector GravityForce = UUniverse::CalculateGravityForce(Satellite, Planet);
 
 		Satellite->AddForce(GravityForce);
 		Planet->AddForce(-GravityForce);
@@ -37,7 +37,7 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 	{
 		for (int j = i + 1; j < Satellites.Num(); j++)
 		{
-			FVector GravityForce = UGravity::CalculateGravityForce(Satellites[i], Satellites[j], GravitationalConstant);
+			FVector GravityForce = UUniverse::CalculateGravityForce(Satellites[i], Satellites[j], GravitationalConstant);
 
 			Satellites[i]->AddForce(GravityForce);
 			Satellites[j]->AddForce(-GravityForce);
@@ -45,10 +45,10 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 	}
 
 	// Apply the forces with semi implicit euler integrator
-	UGravity::SemiImplicitEulerIntegrator(Planet, DeltaTime);
+	UUniverse::SemiImplicitEulerIntegrator(Planet, DeltaTime);
 	for (ACPP_Satellite* Satellite : Satellites)
 	{
-		UGravity::SemiImplicitEulerIntegrator(Satellite, DeltaTime);
+		UUniverse::SemiImplicitEulerIntegrator(Satellite, DeltaTime);
 	}
 }
 
@@ -89,7 +89,8 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 		SimulationConfig.Planet.Mass, 
 		SimulationConfig.Planet.Size, 
 		SimulationConfig.Planet.GM * SimulationConfig.TimeScale * SimulationConfig.TimeScale,
-		SimulationConfig.Planet.RotationSpeed * SimulationConfig.TimeScale
+		SimulationConfig.Planet.RotationSpeed * SimulationConfig.TimeScale,
+		SimulationConfig.Planet.Epoch
 	);
 
 	for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
@@ -103,7 +104,7 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 			}
 
 			SatelliteExists = true;
-			FOrbitalState OrbitalState = UGravity::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
+			FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
 			Satellite->Initialize(
 				SatelliteConfig.Name, 
 				SatelliteConfig.Mass, 
@@ -118,7 +119,7 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 			ACPP_Satellite* NewSatellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
 			NewSatellite->OrbitingPlanet = Planet;
 
-			FOrbitalState OrbitalState = UGravity::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
+			FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
 			NewSatellite->Initialize(
 				SatelliteConfig.Name, 
 				SatelliteConfig.Mass, 

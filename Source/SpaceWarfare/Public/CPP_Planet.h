@@ -19,7 +19,7 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	void Initialize(FString Name, double Mass, float Size, double GM, double aRotationSpeed);
+	void Initialize(FString Name, double Mass, float Size, double GM, double aRotationSpeed, FString Epoch);
 
 private:
 	FRotator RotationSpeed;

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Gravity.generated.h"
+#include "Universe.generated.h"
 
 
 // Forward Declarations
@@ -55,7 +55,7 @@ struct FOrbitalElements
 	UPROPERTY()
 	float MeanAnomaly;
 
-	/** Time at which the body starts orbiting */
+	/** Time at which the body starts orbiting in ISO 8601 */
 	UPROPERTY()
 	FString Epoch;
 };
@@ -80,7 +80,7 @@ struct FGeographicCoordinates
  * 
  */
 UCLASS()
-class SPACEWARFARE_API UGravity : public UBlueprintFunctionLibrary
+class SPACEWARFARE_API UUniverse : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	
@@ -89,6 +89,7 @@ public:
 	static FVector CalculateGravityForce(ACPP_Satellite* Satellite, ACPP_Planet* Planet);
 	static void SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime);
 	static FOrbitalState ConvertOrbitalElementsToOrbitalState(FOrbitalElements OrbitalElements, double GM);
+	static double GetEarthRotationAngle(double JulianDay);
 
 	UFUNCTION(BlueprintCallable)
 	static FGeographicCoordinates ConvertECILocationToGeographicCoordinates(ACPP_Planet* Planet, FVector Location);
