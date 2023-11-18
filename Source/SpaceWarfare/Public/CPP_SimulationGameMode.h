@@ -106,5 +106,9 @@ public:
 	void InitializeSimulationVariables();
 
 private:
+	int TimeScale;
+	FDateTime InitialEpoch;
+	float ElapsedTime;
+
 	FSimulationConfigStruct ReadSimulationConfigJson(const FString& SimulationConfigPath);
 };

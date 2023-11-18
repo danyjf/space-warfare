@@ -50,6 +50,16 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 	{
 		UUniverse::SemiImplicitEulerIntegrator(Satellite, DeltaTime);
 	}
+
+	// Calculate current time
+	ElapsedTime += DeltaTime * TimeScale;
+	FTimespan ElapsedEpoch;
+	ElapsedEpoch = ElapsedEpoch.FromSeconds(ElapsedTime);
+
+	FDateTime CurrentEpoch = InitialEpoch;
+	CurrentEpoch += ElapsedEpoch;
+
+	UE_LOG(LogTemp, Warning, TEXT("Current Epoch: %s"), *CurrentEpoch.ToString());
 }
 
 FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const FString& SimulationConfigPath)
@@ -83,14 +93,17 @@ FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()
 {
 	GravitationalConstant = SimulationConfig.GravitationalConstant * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
+	TimeScale = SimulationConfig.TimeScale;
+
+	FDateTime::ParseIso8601(*SimulationConfig.Planet.Epoch, InitialEpoch);
 
 	Planet->Initialize(
 		SimulationConfig.Planet.Name, 
 		SimulationConfig.Planet.Mass, 
 		SimulationConfig.Planet.Size, 
-		SimulationConfig.Planet.GM * SimulationConfig.TimeScale * SimulationConfig.TimeScale,
-		SimulationConfig.Planet.RotationSpeed * SimulationConfig.TimeScale,
-		SimulationConfig.Planet.Epoch
+		SimulationConfig.Planet.GM * TimeScale * TimeScale,
+		SimulationConfig.Planet.RotationSpeed * TimeScale,
+		InitialEpoch
 	);
 
 	for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
@@ -110,7 +123,7 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 				SatelliteConfig.Mass, 
 				SatelliteConfig.Size, 
 				OrbitalState.Location, 
-				OrbitalState.Velocity * SimulationConfig.TimeScale
+				OrbitalState.Velocity * TimeScale
 			);
 		}
 
@@ -125,7 +138,7 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 				SatelliteConfig.Mass, 
 				SatelliteConfig.Size, 
 				OrbitalState.Location, 
-				OrbitalState.Velocity * SimulationConfig.TimeScale
+				OrbitalState.Velocity * TimeScale
 			);
 
 			Satellites.Add(NewSatellite);
