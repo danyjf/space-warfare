@@ -1,123 +1,22 @@
-﻿Current Epoch: 2023.10.23-12.49.33
-Longitude: 31.930696; Latitude: -26.195183; Altitude: 414.451874
-
-Current Epoch: 2023.10.23-13.19.33
-Longitude: 162.293106; Latitude: -22.594234; Altitude: 417.882599
-
-OK:
- Current Epoch: 2023.10.23-13.49.33
- Longitude: -100.710213; Latitude: 51.548756; Altitude: 415.871185
-
-Current Epoch: 2023.10.23-14.19.34
-Longitude: 1.700799; Latitude: -18.314356; Altitude: 414.232269
-
-Current Epoch: 2023.10.23-14.49.33
-Longitude: 131.541061; Latitude: -30.242018; Altitude: 417.704132
-
-Current Epoch: 2023.10.23-15.19.33
-Longitude: -139.783722; Latitude: 49.656467; Altitude: 416.250702
-
-Current Epoch: 2023.10.23-15.49.32
-Longitude: -27.921759; Latitude: -10.049521; Altitude: 414.071808
-
-Current Epoch: 2023.10.23-16.19.33
-Longitude: 99.393028; Latitude: -37.329868; Altitude: 417.465546
-
-Current Epoch: 2023.10.23-16.49.32
-Longitude: -177.017487; Latitude: 45.620392; Altitude: 416.622620
-
-OK:
- Current Epoch: 2023.10.23-17.19.33
- Longitude: -57.107948; Latitude: -1.741539; Altitude: 413.979858
-
-Current Epoch: 2023.10.23-17.49.32
-Longitude: 65.384911; Latitude: -43.480690; Altitude: 417.176056
-
-Current Epoch: 2023.10.23-18.19.33
-Longitude: 148.142990; Latitude: 40.012779; Altitude: 416.970825
-
-Current Epoch: 2023.10.23-18.49.33
-Longitude: -86.254364; Latitude: 6.615302; Altitude: 413.957306
-
-Current Epoch: 2023.10.23-19.19.33
-Longitude: 29.234354; Latitude: -48.204060; Altitude: 416.848816
-
-Current Epoch: 2023.10.23-19.49.33
-Longitude: 115.312798; Latitude: 33.286854; Altitude: 417.286591
-
-Current Epoch: 2023.10.23-20.19.33
-Longitude: -115.627914; Latitude: 14.880998; Altitude: 414.005310
-
-Current Epoch: 2023.10.23-20.30.09
-Longitude: -96.936043; Latitude: -17.097324; Altitude: 414.204254
-
-OK:
- Current Epoch: 2023.10.23-20.39.37
- Longitude: -72.745117; Latitude: -42.148899; Altitude: 415.147095
-
-OK:
- Current Epoch: 2023.10.23-21.09.37
- Longitude: 51.041538; Latitude: -3.742960; Altitude: 418.041656
-
-Not OK:
- Current Epoch: 2023.10.23-21.39.37
- Longitude: -178.119431; Latitude: 46.793797; Altitude: 415.034637
-
-Current Epoch: 2023.10.23-22.09.37
-Longitude: -78.501930; Latitude: -35.738159; Altitude: 414.817230
-
-Current Epoch: 2023.10.23-22.39.36
-Longitude: 64.546036; Latitude: -12.068605; Altitude: 418.017731
-
-Not OK:
- Current Epoch: 2023.10.23-23.09.37
- Longitude: -170.804642; Latitude: 50.330524; Altitude: 415.383484
-
-Current Epoch: 2023.10.23-23.39.36
-Longitude: -65.292374; Latitude: -28.475924; Altitude: 414.528442
-
-Current Epoch: 2023.10.24-00.09.37
-Longitude: 79.889854; Latitude: -20.171883; Altitude: 417.924530
-
-Current Epoch: 2023.10.24-00.39.36
-Longitude: -165.260117; Latitude: 51.643036; Altitude: 415.756897
-
-Current Epoch: 2023.10.24-00.46.54
-Longitude: -116.927650; Latitude: 43.533100; Altitude: 414.824829
-
-Current Epoch: 2023.10.24-00.49.54
-Longitude: -96.962456; Latitude: 36.790970; Altitude: 414.511475
-
-Not OK:
- Current Epoch: 2023.10.24-00.52.54
- Longitude: -79.157928; Latitude: 28.969175; Altitude: 414.259399
-
-Current Epoch: 2023.10.24-00.55.54
-Longitude: -62.860008; Latitude: 20.476038; Altitude: 414.078979
-
-Current Epoch: 2023.10.24-00.58.54
-Longitude: -47.508884; Latitude: 11.587889; Altitude: 413.977661
-
-Current Epoch: 2023.10.24-01.01.54
-Longitude: -32.649670; Latitude: 2.501481; Altitude: 413.959595
-
-Current Epoch: 2023.10.24-01.04.54
-Longitude: -17.892418; Latitude: -6.625431; Altitude: 414.025543
-
-Current Epoch: 2023.10.24-01.07.54
-Longitude: -2.862041; Latitude: -15.642945; Altitude: 414.172791
-
-Current Epoch: 2023.10.24-01.10.54
-Longitude: 12.854033; Latitude: -24.379976; Altitude: 414.395264
-
-Current Epoch: 2023.10.24-01.20.21
-Longitude: 56.914387; Latitude: -46.861496; Altitude: 415.471313
-
-Current Epoch: 2023.10.24-01.31.57
-Longitude: 131.798050; Latitude: -46.007530; Altitude: 417.019409
-
-Current Epoch: 2023.10.24-01.34.57
-Longitude: 152.894928; Latitude: -39.917465; Altitude: 417.355713
-
-Current Epoch: 2023.10.24-01.59.45
-Longitude: -129.575928; Latitude: 31.165358; Altitude: 417.371124
+﻿Current Epoch: 2023-10-23 13:19:33+0000; Longitude: 162.293106; Latitude: -22.594234; Altitude: 417.882599
+Current Epoch: 2023-10-23 14:19:34+0000; Longitude: 1.700799; Latitude: -18.314356; Altitude: 414.232269
+Current Epoch: 2023-10-23 15:19:33+0000; Longitude: -139.783722; Latitude: 49.656467; Altitude: 416.250702
+Current Epoch: 2023-10-23 16:19:33+0000; Longitude: 99.393028; Latitude: -37.329868; Altitude: 417.465546
+Current Epoch: 2023-10-23 17:19:33+0000; Longitude: -57.107948; Latitude: -1.741539; Altitude: 413.979858
+Current Epoch: 2023-10-23 18:19:33+0000; Longitude: 148.142990; Latitude: 40.012779; Altitude: 416.970825
+Current Epoch: 2023-10-23 19:19:33+0000; Longitude: 29.234354; Latitude: -48.204060; Altitude: 416.848816
+Current Epoch: 2023-10-23 20:19:33+0000; Longitude: -115.627914; Latitude: 14.880998; Altitude: 414.005310
+Current Epoch: 2023-10-23 21:39:37+0000; Longitude: -178.119431; Latitude: 46.793797; Altitude: 415.034637
+Current Epoch: 2023-10-23 22:39:36+0000; Longitude: 64.546036; Latitude: -12.068605; Altitude: 418.017731
+Current Epoch: 2023-10-23 23:39:36+0000; Longitude: -65.292374; Latitude: -28.475924; Altitude: 414.528442
+Current Epoch: 2023-10-24 00:39:36+0000; Longitude: -165.260117; Latitude: 51.643036; Altitude: 415.756897
+Current Epoch: 2023-10-24 00:49:54+0000; Longitude: -96.962456; Latitude: 36.790970; Altitude: 414.511475
+Current Epoch: 2023-10-24 00:55:54+0000; Longitude: -62.860008; Latitude: 20.476038; Altitude: 414.078979
+Current Epoch: 2023-10-24 01:01:54+0000; Longitude: -32.649670; Latitude: 2.501481; Altitude: 413.959595
+Current Epoch: 2023-10-24 01:04:54+0000; Longitude: -17.892418; Latitude: -6.625431; Altitude: 414.025543
+Current Epoch: 2023-10-24 01:07:54+0000; Longitude: -2.862041; Latitude: -15.642945; Altitude: 414.172791
+Current Epoch: 2023-10-24 01:10:54+0000; Longitude: 12.854033; Latitude: -24.379976; Altitude: 414.395264
+Current Epoch: 2023-10-24 01:20:21+0000; Longitude: 56.914387; Latitude: -46.861496; Altitude: 415.471313
+Current Epoch: 2023-10-24 01:31:57+0000; Longitude: 131.798050; Latitude: -46.007530; Altitude: 417.019409
+Current Epoch: 2023-10-24 01:34:57+0000; Longitude: 152.894928; Latitude: -39.917465; Altitude: 417.355713
+Current Epoch: 2023-10-24 01:59:45+0000; Longitude: -129.575928; Latitude: 31.165358; Altitude: 417.371124

@@ -25,9 +25,26 @@ FString UFileReadWrite::ReadFile(FString FilePath)
 	return RetString;
 }
 
-void UFileReadWrite::WriteFile(FString FilePath, FString String)
+void UFileReadWrite::WriteFile(FString FilePath, FString String, bool ShouldAppend)
 {
-	if (!FFileHelper::SaveStringToFile(String, *FilePath))
+	bool bSuccess = false;
+
+	if (ShouldAppend)
+	{
+		bSuccess = FFileHelper::SaveStringToFile(
+			String, 
+			*FilePath, 
+			FFileHelper::EEncodingOptions::AutoDetect, 
+			&IFileManager::Get(), 
+			FILEWRITE_Append
+		);
+	}
+	else
+	{
+		bSuccess = FFileHelper::SaveStringToFile(String, *FilePath);
+	}
+
+	if (!bSuccess)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Write string to file failed - Was not able to write to file - '%s'"), *FilePath);
 		return;

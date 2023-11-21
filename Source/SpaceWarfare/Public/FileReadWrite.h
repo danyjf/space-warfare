@@ -18,5 +18,5 @@ class SPACEWARFARE_API UFileReadWrite : public UBlueprintFunctionLibrary
 public:
 	static FString ReadFile(FString FilePath);
 
-	static void WriteFile(FString FilePath, FString String);
+	static void WriteFile(FString FilePath, FString String, bool ShouldAppend = false);
 };

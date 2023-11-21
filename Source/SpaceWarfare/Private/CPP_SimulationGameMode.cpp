@@ -6,6 +6,7 @@
 #include "CPP_Planet.h"
 #include "CPP_Satellite.h"
 #include "JsonReadWrite.h"
+#include "FileReadWrite.h"
 
 #include "JsonObjectConverter.h"	// JsonUtilities module
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
@@ -63,16 +64,27 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 
 void ACPP_SimulationGameMode::PrintSimulationData()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Current Epoch: %s"), *CurrentEpoch.ToString());
 	const FGeographicCoordinates& GeographicCoordinates = Satellites[0]->GetGeographicCoordinates();
 	UE_LOG(
 		LogTemp,
 		Warning,
-		TEXT("Longitude: %f; Latitude: %f; Altitude: %f"),
+		TEXT("Current Epoch: %s; Longitude: %f; Latitude: %f; Altitude: %f"),
+		*CurrentEpoch.ToString(),
 		GeographicCoordinates.Longitude,
 		GeographicCoordinates.Latitude,
 		GeographicCoordinates.Altitude
 	);
+	/*const FGeographicCoordinates& GeographicCoordinates = Satellites[0]->GetGeographicCoordinates();
+	UFileReadWrite::WriteFile(
+		FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/Results.txt"), 
+		FString::Printf(
+			TEXT("Longitude: %f; Latitude: %f; Altitude: %f\n"), 
+			GeographicCoordinates.Longitude, 
+			GeographicCoordinates.Latitude, 
+			GeographicCoordinates.Altitude
+		),
+		true
+	);*/
 }
 
 FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const FString& SimulationConfigPath)

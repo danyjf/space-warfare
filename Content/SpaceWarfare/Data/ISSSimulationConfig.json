@@ -1,5 +1,5 @@
 {
-    "timeScale": 60,
+    "timeScale": 3600,
     "gravitationalConstant": 0.000000000000000000066743,
     "planet": {
         "name": "Earth",
