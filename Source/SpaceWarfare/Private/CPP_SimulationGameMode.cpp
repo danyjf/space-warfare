@@ -10,6 +10,7 @@
 #include "JsonObjectConverter.h"	// JsonUtilities module
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 ACPP_SimulationGameMode::ACPP_SimulationGameMode()
@@ -56,30 +57,33 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 	FTimespan ElapsedEpoch;
 	ElapsedEpoch = ElapsedEpoch.FromSeconds(ElapsedTime);
 
-	FDateTime CurrentEpoch = InitialEpoch;
+	CurrentEpoch = InitialEpoch;
 	CurrentEpoch += ElapsedEpoch;
+}
 
+void ACPP_SimulationGameMode::PrintSimulationData()
+{
 	UE_LOG(LogTemp, Warning, TEXT("Current Epoch: %s"), *CurrentEpoch.ToString());
+	const FGeographicCoordinates& GeographicCoordinates = Satellites[0]->GetGeographicCoordinates();
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("Longitude: %f; Latitude: %f; Altitude: %f"),
+		GeographicCoordinates.Longitude,
+		GeographicCoordinates.Latitude,
+		GeographicCoordinates.Altitude
+	);
 }
 
 FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const FString& SimulationConfigPath)
 {
-	bool bSuccess;
-	FString InfoMessage;
 	TSharedPtr<FJsonObject> JsonObject = UJsonReadWrite::ReadJson(
 		FPaths::Combine(
 			FPaths::ProjectContentDir(), 
 			"SpaceWarfare/Data/", 
 			SimulationConfigPath
-		), 
-		bSuccess, 
-		InfoMessage
+		)
 	);
-
-	if (!bSuccess)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s"), *FString(InfoMessage));
-	}
 
 	FSimulationConfigStruct Config;
 	if (!FJsonObjectConverter::JsonObjectToUStruct<FSimulationConfigStruct >(JsonObject.ToSharedRef(), &Config))

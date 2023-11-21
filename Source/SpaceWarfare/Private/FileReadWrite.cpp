@@ -6,12 +6,11 @@
 #include "HAL/PlatformFileManager.h"
 
 
-FString UFileReadWrite::ReadFile(FString FilePath, bool& bOutSuccess, FString& OutInfoMessage)
+FString UFileReadWrite::ReadFile(FString FilePath)
 {
 	if (!FPlatformFileManager::Get().GetPlatformFile().FileExists(*FilePath))
 	{
-		bOutSuccess = false;
-		OutInfoMessage = FString::Printf(TEXT("Read string from file failed - File doesn't exist - '%s'"), *FilePath);
+		UE_LOG(LogTemp, Error, TEXT("Read string from file failed - File doesn't exist - '%s'"), *FilePath);
 		return "";
 	}
 
@@ -19,25 +18,18 @@ FString UFileReadWrite::ReadFile(FString FilePath, bool& bOutSuccess, FString& O
 
 	if (!FFileHelper::LoadFileToString(RetString, *FilePath))
 	{
-		bOutSuccess = false;
-		OutInfoMessage = FString::Printf(TEXT("Read string from file failed - Was not able to read file - '%s'"), *FilePath);
+		UE_LOG(LogTemp, Error, TEXT("Read string from file failed - Was not able to read file - '%s'"), *FilePath);
 		return "";
 	}
 
-	bOutSuccess = true;
-	OutInfoMessage = FString::Printf(TEXT("Read string from file succeeded - '%s'"), *FilePath);
 	return RetString;
 }
 
-void UFileReadWrite::WriteFile(FString FilePath, FString String, bool& bOutSuccess, FString& OutInfoMessage)
+void UFileReadWrite::WriteFile(FString FilePath, FString String)
 {
 	if (!FFileHelper::SaveStringToFile(String, *FilePath))
 	{
-		bOutSuccess = false;
-		OutInfoMessage = FString::Printf(TEXT("Write string to file failed - Was not able to write to file - '%s'"), *FilePath);
+		UE_LOG(LogTemp, Error, TEXT("Write string to file failed - Was not able to write to file - '%s'"), *FilePath);
 		return;
 	}
-
-	bOutSuccess = true;
-	OutInfoMessage = FString::Printf(TEXT("Write string to file succeeded - '%s'"), *FilePath);
 }

@@ -105,9 +105,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitializeSimulationVariables();
 
+	UFUNCTION(BlueprintCallable)
+	void PrintSimulationData();
+
 private:
 	int TimeScale;
 	FDateTime InitialEpoch;
+	FDateTime CurrentEpoch;
 	float ElapsedTime;
 
 	FSimulationConfigStruct ReadSimulationConfigJson(const FString& SimulationConfigPath);
