@@ -25,6 +25,8 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 
+	float ScaledDeltaTime = DeltaTime * TimeScale;
+
 	// Calculate gravity forces between planet and all satellites
 	for (ACPP_Satellite* Satellite : Satellites)
 	{
@@ -47,10 +49,10 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 	}
 
 	// Apply the forces with semi implicit euler integrator
-	UUniverse::SemiImplicitEulerIntegrator(Planet, DeltaTime);
+	UUniverse::SemiImplicitEulerIntegrator(Planet, ScaledDeltaTime);
 	for (ACPP_Satellite* Satellite : Satellites)
 	{
-		UUniverse::SemiImplicitEulerIntegrator(Satellite, DeltaTime);
+		UUniverse::SemiImplicitEulerIntegrator(Satellite, ScaledDeltaTime);
 	}
 
 	// Calculate current time
@@ -108,7 +110,8 @@ FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const 
 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()
 {
-	GravitationalConstant = SimulationConfig.GravitationalConstant * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
+	//GravitationalConstant = SimulationConfig.GravitationalConstant * SimulationConfig.TimeScale * SimulationConfig.TimeScale;
+	GravitationalConstant = SimulationConfig.GravitationalConstant;
 	TimeScale = SimulationConfig.TimeScale;
 
 	FDateTime::ParseIso8601(*SimulationConfig.Planet.Epoch, InitialEpoch);
@@ -117,7 +120,8 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 		SimulationConfig.Planet.Name, 
 		SimulationConfig.Planet.Mass, 
 		SimulationConfig.Planet.Size, 
-		SimulationConfig.Planet.GM * TimeScale * TimeScale,
+		//SimulationConfig.Planet.GM * TimeScale * TimeScale,
+		SimulationConfig.Planet.GM,
 		SimulationConfig.Planet.RotationSpeed * TimeScale,
 		InitialEpoch
 	);
@@ -139,7 +143,8 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 				SatelliteConfig.Mass, 
 				SatelliteConfig.Size, 
 				OrbitalState.Location, 
-				OrbitalState.Velocity * TimeScale
+				//OrbitalState.Velocity * TimeScale
+				OrbitalState.Velocity
 			);
 		}
 
@@ -154,7 +159,8 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 				SatelliteConfig.Mass, 
 				SatelliteConfig.Size, 
 				OrbitalState.Location, 
-				OrbitalState.Velocity * TimeScale
+				//OrbitalState.Velocity * TimeScale
+				OrbitalState.Velocity
 			);
 
 			Satellites.Add(NewSatellite);
