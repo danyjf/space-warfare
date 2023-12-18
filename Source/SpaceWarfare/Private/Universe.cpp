@@ -134,25 +134,12 @@ FGeographicCoordinates UUniverse::ConvertECILocationToGeographicCoordinates(ACPP
 	GeographicCoordinates.Latitude = atan(Location.Z / sqrt(pow(Location.X, 2) + pow(Location.Y, 2)));
 	GeographicCoordinates.Latitude = UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Latitude);
 	
-	float EarthRotationAngle = -acos(FVector::DotProduct(FVector(1, 0, 0), Planet->GetActorForwardVector()));
+	float EarthRotationAngle = -UKismetMathLibrary::DegreesToRadians(Planet->GetActorRotation().Yaw);
 	if (EarthRotationAngle < 0)
 	{
 		EarthRotationAngle += 2 * PI;
 	}
 	
-	//if (Location.X >= 0)
-	//{
-	//	GeographicCoordinates.Longitude = atan(Location.Y / Location.X) - EarthRotationAngle;
-	//}
-	//else
-	//{
-	//	GeographicCoordinates.Longitude = PI + atan(Location.Y / Location.X) - EarthRotationAngle;
-	//}
-
-	//if (GeographicCoordinates.Longitude > PI)
-	//{
-	//	GeographicCoordinates.Longitude -= 2 * PI;
-	//}
 	GeographicCoordinates.Longitude = atan2(Location.Y, Location.X) - EarthRotationAngle;
 	GeographicCoordinates.Longitude = FRotator::NormalizeAxis(UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Longitude));
 
