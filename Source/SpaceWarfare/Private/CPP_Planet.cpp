@@ -11,8 +11,7 @@ void ACPP_Planet::Initialize(FString aName, double Mass, float Size, double aGM,
 	GM = aGM;
 	RotationSpeed = FRotator(0, -aRotationSpeed, 0);
 
-	//UE_LOG(LogTemp, Warning, TEXT("%f"), OutEpoch.GetJulianDay());
-	FRotator EpochRotationAngle = FRotator(0, -UUniverse::GetEarthRotationAngle(Epoch.GetJulianDay()), 0);
+	FRotator EpochRotationAngle = FRotator(0, UUniverse::GetEarthRotationAngle(Epoch.GetJulianDay()), 0);
 	SetActorRotation(EpochRotationAngle);
 }
 

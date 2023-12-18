@@ -118,19 +118,20 @@ FGeographicCoordinates UUniverse::ConvertECILocationToGeographicCoordinates(ACPP
 	
 	float EarthRotationAngle = -acos(FVector::DotProduct(FVector(1, 0, 0), Planet->GetActorForwardVector()));
 	
-	if (Location.X >= 0)
-	{
-		GeographicCoordinates.Longitude = atan(Location.Y / Location.X) - EarthRotationAngle;
-	}
-	else
-	{
-		GeographicCoordinates.Longitude = PI + atan(Location.Y / Location.X) - EarthRotationAngle;
-	}
+	//if (Location.X >= 0)
+	//{
+	//	GeographicCoordinates.Longitude = atan(Location.Y / Location.X) - EarthRotationAngle;
+	//}
+	//else
+	//{
+	//	GeographicCoordinates.Longitude = PI + atan(Location.Y / Location.X) - EarthRotationAngle;
+	//}
 
-	if (GeographicCoordinates.Longitude > PI)
-	{
-		GeographicCoordinates.Longitude -= 2 * PI;
-	}
+	//if (GeographicCoordinates.Longitude > PI)
+	//{
+	//	GeographicCoordinates.Longitude -= 2 * PI;
+	//}
+	GeographicCoordinates.Longitude = atan2(Location.Y, Location.X) - EarthRotationAngle;
 	GeographicCoordinates.Longitude = UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Longitude);
 
 	GeographicCoordinates.Altitude = Location.Length() - (Planet->GetActorScale().X / 2);
@@ -140,5 +141,6 @@ FGeographicCoordinates UUniverse::ConvertECILocationToGeographicCoordinates(ACPP
 
 double UUniverse::GetEarthRotationAngle(double JulianDay)
 {
-	return UKismetMathLibrary::RadiansToDegrees(2 * PI * (0.7790572732640 + 1.00273781191135448 * (JulianDay - 2451545.0)));
+	// is negative because of unreal's left handed system
+	return -UKismetMathLibrary::RadiansToDegrees(2 * PI * (0.7790572732640 + 1.00273781191135448 * (JulianDay - 2451545.0)));
 }

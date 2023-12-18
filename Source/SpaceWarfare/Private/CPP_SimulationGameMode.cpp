@@ -7,6 +7,7 @@
 #include "CPP_Satellite.h"
 #include "JsonReadWrite.h"
 #include "FileReadWrite.h"
+#include "Universe.h"
 
 #include "JsonObjectConverter.h"	// JsonUtilities module
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
@@ -27,32 +28,35 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 
 	float ScaledDeltaTime = DeltaTime * TimeScale;
 
-	// Calculate gravity forces between planet and all satellites
-	for (ACPP_Satellite* Satellite : Satellites)
+	for (int substep = 0; substep < 10; substep++)
 	{
-		FVector GravityForce = UUniverse::CalculateGravityForce(Satellite, Planet);
-
-		Satellite->AddForce(GravityForce);
-		Planet->AddForce(-GravityForce);
-	}
-
-	// Calculate gravity forces between all satellites
-	for (int i = 0; i < Satellites.Num(); i++)
-	{
-		for (int j = i + 1; j < Satellites.Num(); j++)
+		// Calculate gravity forces between planet and all satellites
+		for (ACPP_Satellite* Satellite : Satellites)
 		{
-			FVector GravityForce = UUniverse::CalculateGravityForce(Satellites[i], Satellites[j], GravitationalConstant);
+			FVector GravityForce = UUniverse::CalculateGravityForce(Satellite, Planet);
 
-			Satellites[i]->AddForce(GravityForce);
-			Satellites[j]->AddForce(-GravityForce);
+			Satellite->AddForce(GravityForce);
+			Planet->AddForce(-GravityForce);
 		}
-	}
 
-	// Apply the forces with semi implicit euler integrator
-	UUniverse::SemiImplicitEulerIntegrator(Planet, ScaledDeltaTime);
-	for (ACPP_Satellite* Satellite : Satellites)
-	{
-		UUniverse::SemiImplicitEulerIntegrator(Satellite, ScaledDeltaTime);
+		// Calculate gravity forces between all satellites
+		for (int i = 0; i < Satellites.Num(); i++)
+		{
+			for (int j = i + 1; j < Satellites.Num(); j++)
+			{
+				FVector GravityForce = UUniverse::CalculateGravityForce(Satellites[i], Satellites[j], GravitationalConstant);
+
+				Satellites[i]->AddForce(GravityForce);
+				Satellites[j]->AddForce(-GravityForce);
+			}
+		}
+
+		// Apply the forces with semi implicit euler integrator
+		UUniverse::SemiImplicitEulerIntegrator(Planet, ScaledDeltaTime / 10);
+		for (ACPP_Satellite* Satellite : Satellites)
+		{
+			UUniverse::SemiImplicitEulerIntegrator(Satellite, ScaledDeltaTime / 10);
+		}
 	}
 
 	// Calculate current time
@@ -70,11 +74,13 @@ void ACPP_SimulationGameMode::PrintSimulationData()
 	UE_LOG(
 		LogTemp,
 		Warning,
-		TEXT("Current Epoch: %s; Longitude: %f; Latitude: %f; Altitude: %f"),
+		TEXT("Current Epoch: %s; Longitude: %f; Latitude: %f; Altitude: %f; Simulation Earth Rotation: %f; Correct Earth Rotation: %f"),
 		*CurrentEpoch.ToString(TEXT("%Y-%m-%d %H:%M:%S+0000")),
 		GeographicCoordinates.Longitude,
 		GeographicCoordinates.Latitude,
-		GeographicCoordinates.Altitude
+		GeographicCoordinates.Altitude,
+		Planet->GetActorRotation().Yaw,
+		FRotator::NormalizeAxis(UUniverse::GetEarthRotationAngle(CurrentEpoch.GetJulianDay()))
 	);
 	/*const FGeographicCoordinates& GeographicCoordinates = Satellites[0]->GetGeographicCoordinates();
 	UFileReadWrite::WriteFile(
