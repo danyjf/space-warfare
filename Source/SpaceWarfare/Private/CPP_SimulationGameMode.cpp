@@ -52,10 +52,12 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 		}
 
 		// Apply the forces with semi implicit euler integrator
-		UUniverse::SemiImplicitEulerIntegrator(Planet, ScaledDeltaTime / 10);
+		//UUniverse::SemiImplicitEulerIntegrator(Planet, ScaledDeltaTime / 10);
+		UUniverse::LeapFrogIntegrator(Planet, ScaledDeltaTime / 10);
 		for (ACPP_Satellite* Satellite : Satellites)
 		{
-			UUniverse::SemiImplicitEulerIntegrator(Satellite, ScaledDeltaTime / 10);
+			//UUniverse::SemiImplicitEulerIntegrator(Satellite, ScaledDeltaTime / 10);
+			UUniverse::LeapFrogIntegrator(Satellite, ScaledDeltaTime / 10);
 		}
 	}
 

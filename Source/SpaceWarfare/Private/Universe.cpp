@@ -43,9 +43,27 @@ FVector UUniverse::CalculateGravityForce(ACPP_Satellite* Satellite, ACPP_Planet*
 
 void UUniverse::SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime)
 {
-	GravityActor->UpdateVelocity(DeltaTime);
-	GravityActor->UpdateLocation(DeltaTime);
-	GravityActor->ResetForces();
+	// Update velocity
+	FVector Acceleration = GravityActor->TotalForces / GravityActor->RigidBody->M();
+	GravityActor->Velocity += Acceleration * DeltaTime;
+
+	// Update position
+	GravityActor->RigidBody->SetX(GravityActor->RigidBody->X() + GravityActor->Velocity * DeltaTime);
+	
+	// Set forces back to zero
+	GravityActor->TotalForces.Set(0.0f, 0.0f, 0.0f);
+}
+
+void UUniverse::LeapFrogIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime)
+{
+	FVector Acceleration = GravityActor->TotalForces / GravityActor->RigidBody->M();
+	GravityActor->Velocity += Acceleration * 0.5f * DeltaTime;
+
+	GravityActor->RigidBody->SetX(GravityActor->RigidBody->X() + GravityActor->Velocity * DeltaTime);
+
+	GravityActor->Velocity += Acceleration * 0.5f * DeltaTime;
+
+	GravityActor->TotalForces.Set(0.0f, 0.0f, 0.0f);
 }
 
 FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(FOrbitalElements OrbitalElements, double GM)
@@ -132,7 +150,7 @@ FGeographicCoordinates UUniverse::ConvertECILocationToGeographicCoordinates(ACPP
 	//	GeographicCoordinates.Longitude -= 2 * PI;
 	//}
 	GeographicCoordinates.Longitude = atan2(Location.Y, Location.X) - EarthRotationAngle;
-	GeographicCoordinates.Longitude = UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Longitude);
+	GeographicCoordinates.Longitude = FRotator::NormalizeAxis(UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Longitude));
 
 	GeographicCoordinates.Altitude = Location.Length() - (Planet->GetActorScale().X / 2);
 

@@ -27,6 +27,8 @@ public:
 	* the async physics tick
 	*/
 	FBodyInstanceAsyncPhysicsTickHandle RigidBody;
+	FVector TotalForces;
+	FVector Velocity;
 
 	// Sets default values for this actor's properties
 	ACPP_GravityActor();
@@ -37,9 +39,9 @@ public:
 	void Initialize(FString Name, double Mass, float Size, FVector Location, FVector InitialVelocity);
 
 	void AddForce(FVector Force);
-	void ResetForces();
-	void UpdateVelocity(float DeltaTime);
-	void UpdateLocation(float DeltaTime);
+	//void ResetForces();
+	//void UpdateVelocity(float DeltaTime);
+	//void UpdateLocation(float DeltaTime);
 
 protected:
 	// Called when the game starts or when spawned
@@ -48,6 +50,4 @@ protected:
 private:
 	// Reference to the GameMode object
 	ACPP_SimulationGameMode* SimulationGameMode;
-	FVector TotalForces;
-	FVector Velocity;
 };

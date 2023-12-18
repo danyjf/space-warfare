@@ -47,18 +47,18 @@ void ACPP_GravityActor::AddForce(FVector Force)
 	TotalForces += Force;
 }
 
-void ACPP_GravityActor::ResetForces()
-{
-	TotalForces.Set(0.0, 0.0, 0.0);
-}
-
-void ACPP_GravityActor::UpdateVelocity(float DeltaTime)
-{
-	FVector Acceleration = TotalForces / RigidBody->M();
-	Velocity += Acceleration * DeltaTime;
-}
-
-void ACPP_GravityActor::UpdateLocation(float DeltaTime)
-{
-	RigidBody->SetX(RigidBody->X() + Velocity * DeltaTime);
-}
+//void ACPP_GravityActor::ResetForces()
+//{
+//	TotalForces.Set(0.0, 0.0, 0.0);
+//}
+//
+//void ACPP_GravityActor::UpdateVelocity(float DeltaTime)
+//{
+//	FVector Acceleration = TotalForces / RigidBody->M();
+//	Velocity += Acceleration * DeltaTime;
+//}
+//
+//void ACPP_GravityActor::UpdateLocation(float DeltaTime)
+//{
+//	RigidBody->SetX(RigidBody->X() + Velocity * DeltaTime);
+//}
