@@ -56,7 +56,7 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 	}
 
 	// Calculate current time
-	ElapsedTime += DeltaTime * TimeScale;
+	ElapsedTime += ScaledDeltaTime;
 	FTimespan ElapsedEpoch;
 	ElapsedEpoch = ElapsedEpoch.FromSeconds(ElapsedTime);
 
@@ -71,7 +71,7 @@ void ACPP_SimulationGameMode::PrintSimulationData()
 		LogTemp,
 		Warning,
 		TEXT("Current Epoch: %s; Longitude: %f; Latitude: %f; Altitude: %f"),
-		*CurrentEpoch.ToString(),
+		*CurrentEpoch.ToString(TEXT("%Y-%m-%d %H:%M:%S+0000")),
 		GeographicCoordinates.Longitude,
 		GeographicCoordinates.Latitude,
 		GeographicCoordinates.Altitude
