@@ -135,6 +135,10 @@ FGeographicCoordinates UUniverse::ConvertECILocationToGeographicCoordinates(ACPP
 	GeographicCoordinates.Latitude = UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Latitude);
 	
 	float EarthRotationAngle = -acos(FVector::DotProduct(FVector(1, 0, 0), Planet->GetActorForwardVector()));
+	if (EarthRotationAngle < 0)
+	{
+		EarthRotationAngle += 2 * PI;
+	}
 	
 	//if (Location.X >= 0)
 	//{
