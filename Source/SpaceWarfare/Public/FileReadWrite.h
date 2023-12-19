@@ -16,7 +16,7 @@ class SPACEWARFARE_API UFileReadWrite : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 	
 public:
-	static FString ReadFile(FString FilePath, bool& bOutSuccess, FString& OutInfoMessage);
+	static FString ReadFile(FString FilePath);
 
-	static void WriteFile(FString FilePath, FString String, bool& bOutSuccess, FString& OutInfoMessage);
+	static void WriteFile(FString FilePath, FString String, bool ShouldAppend = false);
 };

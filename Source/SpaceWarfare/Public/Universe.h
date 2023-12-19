@@ -88,6 +88,7 @@ public:
 	static FVector CalculateGravityForce(ACPP_GravityActor* ExertedOn, ACPP_GravityActor* ExertedBy, double GravitationalConstant);
 	static FVector CalculateGravityForce(ACPP_Satellite* Satellite, ACPP_Planet* Planet);
 	static void SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime);
+	static void LeapFrogIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime);
 	static FOrbitalState ConvertOrbitalElementsToOrbitalState(FOrbitalElements OrbitalElements, double GM);
 	static double GetEarthRotationAngle(double JulianDay);
 

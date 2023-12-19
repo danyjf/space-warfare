@@ -21,6 +21,7 @@ public:
 	ACPP_Planet* OrbitingPlanet;
 
 	virtual void Tick(float DeltaTime) override;
+	const FGeographicCoordinates& GetGeographicCoordinates();
 
 private:
 	FGeographicCoordinates GeographicCoordinates;

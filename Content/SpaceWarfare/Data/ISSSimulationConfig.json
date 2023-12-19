@@ -1,12 +1,12 @@
 {
-    "timeScale": 1,
+    "timeScale": 3600,
     "gravitationalConstant": 0.000000000000000000066743,
     "planet": {
         "name": "Earth",
         "mass": 5972000000000000000000000,
         "size": 12742,
         "gm": 398589.196,
-        "rotationSpeed": 0.004167,
+        "rotationSpeed": 0.00417807462,
         "epoch": "2023-10-23T12:19:42.000Z"
     },
     "satellites": [
