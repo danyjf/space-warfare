@@ -19,6 +19,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
+
 	void Initialize(FString Name, double Mass, float Size, double GM, double aRotationSpeed, FDateTime Epoch);
 
 private:

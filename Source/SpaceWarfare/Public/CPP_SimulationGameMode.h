@@ -97,6 +97,8 @@ public:
 	FSimulationConfigStruct SimulationConfig;
 	double GravitationalConstant;
 
+	int TimeScale;
+
 	ACPP_SimulationGameMode();
 
 	// Called at a fixed DeltaTime to update physics
@@ -109,7 +111,6 @@ public:
 	void PrintSimulationData();
 
 private:
-	int TimeScale;
 	FDateTime InitialEpoch;
 	FDateTime CurrentEpoch;
 	float ElapsedTime;

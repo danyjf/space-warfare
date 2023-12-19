@@ -3,6 +3,8 @@
 
 #include "CPP_Planet.h"
 #include "Universe.h"
+#include "CPP_SimulationGameMode.h"
+#include "CPP_Satellite.h"
 
 
 void ACPP_Planet::Initialize(FString aName, double Mass, float Size, double aGM, double aRotationSpeed, FDateTime Epoch)
@@ -21,4 +23,20 @@ void ACPP_Planet::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	SetActorRotation(GetActorRotation() + (RotationSpeed * DeltaTime));
+}
+
+void ACPP_Planet::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
+{
+	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
+
+	float ScaledDeltaTime = DeltaTime * SimulationGameMode->TimeScale;
+
+	for (ACPP_Satellite* Satellite : SimulationGameMode->Satellites)
+	{
+		FVector GravityForce = UUniverse::CalculateGravityForce(Satellite, this);
+
+		AddForce(-GravityForce);
+	}
+
+	UUniverse::SemiImplicitEulerIntegrator(this, ScaledDeltaTime);
 }

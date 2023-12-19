@@ -31,34 +31,34 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 	for (int substep = 0; substep < 10; substep++)
 	{
 		// Calculate gravity forces between planet and all satellites
-		for (ACPP_Satellite* Satellite : Satellites)
-		{
-			FVector GravityForce = UUniverse::CalculateGravityForce(Satellite, Planet);
+		//for (ACPP_Satellite* Satellite : Satellites)
+		//{
+		//	FVector GravityForce = UUniverse::CalculateGravityForce(Satellite, Planet);
 
-			Satellite->AddForce(GravityForce);
-			Planet->AddForce(-GravityForce);
-		}
+		//	Satellite->AddForce(GravityForce);
+		//	Planet->AddForce(-GravityForce);
+		//}
 
 		// Calculate gravity forces between all satellites
-		for (int i = 0; i < Satellites.Num(); i++)
-		{
-			for (int j = i + 1; j < Satellites.Num(); j++)
-			{
-				FVector GravityForce = UUniverse::CalculateGravityForce(Satellites[i], Satellites[j], GravitationalConstant);
+		//for (int i = 0; i < Satellites.Num(); i++)
+		//{
+		//	for (int j = i + 1; j < Satellites.Num(); j++)
+		//	{
+		//		FVector GravityForce = UUniverse::CalculateGravityForce(Satellites[i], Satellites[j], GravitationalConstant);
 
-				Satellites[i]->AddForce(GravityForce);
-				Satellites[j]->AddForce(-GravityForce);
-			}
-		}
+		//		Satellites[i]->AddForce(GravityForce);
+		//		Satellites[j]->AddForce(-GravityForce);
+		//	}
+		//}
 
 		// Apply the forces with semi implicit euler integrator
-		UUniverse::SemiImplicitEulerIntegrator(Planet, ScaledDeltaTime / 10);
+		//UUniverse::SemiImplicitEulerIntegrator(Planet, ScaledDeltaTime / 10);
 		//UUniverse::LeapFrogIntegrator(Planet, ScaledDeltaTime / 10);
-		for (ACPP_Satellite* Satellite : Satellites)
-		{
-			UUniverse::SemiImplicitEulerIntegrator(Satellite, ScaledDeltaTime / 10);
+		//for (ACPP_Satellite* Satellite : Satellites)
+		//{
+			//UUniverse::SemiImplicitEulerIntegrator(Satellite, ScaledDeltaTime / 10);
 			//UUniverse::LeapFrogIntegrator(Satellite, ScaledDeltaTime / 10);
-		}
+		//}
 	}
 
 	// Calculate current time

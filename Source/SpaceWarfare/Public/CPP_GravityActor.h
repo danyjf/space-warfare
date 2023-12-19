@@ -36,6 +36,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
+
 	void Initialize(FString Name, double Mass, float Size, FVector Location, FVector InitialVelocity);
 
 	void AddForce(FVector Force);
@@ -44,7 +46,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-private:
+protected:
 	// Reference to the GameMode object
 	ACPP_SimulationGameMode* SimulationGameMode;
 };

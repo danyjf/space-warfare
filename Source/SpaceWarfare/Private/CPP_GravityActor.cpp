@@ -33,6 +33,11 @@ void ACPP_GravityActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ACPP_GravityActor::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
+{
+	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
+}
+
 void ACPP_GravityActor::Initialize(FString aName, double Mass, float Size, FVector Location, FVector InitialVelocity)
 {
 	Name = aName;
