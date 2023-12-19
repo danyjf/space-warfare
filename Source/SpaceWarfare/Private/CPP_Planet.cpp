@@ -28,15 +28,14 @@ void ACPP_Planet::Tick(float DeltaTime)
 void ACPP_Planet::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
+}
 
-	float ScaledDeltaTime = DeltaTime * SimulationGameMode->TimeScale;
-
+void ACPP_Planet::UpdateGravityForce()
+{
 	for (ACPP_Satellite* Satellite : SimulationGameMode->Satellites)
 	{
 		FVector GravityForce = UUniverse::CalculateGravityForce(Satellite, this);
 
 		AddForce(-GravityForce);
 	}
-
-	UUniverse::SemiImplicitEulerIntegrator(this, ScaledDeltaTime);
 }

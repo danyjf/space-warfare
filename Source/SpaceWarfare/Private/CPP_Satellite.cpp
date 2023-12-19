@@ -15,9 +15,10 @@ void ACPP_Satellite::Tick(float DeltaTime)
 void ACPP_Satellite::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
+}
 
-	float ScaledDeltaTime = DeltaTime * SimulationGameMode->TimeScale;
-
+void ACPP_Satellite::UpdateGravityForce()
+{
 	AddForce(UUniverse::CalculateGravityForce(this, SimulationGameMode->Planet));
 	for (ACPP_Satellite* Satellite : SimulationGameMode->Satellites)
 	{
@@ -27,8 +28,6 @@ void ACPP_Satellite::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 			AddForce(GravityForce);
 		}
 	}
-
-	UUniverse::SemiImplicitEulerIntegrator(this, ScaledDeltaTime);
 }
 
 const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates()

@@ -23,6 +23,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
 	const FGeographicCoordinates& GetGeographicCoordinates();
+	virtual void UpdateGravityForce() override;
 
 private:
 	FGeographicCoordinates GeographicCoordinates;

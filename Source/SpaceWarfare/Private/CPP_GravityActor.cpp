@@ -3,6 +3,7 @@
 
 #include "CPP_GravityActor.h"
 #include "CPP_SimulationGameMode.h"
+#include "Universe.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h" 
@@ -36,7 +37,16 @@ void ACPP_GravityActor::Tick(float DeltaTime)
 void ACPP_GravityActor::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
+
+	float ScaledDeltaTime = DeltaTime * SimulationGameMode->TimeScale;
+	for (int i = 0; i < 10; i++)
+	{
+		//UUniverse::SemiImplicitEulerIntegrator(this, ScaledDeltaTime / 10);
+		UUniverse::LeapFrogIntegrator(this, ScaledDeltaTime / 10.0f);
+	}
 }
+
+void ACPP_GravityActor::UpdateGravityForce(){}
 
 void ACPP_GravityActor::Initialize(FString aName, double Mass, float Size, FVector Location, FVector InitialVelocity)
 {

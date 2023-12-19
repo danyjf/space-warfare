@@ -28,8 +28,8 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 
 	float ScaledDeltaTime = DeltaTime * TimeScale;
 
-	for (int substep = 0; substep < 10; substep++)
-	{
+	//for (int substep = 0; substep < 10; substep++)
+	//{
 		// Calculate gravity forces between planet and all satellites
 		//for (ACPP_Satellite* Satellite : Satellites)
 		//{
@@ -59,7 +59,7 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 			//UUniverse::SemiImplicitEulerIntegrator(Satellite, ScaledDeltaTime / 10);
 			//UUniverse::LeapFrogIntegrator(Satellite, ScaledDeltaTime / 10);
 		//}
-	}
+	//}
 
 	// Calculate current time
 	ElapsedTime += ScaledDeltaTime;

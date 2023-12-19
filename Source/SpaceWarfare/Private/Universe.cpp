@@ -43,6 +43,8 @@ FVector UUniverse::CalculateGravityForce(ACPP_Satellite* Satellite, ACPP_Planet*
 
 void UUniverse::SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime)
 {
+	GravityActor->UpdateGravityForce();
+
 	// Update velocity
 	FVector Acceleration = GravityActor->TotalForces / GravityActor->RigidBody->M();
 	GravityActor->Velocity += Acceleration * DeltaTime;
@@ -56,10 +58,16 @@ void UUniverse::SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, flo
 
 void UUniverse::LeapFrogIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime)
 {
+	GravityActor->UpdateGravityForce();
+
 	FVector Acceleration = GravityActor->TotalForces / GravityActor->RigidBody->M();
 	GravityActor->Velocity += Acceleration * 0.5f * DeltaTime;
 
 	GravityActor->RigidBody->SetX(GravityActor->RigidBody->X() + GravityActor->Velocity * DeltaTime);
+
+	GravityActor->TotalForces.Set(0.0f, 0.0f, 0.0f);
+	GravityActor->UpdateGravityForce();
+	Acceleration = GravityActor->TotalForces / GravityActor->RigidBody->M();
 
 	GravityActor->Velocity += Acceleration * 0.5f * DeltaTime;
 
