@@ -39,9 +39,6 @@ public:
 	void Initialize(FString Name, double Mass, float Size, FVector Location, FVector InitialVelocity);
 
 	void AddForce(FVector Force);
-	//void ResetForces();
-	//void UpdateVelocity(float DeltaTime);
-	//void UpdateLocation(float DeltaTime);
 
 protected:
 	// Called when the game starts or when spawned
