@@ -1,0 +1,154 @@
+[
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Private\\CPP_GravityActor.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Private\\CPP_Planet.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Private\\CPP_Satellite.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Private\\CPP_SimulationGameMode.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Private\\FileReadWrite.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Private\\JsonReadWrite.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Private\\Universe.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Public\\CPP_GravityActor.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Public\\CPP_Planet.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Public\\CPP_Satellite.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Public\\CPP_SimulationGameMode.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Public\\FileReadWrite.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Public\\JsonReadWrite.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Public\\Universe.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\SpaceWarfare.Build.cs",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\SpaceWarfare.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\SpaceWarfare.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\SpaceWarfareGameModeBase.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\SpaceWarfareGameModeBase.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	}
+]
