@@ -30,12 +30,18 @@ void ACPP_Planet::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 }
 
+void ACPP_Planet::SetRotationAtEpoch(const FDateTime& Epoch)
+{
+	FRotator EpochRotationAngle = FRotator(0, UUniverse::GetEarthRotationAngle(Epoch.GetJulianDay()), 0);
+	SetActorRotation(EpochRotationAngle);
+}
+
 void ACPP_Planet::UpdateGravityForce()
 {
-	for (ACPP_Satellite* Satellite : SimulationGameMode->Satellites)
-	{
-		FVector GravityForce = UUniverse::CalculateGravityForce(Satellite, this);
+	//for (ACPP_Satellite* Satellite : SimulationGameMode->Satellites)
+	//{
+	//	FVector GravityForce = UUniverse::CalculateGravityForce(Satellite, this);
 
-		AddForce(-GravityForce);
-	}
+	//	AddForce(-GravityForce);
+	//}
 }

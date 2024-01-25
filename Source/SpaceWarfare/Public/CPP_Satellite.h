@@ -20,10 +20,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ACPP_Planet* OrbitingPlanet;
 
+    UFUNCTION(BlueprintCallable)
+	const FGeographicCoordinates& GetGeographicCoordinates() const;
+
+    UFUNCTION(BlueprintCallable)
+    void PrintGeographicCoordinates();
+
+    UFUNCTION(BlueprintCallable)
+	virtual void UpdateGravityForce() override;
+
 	virtual void Tick(float DeltaTime) override;
 	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
-	const FGeographicCoordinates& GetGeographicCoordinates();
-	virtual void UpdateGravityForce() override;
 
 private:
 	FGeographicCoordinates GeographicCoordinates;

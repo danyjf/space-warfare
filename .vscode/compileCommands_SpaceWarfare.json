@@ -8,6 +8,22 @@
 		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
 	},
 	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Private\\CPP_GravityComponent.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Private\\CPP_GravityManager.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
 		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Private\\CPP_Planet.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
@@ -57,6 +73,22 @@
 	},
 	{
 		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Public\\CPP_GravityActor.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Public\\CPP_GravityComponent.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Dev\\SpaceWarfare\\Source\\SpaceWarfare\\Public\\CPP_GravityManager.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
 			"@C:\\Dev\\SpaceWarfare\\.vscode\\compileCommands_SpaceWarfare\\SpaceWarfare.1.rsp"

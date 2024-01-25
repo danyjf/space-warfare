@@ -13,6 +13,7 @@
 class ACPP_GravityActor;
 class ACPP_Planet;
 class ACPP_Satellite;
+class ACPP_GravityManager;
 
 
 USTRUCT(BlueprintType)
@@ -85,19 +86,24 @@ class SPACEWARFARE_API ACPP_SimulationGameMode : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ACPP_Planet* Planet;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    ACPP_GravityManager* GravityManager;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<ACPP_Satellite*> Satellites;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//ACPP_Planet* Planet;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//TArray<ACPP_Satellite*> Satellites;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> SatelliteBlueprintClass;	// Satellite BP used to spawn satellites on initialization from config
 
 	FSimulationConfigStruct SimulationConfig;
-	double GravitationalConstant;
+	//double GravitationalConstant;
 
 	int TimeScale;
+
+	FDateTime CurrentEpoch;
 
 	ACPP_SimulationGameMode();
 
@@ -112,7 +118,6 @@ public:
 
 private:
 	FDateTime InitialEpoch;
-	FDateTime CurrentEpoch;
 	float ElapsedTime;
 
 	FSimulationConfigStruct ReadSimulationConfigJson(const FString& SimulationConfigPath);

@@ -38,12 +38,12 @@ void ACPP_GravityActor::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 
-	float ScaledDeltaTime = DeltaTime * SimulationGameMode->TimeScale;
-	for (int i = 0; i < 10; i++)
-	{
+	//float ScaledDeltaTime = DeltaTime * SimulationGameMode->TimeScale;
+	//for (int i = 0; i < 10; i++)
+	//{
 		//UUniverse::SemiImplicitEulerIntegrator(this, ScaledDeltaTime / 10);
-		UUniverse::LeapFrogIntegrator(this, ScaledDeltaTime / 10.0f);
-	}
+		//UUniverse::LeapFrogIntegrator(this, ScaledDeltaTime / 10.0f);
+	//}
 }
 
 void ACPP_GravityActor::UpdateGravityForce(){}

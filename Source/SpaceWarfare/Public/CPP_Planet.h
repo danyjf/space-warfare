@@ -16,12 +16,15 @@ class SPACEWARFARE_API ACPP_Planet : public ACPP_GravityActor
 	
 public:
 	double GM;
+	FRotator RotationSpeed;
+
+    UFUNCTION(BlueprintCallable)
+    void SetRotationAtEpoch(const FDateTime& Epoch);
+
+	void Initialize(FString Name, double Mass, float Size, double GM, double aRotationSpeed, FDateTime Epoch);
+
+	virtual void UpdateGravityForce() override;
 
 	virtual void Tick(float DeltaTime) override;
 	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
-	void Initialize(FString Name, double Mass, float Size, double GM, double aRotationSpeed, FDateTime Epoch);
-	virtual void UpdateGravityForce() override;
-
-private:
-	FRotator RotationSpeed;
 };

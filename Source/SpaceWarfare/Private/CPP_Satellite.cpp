@@ -19,18 +19,31 @@ void ACPP_Satellite::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 
 void ACPP_Satellite::UpdateGravityForce()
 {
-	AddForce(UUniverse::CalculateGravityForce(this, SimulationGameMode->Planet));
-	for (ACPP_Satellite* Satellite : SimulationGameMode->Satellites)
-	{
-		if (Satellite != this)
-		{
-			FVector GravityForce = UUniverse::CalculateGravityForce(this, Satellite, SimulationGameMode->GravitationalConstant);
-			AddForce(GravityForce);
-		}
-	}
+	//AddForce(UUniverse::CalculateGravityForce(this, SimulationGameMode->Planet));
+	//for (ACPP_Satellite* Satellite : SimulationGameMode->Satellites)
+	//{
+	//	if (Satellite != this)
+	//	{
+	//		FVector GravityForce = UUniverse::CalculateGravityForce(this, Satellite, SimulationGameMode->GravitationalConstant);
+	//		AddForce(GravityForce);
+	//	}
+	//}
 }
 
-const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates()
+void ACPP_Satellite::PrintGeographicCoordinates()
+{
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("Current Epoch: %s; Longitude: %f; Latitude: %f; Altitude: %f"),
+		*SimulationGameMode->CurrentEpoch.ToString(TEXT("%Y-%m-%d %H:%M:%S+0000")),
+		GeographicCoordinates.Longitude,
+		GeographicCoordinates.Latitude,
+		GeographicCoordinates.Altitude
+	);
+}
+
+const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const
 {
 	return GeographicCoordinates;
 }
