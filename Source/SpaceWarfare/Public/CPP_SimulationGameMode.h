@@ -10,9 +10,6 @@
 
 
 // Forward Declarations
-class ACPP_GravityActor;
-class ACPP_Planet;
-class ACPP_Satellite;
 class ACPP_GravityManager;
 
 
@@ -89,20 +86,16 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     ACPP_GravityManager* GravityManager;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//ACPP_Planet* Planet;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//TArray<ACPP_Satellite*> Satellites;
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AActor> SatelliteBlueprintClass;	// Satellite BP used to spawn satellites on initialization from config
 
+    UPROPERTY(BlueprintReadOnly)
 	FSimulationConfigStruct SimulationConfig;
-	//double GravitationalConstant;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int TimeScale;
 
+    UPROPERTY(BlueprintReadOnly)
 	FDateTime CurrentEpoch;
 
 	ACPP_SimulationGameMode();
@@ -112,9 +105,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void InitializeSimulationVariables();
-
-	UFUNCTION(BlueprintCallable)
-	void PrintSimulationData();
 
 private:
 	FDateTime InitialEpoch;

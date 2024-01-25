@@ -4,6 +4,16 @@
 #include "CPP_Satellite.h"
 #include "CPP_SimulationGameMode.h"
 
+#include "Kismet/GameplayStatics.h"
+
+
+// Called when the game starts or when spawned
+void ACPP_Satellite::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+}
 
 void ACPP_Satellite::Tick(float DeltaTime)
 {
@@ -12,22 +22,9 @@ void ACPP_Satellite::Tick(float DeltaTime)
 	GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
 }
 
-void ACPP_Satellite::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
+const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const
 {
-	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
-}
-
-void ACPP_Satellite::UpdateGravityForce()
-{
-	//AddForce(UUniverse::CalculateGravityForce(this, SimulationGameMode->Planet));
-	//for (ACPP_Satellite* Satellite : SimulationGameMode->Satellites)
-	//{
-	//	if (Satellite != this)
-	//	{
-	//		FVector GravityForce = UUniverse::CalculateGravityForce(this, Satellite, SimulationGameMode->GravitationalConstant);
-	//		AddForce(GravityForce);
-	//	}
-	//}
+	return GeographicCoordinates;
 }
 
 void ACPP_Satellite::PrintGeographicCoordinates()
@@ -41,9 +38,4 @@ void ACPP_Satellite::PrintGeographicCoordinates()
 		GeographicCoordinates.Latitude,
 		GeographicCoordinates.Altitude
 	);
-}
-
-const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const
-{
-	return GeographicCoordinates;
 }

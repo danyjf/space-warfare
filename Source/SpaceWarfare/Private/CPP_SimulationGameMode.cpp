@@ -2,7 +2,6 @@
 
 
 #include "CPP_SimulationGameMode.h"
-#include "CPP_GravityActor.h"
 #include "CPP_Planet.h"
 #include "CPP_Satellite.h"
 #include "CPP_GravityManager.h"
@@ -30,39 +29,6 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 
 	float ScaledDeltaTime = DeltaTime * TimeScale;
 
-	//for (int substep = 0; substep < 10; substep++)
-	//{
-		// Calculate gravity forces between planet and all satellites
-		//for (ACPP_Satellite* Satellite : Satellites)
-		//{
-		//	FVector GravityForce = UUniverse::CalculateGravityForce(Satellite, Planet);
-
-		//	Satellite->AddForce(GravityForce);
-		//	Planet->AddForce(-GravityForce);
-		//}
-
-		// Calculate gravity forces between all satellites
-		//for (int i = 0; i < Satellites.Num(); i++)
-		//{
-		//	for (int j = i + 1; j < Satellites.Num(); j++)
-		//	{
-		//		FVector GravityForce = UUniverse::CalculateGravityForce(Satellites[i], Satellites[j], GravitationalConstant);
-
-		//		Satellites[i]->AddForce(GravityForce);
-		//		Satellites[j]->AddForce(-GravityForce);
-		//	}
-		//}
-
-		// Apply the forces with semi implicit euler integrator
-		//UUniverse::SemiImplicitEulerIntegrator(Planet, ScaledDeltaTime / 10);
-		//UUniverse::LeapFrogIntegrator(Planet, ScaledDeltaTime / 10);
-		//for (ACPP_Satellite* Satellite : Satellites)
-		//{
-			//UUniverse::SemiImplicitEulerIntegrator(Satellite, ScaledDeltaTime / 10);
-			//UUniverse::LeapFrogIntegrator(Satellite, ScaledDeltaTime / 10);
-		//}
-	//}
-
 	// Calculate current time
 	ElapsedTime += ScaledDeltaTime;
 	FTimespan ElapsedEpoch;
@@ -70,22 +36,6 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 
 	CurrentEpoch = InitialEpoch;
 	CurrentEpoch += ElapsedEpoch;
-}
-
-void ACPP_SimulationGameMode::PrintSimulationData()
-{
-	//const FGeographicCoordinates& GeographicCoordinates = Satellites[0]->GetGeographicCoordinates();
-	//UE_LOG(
-	//	LogTemp,
-	//	Warning,
-	//	TEXT("Current Epoch: %s; Longitude: %f; Latitude: %f; Altitude: %f; Simulation Earth Rotation: %f; Correct Earth Rotation: %f"),
-	//	*CurrentEpoch.ToString(TEXT("%Y-%m-%d %H:%M:%S+0000")),
-	//	GeographicCoordinates.Longitude,
-	//	GeographicCoordinates.Latitude,
-	//	GeographicCoordinates.Altitude,
-	//	Planet->GetActorRotation().Yaw,
-	//	FRotator::NormalizeAxis(UUniverse::GetEarthRotationAngle(CurrentEpoch.GetJulianDay()))
-	//);
 }
 
 FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const FString& SimulationConfigPath)
@@ -109,61 +59,6 @@ FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const 
 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()
 {
-    // Setup variables on gravity actors
-	//GravitationalConstant = SimulationConfig.GravitationalConstant;
-	//TimeScale = SimulationConfig.TimeScale;
-
-	//FDateTime::ParseIso8601(*SimulationConfig.Planet.Epoch, InitialEpoch);
-
-	//Planet->Initialize(
-	//	SimulationConfig.Planet.Name, 
-	//	SimulationConfig.Planet.Mass, 
-	//	SimulationConfig.Planet.Size, 
-	//	SimulationConfig.Planet.GM,
-	//	SimulationConfig.Planet.RotationSpeed * TimeScale,
-	//	InitialEpoch
-	//);
-
-	//for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
-	//{
-	//	bool bSatelliteExists = false;
-	//	for (ACPP_Satellite* Satellite : Satellites)
-	//	{
-	//		if (Satellite->Name != SatelliteConfig.Name)
-	//		{
-	//			continue;
-	//		}
-
-	//		bSatelliteExists = true;
-	//		FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
-	//		Satellite->Initialize(
-	//			SatelliteConfig.Name, 
-	//			SatelliteConfig.Mass, 
-	//			SatelliteConfig.Size, 
-	//			OrbitalState.Location, 
-	//			OrbitalState.Velocity
-	//		);
-	//	}
-
-	//	if (!bSatelliteExists)
-	//	{
-	//		ACPP_Satellite* NewSatellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
-	//		NewSatellite->OrbitingPlanet = Planet;
-
-	//		FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
-	//		NewSatellite->Initialize(
-	//			SatelliteConfig.Name, 
-	//			SatelliteConfig.Mass, 
-	//			SatelliteConfig.Size, 
-	//			OrbitalState.Location, 
-	//			OrbitalState.Velocity
-	//		);
-
-	//		Satellites.Add(NewSatellite);
-	//	}
-	//}
-
-    // Setup variables on gravity manager and components
 	TimeScale = SimulationConfig.TimeScale;
     GravityManager->TimeScale = TimeScale;
     GravityManager->GravitationalConstant = SimulationConfig.GravitationalConstant;
@@ -198,6 +93,5 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
                 GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * SatelliteConfig.Mass);
             }
         }
-        //UE_LOG(LogTemp, Warning, TEXT("%d"), GravityManager->GravityComponents.Num())
     }
 }

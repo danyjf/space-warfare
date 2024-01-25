@@ -3,28 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CPP_GravityActor.h"
 #include "CPP_Planet.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SPACEWARFARE_API ACPP_Planet : public ACPP_GravityActor
+class SPACEWARFARE_API ACPP_Planet : public AActor
 {
 	GENERATED_BODY()
 	
 public:
-	double GM;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Name;
+
 	FRotator RotationSpeed;
 
     UFUNCTION(BlueprintCallable)
     void SetRotationAtEpoch(const FDateTime& Epoch);
 
-	void Initialize(FString Name, double Mass, float Size, double GM, double aRotationSpeed, FDateTime Epoch);
-
-	virtual void UpdateGravityForce() override;
-
 	virtual void Tick(float DeltaTime) override;
-	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
 };

@@ -8,9 +8,7 @@
 
 
 // Forward Declarations
-class ACPP_GravityActor;
 class ACPP_Planet;
-class ACPP_Satellite;
 
 
 USTRUCT(BlueprintType)
@@ -18,10 +16,10 @@ struct FOrbitalState
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FVector Location;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FVector Velocity;
 };
 
@@ -32,31 +30,31 @@ struct FOrbitalElements
 	GENERATED_BODY()
 
 	/** Eccentricity */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float Eccentricity;
 
 	/** Semi-major axis */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float SemiMajorAxis;
 
 	/** Inclination in degrees */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float Inclination;
 
 	/** Longitude of ascending node in degrees */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float LongitudeOfAscendingNode;
 
 	/** Argument of periapsis in degrees */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float ArgumentOfPeriapsis;
 
 	/** Mean anomaly at epoch in degrees */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float MeanAnomaly;
 
 	/** Time at which the body starts orbiting in ISO 8601 */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FString Epoch;
 };
 
@@ -85,11 +83,10 @@ class SPACEWARFARE_API UUniverse : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 	
 public:
-	static FVector CalculateGravityForce(ACPP_GravityActor* ExertedOn, ACPP_GravityActor* ExertedBy, double GravitationalConstant);
-	static FVector CalculateGravityForce(ACPP_Satellite* Satellite, ACPP_Planet* Planet);
-	static void SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime);
-	static void LeapFrogIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime);
+    UFUNCTION(BlueprintCallable)
 	static FOrbitalState ConvertOrbitalElementsToOrbitalState(FOrbitalElements OrbitalElements, double GM);
+
+    UFUNCTION(BlueprintCallable)
 	static double GetEarthRotationAngle(double JulianDay);
 
 	UFUNCTION(BlueprintCallable)

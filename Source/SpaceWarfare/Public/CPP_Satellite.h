@@ -5,18 +5,24 @@
 #include "Universe.h"
 
 #include "CoreMinimal.h"
-#include "CPP_GravityActor.h"
 #include "CPP_Satellite.generated.h"
+
+
+// Forward declarations
+class ACPP_SimulationGameMode;
 
 /**
  * 
  */
 UCLASS()
-class SPACEWARFARE_API ACPP_Satellite : public ACPP_GravityActor
+class SPACEWARFARE_API ACPP_Satellite : public AActor
 {
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Name;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ACPP_Planet* OrbitingPlanet;
 
@@ -26,12 +32,13 @@ public:
     UFUNCTION(BlueprintCallable)
     void PrintGeographicCoordinates();
 
-    UFUNCTION(BlueprintCallable)
-	virtual void UpdateGravityForce() override;
-
 	virtual void Tick(float DeltaTime) override;
-	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 private:
 	FGeographicCoordinates GeographicCoordinates;
+    ACPP_SimulationGameMode* SimulationGameMode;
 };
