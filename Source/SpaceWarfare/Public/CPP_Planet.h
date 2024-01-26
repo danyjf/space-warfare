@@ -24,6 +24,5 @@ public:
     void SetRotationAtEpoch(const FDateTime& Epoch);
 
     ACPP_Planet();    
-
 	virtual void Tick(float DeltaTime) override;
 };

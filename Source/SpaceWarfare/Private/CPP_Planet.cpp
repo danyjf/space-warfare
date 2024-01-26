@@ -15,9 +15,7 @@ void ACPP_Planet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    UE_LOG(LogTemp, Warning, TEXT("here"));
 	SetActorRotation(GetActorRotation() + (RotationSpeed * DeltaTime));
-    //UE_LOG(LogTemp, Warning, TEXT("%s"), *RotationSpeed.ToString());
 }
 
 void ACPP_Planet::SetRotationAtEpoch(const FDateTime& Epoch)

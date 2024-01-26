@@ -7,6 +7,11 @@
 #include "Kismet/GameplayStatics.h"
 
 
+ACPP_Satellite::ACPP_Satellite()
+{
+    PrimaryActorTick.bCanEverTick = true;
+}
+
 // Called when the game starts or when spawned
 void ACPP_Satellite::BeginPlay()
 {

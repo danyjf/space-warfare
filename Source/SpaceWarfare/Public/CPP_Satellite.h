@@ -32,6 +32,7 @@ public:
     UFUNCTION(BlueprintCallable)
     void PrintGeographicCoordinates();
 
+    ACPP_Satellite();    
 	virtual void Tick(float DeltaTime) override;
 
 protected:
