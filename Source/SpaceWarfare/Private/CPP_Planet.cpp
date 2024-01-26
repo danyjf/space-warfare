@@ -5,12 +5,19 @@
 #include "Universe.h"
 
 
+ACPP_Planet::ACPP_Planet()
+{
+    PrimaryActorTick.bCanEverTick = true;
+}
+
 // Called every frame
 void ACPP_Planet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    UE_LOG(LogTemp, Warning, TEXT("here"));
 	SetActorRotation(GetActorRotation() + (RotationSpeed * DeltaTime));
+    //UE_LOG(LogTemp, Warning, TEXT("%s"), *RotationSpeed.ToString());
 }
 
 void ACPP_Planet::SetRotationAtEpoch(const FDateTime& Epoch)

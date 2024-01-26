@@ -17,10 +17,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Name;
 
+    UPROPERTY(BlueprintReadOnly)
 	FRotator RotationSpeed;
 
     UFUNCTION(BlueprintCallable)
     void SetRotationAtEpoch(const FDateTime& Epoch);
+
+    ACPP_Planet();    
 
 	virtual void Tick(float DeltaTime) override;
 };
