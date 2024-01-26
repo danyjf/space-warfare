@@ -8,21 +8,24 @@ public class SpaceWarfare : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange
-			(
-				new string[] 
-				{ 
-					"Core", 
-					"CoreUObject", 
-					"Engine", 
-					"InputCore", 
-					"Json", 
-					"JsonUtilities",
-					"Chaos" 
-				}
-			);
+		PublicDependencyModuleNames.AddRange(
+			new string[] 
+			{ 
+				"Core", 
+				"CoreUObject", 
+				"Engine", 
+				"InputCore" 
+			}
+		);
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		PrivateDependencyModuleNames.AddRange(
+            new string[] 
+            { 
+                "Chaos",
+				"Json", 
+				"JsonUtilities" 
+            }
+        );
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
