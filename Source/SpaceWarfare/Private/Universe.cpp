@@ -2,69 +2,11 @@
 
 
 #include "Universe.h"
-#include "CPP_GravityActor.h"
 #include "CPP_Planet.h"
-#include "CPP_Satellite.h"
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/KismetMathLibrary.h"
 
-
-FVector UUniverse::CalculateGravityForce(ACPP_GravityActor* ExertedOn, ACPP_GravityActor* ExertedBy, double GravitationalConstant)
-{
-	FVector MyLocation = ExertedOn->RigidBody->X();
-	FVector OtherLocation = ExertedBy->RigidBody->X();
-	float MyMass = ExertedOn->RigidBody->M();
-	float OtherMass = ExertedBy->RigidBody->M();
-
-	FVector Direction = OtherLocation - MyLocation;
-
-	double Force = (GravitationalConstant * MyMass * OtherMass) / Direction.SquaredLength();
-
-	Direction.Normalize();
-
-	return Force * Direction;
-}
-
-FVector UUniverse::CalculateGravityForce(ACPP_Satellite* Satellite, ACPP_Planet* Planet)
-{
-	FVector SatelliteLocation = Satellite->RigidBody->X();
-	FVector PlanetLocation = Planet->RigidBody->X();
-	float SatelliteMass = Satellite->RigidBody->M();
-
-	FVector Direction = PlanetLocation - SatelliteLocation;
-
-	double Force = (Planet->GM * SatelliteMass) / Direction.SquaredLength();
-
-	Direction.Normalize();
-
-	return Force * Direction;
-}
-
-void UUniverse::SemiImplicitEulerIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime)
-{
-	// Update velocity
-	FVector Acceleration = GravityActor->TotalForces / GravityActor->RigidBody->M();
-	GravityActor->Velocity += Acceleration * DeltaTime;
-
-	// Update position
-	GravityActor->RigidBody->SetX(GravityActor->RigidBody->X() + GravityActor->Velocity * DeltaTime);
-	
-	// Set forces back to zero
-	GravityActor->TotalForces.Set(0.0f, 0.0f, 0.0f);
-}
-
-void UUniverse::LeapFrogIntegrator(ACPP_GravityActor* GravityActor, float DeltaTime)
-{
-	FVector Acceleration = GravityActor->TotalForces / GravityActor->RigidBody->M();
-	GravityActor->Velocity += Acceleration * 0.5f * DeltaTime;
-
-	GravityActor->RigidBody->SetX(GravityActor->RigidBody->X() + GravityActor->Velocity * DeltaTime);
-
-	GravityActor->Velocity += Acceleration * 0.5f * DeltaTime;
-
-	GravityActor->TotalForces.Set(0.0f, 0.0f, 0.0f);
-}
 
 FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(FOrbitalElements OrbitalElements, double GM)
 {

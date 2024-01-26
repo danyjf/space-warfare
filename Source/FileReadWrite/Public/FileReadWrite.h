@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class SPACEWARFARE_API UFileReadWrite : public UBlueprintFunctionLibrary
+class FILEREADWRITE_API UFileReadWrite : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	

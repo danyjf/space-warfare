@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class SPACEWARFARE_API UJsonReadWrite : public UBlueprintFunctionLibrary
+class FILEREADWRITE_API UJsonReadWrite : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	
