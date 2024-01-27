@@ -14,7 +14,7 @@ public class SpaceWarfare : ModuleRules
 				"Core", 
 				"CoreUObject", 
 				"Engine", 
-				"InputCore", 
+				"InputCore"
 			}
 		);
 
@@ -22,8 +22,8 @@ public class SpaceWarfare : ModuleRules
             new string[] 
             { 
                 "Chaos",
-				"JsonUtilities",
-                "FileReadWrite"
+                "FileReadWrite",
+				"JsonUtilities"
             }
         );
 
