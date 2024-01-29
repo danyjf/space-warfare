@@ -11,18 +11,17 @@ public class FileReadWrite : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[] 
             {  
+                "Core",
+				"CoreUObject", 
+				"Engine", 
+				"JsonUtilities"
             }
         );
 
         PrivateDependencyModuleNames.AddRange(
             new string[] 
             {
-                "Core",
-				"CoreUObject", 
-				"Engine", 
-				"InputCore",
 				"Json", 
-				"JsonUtilities"
             }
         );
     }

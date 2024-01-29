@@ -7,10 +7,9 @@
 #include "CPP_GravityManager.h"
 #include "CPP_GravityComponent.h"
 #include "JsonReadWrite.h"
-#include "FileReadWrite.h"
 #include "Universe.h"
 
-#include "JsonObjectConverter.h"	// JsonUtilities module
+//#include "JsonObjectConverter.h"	// JsonUtilities module
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -18,8 +17,9 @@
 
 ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 {
-	//SimulationConfig = ReadSimulationConfigJson("SimulationConfig.json");
-	SimulationConfig = ReadSimulationConfigJson("ISSSimulationConfig.json");
+    //FString JsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/SimulationConfig.json");
+    FString JsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSSimulationConfig.json");
+    UJsonReadWrite::ReadStructFromJsonFile<FSimulationConfigStruct>(JsonPath, &SimulationConfig);
 }
 
 // Called at a fixed DeltaTime to update physics
@@ -36,25 +36,6 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 
 	CurrentEpoch = InitialEpoch;
 	CurrentEpoch += ElapsedEpoch;
-}
-
-FSimulationConfigStruct ACPP_SimulationGameMode::ReadSimulationConfigJson(const FString& SimulationConfigPath)
-{
-	TSharedPtr<FJsonObject> JsonObject = UJsonReadWrite::ReadJson(
-		FPaths::Combine(
-			FPaths::ProjectContentDir(), 
-			"SpaceWarfare/Data/", 
-			SimulationConfigPath
-		)
-	);
-
-	FSimulationConfigStruct Config;
-	if (!FJsonObjectConverter::JsonObjectToUStruct<FSimulationConfigStruct >(JsonObject.ToSharedRef(), &Config))
-	{
-		UKismetSystemLibrary::PrintString(this, "Read struct json failed - Was not able to convert the json object to the desired structure. Is it the right format / struct?");
-	}
-
-	return Config;
 }
 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()

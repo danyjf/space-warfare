@@ -109,6 +109,4 @@ public:
 private:
 	FDateTime InitialEpoch;
 	float ElapsedTime;
-
-	FSimulationConfigStruct ReadSimulationConfigJson(const FString& SimulationConfigPath);
 };
