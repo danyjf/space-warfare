@@ -97,7 +97,19 @@ FVector UUniverse::ConvertGeographicCoordinatesToECILocation(ACPP_Planet* Planet
 {
     FVector ECIPosition;
 
-    ECIPosition.Set(0, 0, Planet->GetActorScale().X / 2);
+    //ECIPosition.Set(0, 0, Planet->GetActorScale().X / 2);
+	float EarthRotationAngle = -UKismetMathLibrary::DegreesToRadians(Planet->GetActorRotation().Yaw);
+	if (EarthRotationAngle < 0)
+	{
+		EarthRotationAngle += 2 * PI;
+	}
+
+    float Radius = Planet->GetActorScale().X / 2;
+    float Theta = UKismetMathLibrary::DegreesToRadians(GeographicCoordinates.Longitude) + EarthRotationAngle;
+    float R = (GeographicCoordinates.Altitude + Radius) * cos(UKismetMathLibrary::DegreesToRadians(GeographicCoordinates.Latitude));
+    ECIPosition.X = R * cos(Theta);
+    ECIPosition.Y = R * sin(Theta);
+    ECIPosition.Z = (GeographicCoordinates.Altitude + Radius) * sin(UKismetMathLibrary::DegreesToRadians(GeographicCoordinates.Latitude));
 
     return ECIPosition;
 }

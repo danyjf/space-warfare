@@ -18,7 +18,9 @@ void ACPP_GroundStation::BeginPlay()
 	Super::BeginPlay();
 	
     // set the location from the latitude and longitude
-    SetActorLocation(UUniverse::ConvertGeographicCoordinatesToECILocation(Planet, GeographicCoordinates));
+    FVector ECILocation = UUniverse::ConvertGeographicCoordinatesToECILocation(Planet, GeographicCoordinates);
+    ECILocation.Y = -ECILocation.Y;     // convert coordinates to left handed system
+    SetActorLocation(ECILocation);
 
     // set the rotation to be orthogonal to earths surface
 }
