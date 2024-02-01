@@ -63,13 +63,13 @@ struct FGeographicCoordinates
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Latitude;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Longitude;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Altitude;
 };
 
@@ -91,4 +91,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static FGeographicCoordinates ConvertECILocationToGeographicCoordinates(ACPP_Planet* Planet, FVector Location);
+
+    UFUNCTION(BlueprintCallable)
+    static FVector ConvertGeographicCoordinatesToECILocation(ACPP_Planet* Planet, const FGeographicCoordinates& GeographicCoordinates);
 };
