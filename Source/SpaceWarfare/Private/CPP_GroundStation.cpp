@@ -4,6 +4,8 @@
 #include "CPP_GroundStation.h"
 #include "CPP_Planet.h"
 
+#include "Kismet/KismetMathLibrary.h"
+
 // Sets default values
 ACPP_GroundStation::ACPP_GroundStation()
 {
@@ -23,6 +25,7 @@ void ACPP_GroundStation::BeginPlay()
     SetActorLocation(ECILocation);
 
     // set the rotation to be orthogonal to earths surface
+    SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Planet->GetActorLocation(), GetActorLocation()));
 }
 
 // Called every frame
