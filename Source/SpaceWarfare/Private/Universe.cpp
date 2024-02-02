@@ -73,9 +73,11 @@ FGeographicCoordinates UUniverse::ConvertECILocationToGeographicCoordinates(ACPP
 	
 	Location.Y = -Location.Y;	// transform location to right hand coordinate system
 
+    // calculate latitude
 	GeographicCoordinates.Latitude = atan(Location.Z / sqrt(pow(Location.X, 2) + pow(Location.Y, 2)));
 	GeographicCoordinates.Latitude = UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Latitude);
 	
+    // calculate longitude
 	float EarthRotationAngle = -UKismetMathLibrary::DegreesToRadians(Planet->GetActorRotation().Yaw);
 	if (EarthRotationAngle < 0)
 	{
@@ -85,9 +87,31 @@ FGeographicCoordinates UUniverse::ConvertECILocationToGeographicCoordinates(ACPP
 	GeographicCoordinates.Longitude = atan2(Location.Y, Location.X) - EarthRotationAngle;
 	GeographicCoordinates.Longitude = FRotator::NormalizeAxis(UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Longitude));
 
+    // calculate altitude
 	GeographicCoordinates.Altitude = Location.Length() - (Planet->GetActorScale().X / 2);
 
 	return GeographicCoordinates;
+}
+
+FVector UUniverse::ConvertGeographicCoordinatesToECILocation(ACPP_Planet* Planet, const FGeographicCoordinates& GeographicCoordinates)
+{
+    FVector ECIPosition;
+
+    //ECIPosition.Set(0, 0, Planet->GetActorScale().X / 2);
+	float EarthRotationAngle = -UKismetMathLibrary::DegreesToRadians(Planet->GetActorRotation().Yaw);
+	if (EarthRotationAngle < 0)
+	{
+		EarthRotationAngle += 2 * PI;
+	}
+
+    float Radius = Planet->GetActorScale().X / 2;
+    float Theta = UKismetMathLibrary::DegreesToRadians(GeographicCoordinates.Longitude) + EarthRotationAngle;
+    float R = (GeographicCoordinates.Altitude + Radius) * cos(UKismetMathLibrary::DegreesToRadians(GeographicCoordinates.Latitude));
+    ECIPosition.X = R * cos(Theta);
+    ECIPosition.Y = R * sin(Theta);
+    ECIPosition.Z = (GeographicCoordinates.Altitude + Radius) * sin(UKismetMathLibrary::DegreesToRadians(GeographicCoordinates.Latitude));
+
+    return ECIPosition;
 }
 
 double UUniverse::GetEarthRotationAngle(double JulianDay)
