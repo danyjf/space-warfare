@@ -10,6 +10,7 @@
 
 // Forward Declaration
 class ACPP_Planet;
+class ACPP_Satellite;
 
 UCLASS()
 class SPACEWARFARE_API ACPP_GroundStation : public AActor
@@ -26,6 +27,13 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FGeographicCoordinates GeographicCoordinates;
 
+    UFUNCTION(BlueprintCallable)
+    const TArray<ACPP_Satellite*> GetOverpassingSatellites() const { return OverpassingSatellites; }
+    UFUNCTION(BlueprintCallable)
+    void AddOverpassingSatellite(ACPP_Satellite* Satellite);
+    UFUNCTION(BlueprintCallable)
+    void RemoveOverpassingSatellite(ACPP_Satellite* Satellite);
+
 	// Sets default values for this actor's properties
 	ACPP_GroundStation();
 
@@ -35,4 +43,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+private:
+    TArray<ACPP_Satellite*> OverpassingSatellites;
+    TMap<ACPP_Satellite*, FSatelliteStatus> TrackedSatellites;
 };

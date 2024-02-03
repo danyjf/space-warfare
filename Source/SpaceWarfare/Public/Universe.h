@@ -73,6 +73,21 @@ struct FGeographicCoordinates
 	float Altitude;
 };
 
+USTRUCT(BlueprintType)
+struct FSatelliteStatus
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector Position;
+
+	UPROPERTY(BlueprintReadOnly)
+	FRotator Rotation;
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector Velocity;
+};
+
 
 /**
  * 
