@@ -10,6 +10,8 @@
 
 // Forward declarations
 class ACPP_SimulationGameMode;
+class UCPP_GravityComponent;
+
 
 /**
  * 
@@ -32,6 +34,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void PrintGeographicCoordinates();
 
+    UFUNCTION(BlueprintCallable)
+    const FSatelliteStatus& GetSatelliteStatus() const { return SatelliteStatus; }
+
     ACPP_Satellite();    
 	virtual void Tick(float DeltaTime) override;
 
@@ -41,5 +46,7 @@ protected:
 
 private:
 	FGeographicCoordinates GeographicCoordinates;
+    FSatelliteStatus SatelliteStatus;
     ACPP_SimulationGameMode* SimulationGameMode;
+    UCPP_GravityComponent* GravityComponent;
 };

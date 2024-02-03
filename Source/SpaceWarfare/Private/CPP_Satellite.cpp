@@ -3,6 +3,7 @@
 
 #include "CPP_Satellite.h"
 #include "CPP_SimulationGameMode.h"
+#include "CPP_GravityComponent.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -18,6 +19,7 @@ void ACPP_Satellite::BeginPlay()
 	Super::BeginPlay();
 
 	SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+    GravityComponent = FindComponentByClass<UCPP_GravityComponent>();
 }
 
 void ACPP_Satellite::Tick(float DeltaTime)
@@ -25,6 +27,9 @@ void ACPP_Satellite::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
+    SatelliteStatus.Position = GetActorLocation();
+    SatelliteStatus.Rotation = GetActorRotation();
+    SatelliteStatus.Velocity = GravityComponent->GetVelocity();
 }
 
 const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const

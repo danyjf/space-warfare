@@ -3,6 +3,7 @@
 
 #include "CPP_GroundStation.h"
 #include "CPP_Planet.h"
+#include "CPP_Satellite.h"
 
 #include "Kismet/KismetMathLibrary.h"
 
@@ -33,4 +34,24 @@ void ACPP_GroundStation::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    for (ACPP_Satellite* Satellite : OverpassingSatellites)
+    {
+        TrackedSatellites.Emplace(Satellite, Satellite->GetSatelliteStatus());
+        UE_LOG(LogTemp, Warning, TEXT("%s: Position(%s), Rotation(%s), Velocity(%s)"), 
+            *Satellite->Name, 
+            *TrackedSatellites.Find(Satellite)->Position.ToString(),
+            *TrackedSatellites.Find(Satellite)->Rotation.ToString(),
+            *TrackedSatellites.Find(Satellite)->Velocity.ToString()
+        )
+    }
+}
+
+void ACPP_GroundStation::AddOverpassingSatellite(ACPP_Satellite* Satellite)
+{
+    OverpassingSatellites.Add(Satellite);
+}
+
+void ACPP_GroundStation::RemoveOverpassingSatellite(ACPP_Satellite* Satellite)
+{
+    OverpassingSatellites.Remove(Satellite);
 }
