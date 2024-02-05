@@ -44,6 +44,21 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     EInputMode InputMode;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float ClickTimer;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float ClickThreshold;
+
+    UFUNCTION(BlueprintCallable)
+    void HandleLeftMouseButtonPress();
+
+    UFUNCTION(BlueprintCallable)
+    void HandleLeftMouseButtonRelease();
+
+	// Sets default values for this actor's properties
+	ACPP_CameraOrbitController();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
