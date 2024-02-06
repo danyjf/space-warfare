@@ -36,6 +36,7 @@ void ACPP_GroundStation::Tick(float DeltaTime)
 
     for (ACPP_Satellite* Satellite : OverpassingSatellites)
     {
+        // Update the data of the tracked satellites while their overpassing
         TrackedSatellites.Emplace(Satellite, Satellite->GetSatelliteStatus());
         UE_LOG(LogTemp, Warning, TEXT("%s: Position(%s), Rotation(%s), Velocity(%s)"), 
             *Satellite->Name, 
@@ -54,4 +55,14 @@ void ACPP_GroundStation::AddOverpassingSatellite(ACPP_Satellite* Satellite)
 void ACPP_GroundStation::RemoveOverpassingSatellite(ACPP_Satellite* Satellite)
 {
     OverpassingSatellites.Remove(Satellite);
+}
+
+void ACPP_GroundStation::AddTrackedSatellite(ACPP_Satellite* Satellite)
+{
+    if (TrackedSatellites.Contains(Satellite))
+    {
+        return;
+    }
+
+    TrackedSatellites.Emplace(Satellite, Satellite->GetSatelliteStatus());
 }

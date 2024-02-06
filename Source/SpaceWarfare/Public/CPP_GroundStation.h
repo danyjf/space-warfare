@@ -8,9 +8,11 @@
 #include "GameFramework/Actor.h"
 #include "CPP_GroundStation.generated.h"
 
+
 // Forward Declaration
 class ACPP_Planet;
 class ACPP_Satellite;
+
 
 UCLASS()
 class SPACEWARFARE_API ACPP_GroundStation : public AActor
@@ -33,6 +35,9 @@ public:
     void AddOverpassingSatellite(ACPP_Satellite* Satellite);
     UFUNCTION(BlueprintCallable)
     void RemoveOverpassingSatellite(ACPP_Satellite* Satellite);
+
+    UFUNCTION(BlueprintCallable)
+    void AddTrackedSatellite(ACPP_Satellite* Satellite);
 
 	// Sets default values for this actor's properties
 	ACPP_GroundStation();
