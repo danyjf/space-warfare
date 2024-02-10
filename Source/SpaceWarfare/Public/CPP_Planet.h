@@ -17,7 +17,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Name;
 
-    UPROPERTY(BlueprintReadOnly)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRotator RotationSpeed;
 
     UFUNCTION(BlueprintCallable)
