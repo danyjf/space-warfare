@@ -16,8 +16,8 @@ class SPACEWARFARE_API UCPP_CheatManager : public UCheatManager
 
 public:
     UFUNCTION(exec)
-    void InputModeGod();
+    void ServerView();
 
     UFUNCTION(exec)
-    void InputModeGroundStation();
+    void ClientView();
 };
