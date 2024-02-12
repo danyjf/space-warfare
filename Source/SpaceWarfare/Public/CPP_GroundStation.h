@@ -14,6 +14,9 @@ class ACPP_Planet;
 class ACPP_Satellite;
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FString, SatelliteName);
+
+
 UCLASS()
 class SPACEWARFARE_API ACPP_GroundStation : public AActor
 {
@@ -29,6 +32,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FGeographicCoordinates GeographicCoordinates;
 
+    UPROPERTY(BlueprintAssignable)
+    FNewSatelliteDetected OnNewSatelliteDetected;
+
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void SatelliteEnteredOverpassArea(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
@@ -38,9 +44,6 @@ public:
     void AddOverpassingSatellite(ACPP_Satellite* Satellite);
     UFUNCTION(BlueprintCallable)
     void RemoveOverpassingSatellite(ACPP_Satellite* Satellite);
-
-    UFUNCTION(BlueprintCallable)
-    void AddTrackedSatellite(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
 	// Sets default values for this actor's properties
 	ACPP_GroundStation();
