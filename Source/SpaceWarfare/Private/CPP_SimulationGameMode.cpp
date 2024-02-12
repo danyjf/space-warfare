@@ -9,7 +9,6 @@
 #include "JsonReadWrite.h"
 #include "Universe.h"
 
-//#include "JsonObjectConverter.h"	// JsonUtilities module
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"

@@ -6,6 +6,7 @@
 #include "CPP_Satellite.h"
 
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 ACPP_GroundStation::ACPP_GroundStation()
@@ -34,17 +35,22 @@ void ACPP_GroundStation::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    for (ACPP_Satellite* Satellite : OverpassingSatellites)
-    {
-        // Update the data of the tracked satellites while their overpassing
-        TrackedSatellites.Emplace(Satellite, Satellite->GetSatelliteStatus());
-        UE_LOG(LogTemp, Warning, TEXT("%s: Position(%s), Rotation(%s), Velocity(%s)"), 
-            *Satellite->Name, 
-            *TrackedSatellites.Find(Satellite)->Position.ToString(),
-            *TrackedSatellites.Find(Satellite)->Rotation.ToString(),
-            *TrackedSatellites.Find(Satellite)->Velocity.ToString()
-        )
-    }
+    //for (ACPP_Satellite* Satellite : OverpassingSatellites)
+    //{
+    //    // Update the data of the tracked satellites while their overpassing
+    //    TrackedSatellites.Emplace(Satellite, Satellite->GetSatelliteStatus());
+    //    UE_LOG(LogTemp, Warning, TEXT("%s: Position(%s), Rotation(%s), Velocity(%s)"), 
+    //        *Satellite->Name, 
+    //        *TrackedSatellites.Find(Satellite)->Position.ToString(),
+    //        *TrackedSatellites.Find(Satellite)->Rotation.ToString(),
+    //        *TrackedSatellites.Find(Satellite)->Velocity.ToString()
+    //    )
+    //}
+}
+
+void ACPP_GroundStation::SatelliteEnteredOverpassArea_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
+{
+    AddTrackedSatellite(SatelliteName, SatelliteStatus);
 }
 
 void ACPP_GroundStation::AddOverpassingSatellite(ACPP_Satellite* Satellite)
@@ -57,12 +63,12 @@ void ACPP_GroundStation::RemoveOverpassingSatellite(ACPP_Satellite* Satellite)
     OverpassingSatellites.Remove(Satellite);
 }
 
-void ACPP_GroundStation::AddTrackedSatellite(ACPP_Satellite* Satellite)
+void ACPP_GroundStation::AddTrackedSatellite(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
 {
-    if (TrackedSatellites.Contains(Satellite))
+    if (TrackedSatellites.Contains(SatelliteName))
     {
         return;
     }
 
-    TrackedSatellites.Emplace(Satellite, Satellite->GetSatelliteStatus());
+    TrackedSatellites.Emplace(SatelliteName, SatelliteStatus);
 }

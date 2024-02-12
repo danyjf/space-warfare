@@ -18,18 +18,24 @@ void ACPP_Satellite::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-    GravityComponent = FindComponentByClass<UCPP_GravityComponent>();
+    if (HasAuthority())
+    {
+	    SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+        GravityComponent = FindComponentByClass<UCPP_GravityComponent>();
+    }
 }
 
 void ACPP_Satellite::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
-    SatelliteStatus.Position = GetActorLocation();
-    SatelliteStatus.Rotation = GetActorRotation();
-    SatelliteStatus.Velocity = GravityComponent->GetVelocity();
+    if (HasAuthority())
+    {
+	    GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
+        SatelliteStatus.Position = GetActorLocation();
+        SatelliteStatus.Rotation = GetActorRotation();
+        SatelliteStatus.Velocity = GravityComponent->GetVelocity();
+    }
 }
 
 const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const

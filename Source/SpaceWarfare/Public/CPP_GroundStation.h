@@ -29,6 +29,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FGeographicCoordinates GeographicCoordinates;
 
+    UFUNCTION(BlueprintCallable, Client, Reliable)
+    void SatelliteEnteredOverpassArea(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
+
     UFUNCTION(BlueprintCallable)
     const TArray<ACPP_Satellite*> GetOverpassingSatellites() const { return OverpassingSatellites; }
     UFUNCTION(BlueprintCallable)
@@ -37,7 +40,7 @@ public:
     void RemoveOverpassingSatellite(ACPP_Satellite* Satellite);
 
     UFUNCTION(BlueprintCallable)
-    void AddTrackedSatellite(ACPP_Satellite* Satellite);
+    void AddTrackedSatellite(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
 	// Sets default values for this actor's properties
 	ACPP_GroundStation();
@@ -51,5 +54,5 @@ protected:
 
 private:
     TArray<ACPP_Satellite*> OverpassingSatellites;
-    TMap<ACPP_Satellite*, FSatelliteStatus> TrackedSatellites;
+    TMap<FString, FSatelliteStatus> TrackedSatellites;
 };
