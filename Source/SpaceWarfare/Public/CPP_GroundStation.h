@@ -8,9 +8,14 @@
 #include "GameFramework/Actor.h"
 #include "CPP_GroundStation.generated.h"
 
+
 // Forward Declaration
 class ACPP_Planet;
 class ACPP_Satellite;
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FString, SatelliteName);
+
 
 UCLASS()
 class SPACEWARFARE_API ACPP_GroundStation : public AActor
@@ -26,6 +31,12 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FGeographicCoordinates GeographicCoordinates;
+
+    UPROPERTY(BlueprintAssignable)
+    FNewSatelliteDetected OnNewSatelliteDetected;
+
+    UFUNCTION(BlueprintCallable, Client, Reliable)
+    void SatelliteEnteredOverpassArea(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
     UFUNCTION(BlueprintCallable)
     const TArray<ACPP_Satellite*> GetOverpassingSatellites() const { return OverpassingSatellites; }
@@ -46,5 +57,5 @@ protected:
 
 private:
     TArray<ACPP_Satellite*> OverpassingSatellites;
-    TMap<ACPP_Satellite*, FSatelliteStatus> TrackedSatellites;
+    TMap<FString, FSatelliteStatus> TrackedSatellites;
 };

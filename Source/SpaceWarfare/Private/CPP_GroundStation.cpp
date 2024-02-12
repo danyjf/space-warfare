@@ -6,6 +6,7 @@
 #include "CPP_Satellite.h"
 
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 ACPP_GroundStation::ACPP_GroundStation()
@@ -34,16 +35,28 @@ void ACPP_GroundStation::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    for (ACPP_Satellite* Satellite : OverpassingSatellites)
+    //for (ACPP_Satellite* Satellite : OverpassingSatellites)
+    //{
+    //    // Update the data of the tracked satellites while their overpassing
+    //    TrackedSatellites.Emplace(Satellite, Satellite->GetSatelliteStatus());
+    //    UE_LOG(LogTemp, Warning, TEXT("%s: Position(%s), Rotation(%s), Velocity(%s)"), 
+    //        *Satellite->Name, 
+    //        *TrackedSatellites.Find(Satellite)->Position.ToString(),
+    //        *TrackedSatellites.Find(Satellite)->Rotation.ToString(),
+    //        *TrackedSatellites.Find(Satellite)->Velocity.ToString()
+    //    )
+    //}
+}
+
+void ACPP_GroundStation::SatelliteEnteredOverpassArea_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
+{
+    if (TrackedSatellites.Contains(SatelliteName))
     {
-        TrackedSatellites.Emplace(Satellite, Satellite->GetSatelliteStatus());
-        UE_LOG(LogTemp, Warning, TEXT("%s: Position(%s), Rotation(%s), Velocity(%s)"), 
-            *Satellite->Name, 
-            *TrackedSatellites.Find(Satellite)->Position.ToString(),
-            *TrackedSatellites.Find(Satellite)->Rotation.ToString(),
-            *TrackedSatellites.Find(Satellite)->Velocity.ToString()
-        )
+        return;
     }
+
+    TrackedSatellites.Emplace(SatelliteName, SatelliteStatus);
+    OnNewSatelliteDetected.Broadcast(SatelliteName);
 }
 
 void ACPP_GroundStation::AddOverpassingSatellite(ACPP_Satellite* Satellite)
