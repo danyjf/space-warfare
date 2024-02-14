@@ -28,7 +28,7 @@ struct FPlanetStruct
 	float Size;				// kilometers
 
 	UPROPERTY()
-	double GM;
+	double GM;              // gravitational parameter
 
 	UPROPERTY()
 	double RotationSpeed;	// degrees per second
