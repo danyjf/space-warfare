@@ -4,6 +4,7 @@
 #include "CPP_GroundStation.h"
 #include "CPP_Planet.h"
 #include "CPP_Satellite.h"
+#include "CPP_GroundStationManager.h"
 
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -48,16 +49,16 @@ void ACPP_GroundStation::Tick(float DeltaTime)
     //}
 }
 
-void ACPP_GroundStation::SatelliteEnteredOverpassArea_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
-{
-    if (TrackedSatellites.Contains(SatelliteName))
-    {
-        return;
-    }
-
-    TrackedSatellites.Emplace(SatelliteName, SatelliteStatus);
-    OnNewSatelliteDetected.Broadcast(SatelliteName);
-}
+//void ACPP_GroundStation::SatelliteEnteredOverpassArea_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
+//{
+//    if (TrackedSatellites.Contains(SatelliteName))
+//    {
+//        return;
+//    }
+//
+//    TrackedSatellites.Emplace(SatelliteName, SatelliteStatus);
+//    OnNewSatelliteDetected.Broadcast(SatelliteName);
+//}
 
 void ACPP_GroundStation::AddOverpassingSatellite(ACPP_Satellite* Satellite)
 {

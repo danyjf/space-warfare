@@ -12,9 +12,10 @@
 // Forward Declaration
 class ACPP_Planet;
 class ACPP_Satellite;
+class ACPP_GroundStationManager;
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FString, SatelliteName);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FString, SatelliteName);
 
 
 UCLASS()
@@ -23,6 +24,9 @@ class SPACEWARFARE_API ACPP_GroundStation : public AActor
 	GENERATED_BODY()
 	
 public:	
+    UPROPERTY(BlueprintReadWrite)
+    ACPP_GroundStationManager* GroundStationManager;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FString Name;
 
@@ -32,11 +36,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FGeographicCoordinates GeographicCoordinates;
 
-    UPROPERTY(BlueprintAssignable)
-    FNewSatelliteDetected OnNewSatelliteDetected;
+    //UPROPERTY(BlueprintAssignable)
+    //FNewSatelliteDetected OnNewSatelliteDetected;
 
-    UFUNCTION(BlueprintCallable, Client, Reliable)
-    void SatelliteEnteredOverpassArea(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
+    //UFUNCTION(BlueprintCallable, Client, Reliable)
+    //void SatelliteEnteredOverpassArea(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
     UFUNCTION(BlueprintCallable)
     const TArray<ACPP_Satellite*> GetOverpassingSatellites() const { return OverpassingSatellites; }
@@ -57,5 +61,5 @@ protected:
 
 private:
     TArray<ACPP_Satellite*> OverpassingSatellites;
-    TMap<FString, FSatelliteStatus> TrackedSatellites;
+    //TMap<FString, FSatelliteStatus> TrackedSatellites;
 };
