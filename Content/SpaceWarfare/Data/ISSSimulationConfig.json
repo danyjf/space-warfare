@@ -45,10 +45,10 @@
             "orbitalElements": {
                 "eccentricity": 0.008,
                 "semiMajorAxis": 7000,
-                "inclination": 145,
-                "longitudeOfAscendingNode": 20,
+                "inclination": 200,
+                "longitudeOfAscendingNode": -30,
                 "argumentOfPeriapsis": 70,
-                "meanAnomaly": 10,
+                "meanAnomaly": -30,
                 "epoch": "2023-10-23T12:19:42.000Z"
             }
         },
