@@ -37,3 +37,9 @@ void ACPP_GroundStationManager::SatelliteEnteredOverpassArea_Implementation(cons
     TrackedSatellites.Emplace(SatelliteName, SatelliteStatus);
     OnNewSatelliteDetected.Broadcast(SatelliteName);
 }
+
+void ACPP_GroundStationManager::AddGroundStation(ACPP_GroundStation* GroundStation)
+{
+    GroundStations.Add(GroundStation);
+    GroundStation->GroundStationManager = this;
+}
