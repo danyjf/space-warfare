@@ -47,6 +47,7 @@ void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
     Super::PostLogin(NewPlayer);
 
     ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(NewPlayer);
+    CameraOrbitController->PlayerNumber = CurrentPlayerNumber;
 
     ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(GetWorld()->SpawnActor(GroundStationManagerBlueprint));
     GroundStationManager->SetOwner(CameraOrbitController);
