@@ -6,12 +6,16 @@
 #include "CPP_Satellite.h"
 #include "CPP_GravityManager.h"
 #include "CPP_GravityComponent.h"
+#include "CPP_CameraOrbitController.h"
+#include "CPP_GroundStationManager.h"
+#include "CPP_GroundStation.h"
 #include "JsonReadWrite.h"
 #include "Universe.h"
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ACPP_SimulationGameMode::ACPP_SimulationGameMode()
@@ -19,6 +23,7 @@ ACPP_SimulationGameMode::ACPP_SimulationGameMode()
     //FString JsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/SimulationConfig.json");
     FString JsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSSimulationConfig.json");
     UJsonReadWrite::ReadStructFromJsonFile<FSimulationConfigStruct>(JsonPath, &SimulationConfig);
+    CurrentPlayerNumber = 0;
 }
 
 // Called at a fixed DeltaTime to update physics
@@ -35,6 +40,30 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 
 	CurrentEpoch = InitialEpoch;
 	CurrentEpoch += ElapsedEpoch;
+}
+
+void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
+{
+    Super::PostLogin(NewPlayer);
+
+    ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(NewPlayer);
+
+    ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(GetWorld()->SpawnActor(GroundStationManagerBlueprint));
+    GroundStationManager->SetOwner(CameraOrbitController);
+
+    TArray<AActor*> GroundStations;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStation::StaticClass(), GroundStations);
+
+    for (AActor* Actor : GroundStations)
+    {
+        ACPP_GroundStation* GroundStation = Cast<ACPP_GroundStation>(Actor);
+        if (GroundStation->PlayerNumber == CurrentPlayerNumber)
+        {
+            GroundStationManager->AddGroundStation(GroundStation);
+        }
+    }
+
+    CurrentPlayerNumber++;
 }
 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()
