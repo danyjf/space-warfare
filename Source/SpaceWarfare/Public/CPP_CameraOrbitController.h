@@ -29,6 +29,9 @@ class SPACEWARFARE_API ACPP_CameraOrbitController : public APlayerController
 	GENERATED_BODY()
 	
 public:
+    UPROPERTY(BlueprintReadOnly)
+    int PlayerNumber;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     AActor* OrbitingActor;
 

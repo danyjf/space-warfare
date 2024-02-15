@@ -4,6 +4,8 @@
 #include "CPP_GroundStationManager.h"
 #include "CPP_GroundStation.h"
 
+#include "Kismet/KismetSystemLibrary.h"
+
 
 // Sets default values
 ACPP_GroundStationManager::ACPP_GroundStationManager()
@@ -36,4 +38,10 @@ void ACPP_GroundStationManager::SatelliteEnteredOverpassArea_Implementation(cons
 
     TrackedSatellites.Emplace(SatelliteName, SatelliteStatus);
     OnNewSatelliteDetected.Broadcast(SatelliteName);
+}
+
+void ACPP_GroundStationManager::AddGroundStation(ACPP_GroundStation* GroundStation)
+{
+    GroundStations.Add(GroundStation);
+    GroundStation->GroundStationManager = this;
 }

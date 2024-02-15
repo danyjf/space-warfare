@@ -11,6 +11,7 @@
 
 // Forward Declarations
 class ACPP_GravityManager;
+class ACPP_GroundStationManager;
 
 
 USTRUCT(BlueprintType)
@@ -86,6 +87,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     ACPP_GravityManager* GravityManager;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<ACPP_GroundStationManager> GroundStationManagerBlueprint;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AActor> SatelliteBlueprintClass;	// Satellite BP used to spawn satellites on initialization from config
 
@@ -103,10 +107,14 @@ public:
 	// Called at a fixed DeltaTime to update physics
 	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
 
+    // Called after each player logs in
+    virtual void PostLogin(APlayerController* NewPlayer) override;
+
 	UFUNCTION(BlueprintCallable)
 	void InitializeSimulationVariables();
 
 private:
 	FDateTime InitialEpoch;
 	float ElapsedTime;
+    int CurrentPlayerNumber;
 };

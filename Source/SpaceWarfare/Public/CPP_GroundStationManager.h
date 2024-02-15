@@ -31,6 +31,9 @@ public:
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void SatelliteEnteredOverpassArea(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
+    UFUNCTION(BlueprintCallable)
+    void AddGroundStation(ACPP_GroundStation* GroundStation);
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
