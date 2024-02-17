@@ -51,6 +51,7 @@ void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
 
     ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(GetWorld()->SpawnActor(GroundStationManagerBlueprint));
     GroundStationManager->SetOwner(CameraOrbitController);
+    GroundStationManager->PlayerNumber = CurrentPlayerNumber;
 
     // Assign the owners of the ground stations
     TArray<AActor*> GroundStations;

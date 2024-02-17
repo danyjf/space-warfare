@@ -25,11 +25,23 @@ public:
     UPROPERTY(BlueprintReadWrite)
     TArray<ACPP_GroundStation*> GroundStations;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int PlayerNumber;
+
     UPROPERTY(BlueprintAssignable)
-    FNewSatelliteDetected OnNewSatelliteDetected;
+    FNewSatelliteDetected OnNewFriendlySatelliteDetected;
+
+    UPROPERTY(BlueprintAssignable)
+    FNewSatelliteDetected OnNewEnemySatelliteDetected;
+
+    UFUNCTION(BlueprintCallable)
+    void SatelliteEnteredOverpassArea(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void SatelliteEnteredOverpassArea(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
+    void ClientNewFriendlySatelliteTracked(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
+
+    UFUNCTION(BlueprintCallable, Client, Reliable)
+    void ClientNewEnemySatelliteTracked(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
     UFUNCTION(BlueprintCallable)
     void AddGroundStation(ACPP_GroundStation* GroundStation);
@@ -45,5 +57,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-    TMap<FString, FSatelliteStatus> TrackedSatellites;
+    TMap<FString, FSatelliteStatus> FriendlyTrackedSatellites;
+    TMap<FString, FSatelliteStatus> EnemyTrackedSatellites;
 };
