@@ -21,5 +21,5 @@ class SPACEWARFARE_API ACPP_GameHUD : public AHUD
 	
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    UUserWidget* GameWidget;
+    UUserWidget* GameScreenWidget;
 };
