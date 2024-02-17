@@ -49,17 +49,6 @@ void ACPP_GroundStation::Tick(float DeltaTime)
     //}
 }
 
-//void ACPP_GroundStation::SatelliteEnteredOverpassArea_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
-//{
-//    if (TrackedSatellites.Contains(SatelliteName))
-//    {
-//        return;
-//    }
-//
-//    TrackedSatellites.Emplace(SatelliteName, SatelliteStatus);
-//    OnNewSatelliteDetected.Broadcast(SatelliteName);
-//}
-
 void ACPP_GroundStation::AddOverpassingSatellite(ACPP_Satellite* Satellite)
 {
     OverpassingSatellites.Add(Satellite);
