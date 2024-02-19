@@ -11,6 +11,7 @@
 
 // Forward Declarations
 class ACPP_GroundStation;
+class ACPP_Satellite;
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FString, SatelliteName);
@@ -35,7 +36,7 @@ public:
     FNewSatelliteDetected OnNewEnemySatelliteDetected;
 
     UFUNCTION(BlueprintCallable)
-    void SatelliteEnteredOverpassArea(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
+    void SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientNewFriendlySatelliteTracked(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);

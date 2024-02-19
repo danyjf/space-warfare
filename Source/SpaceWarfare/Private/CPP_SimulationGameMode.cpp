@@ -84,6 +84,7 @@ void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
     ACPP_SatelliteLauncher* SatelliteLauncher = Cast<ACPP_SatelliteLauncher>(GetWorld()->SpawnActor(SatelliteLauncherBlueprint));
     SatelliteLauncher->SetOwner(CameraOrbitController);
     SatelliteLauncher->PlayerNumber = CurrentPlayerNumber;
+    SatelliteLauncher->Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
 
     CurrentPlayerNumber++;
 }

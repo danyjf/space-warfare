@@ -8,6 +8,11 @@
 #include "GameFramework/Actor.h"
 #include "CPP_SatelliteLauncher.generated.h"
 
+// Forward Declarations
+class ACPP_Satellite;
+class ACPP_Planet;
+class ACPP_GravityManager;
+
 UCLASS()
 class SPACEWARFARE_API ACPP_SatelliteLauncher : public AActor
 {
@@ -16,6 +21,12 @@ class SPACEWARFARE_API ACPP_SatelliteLauncher : public AActor
 public:	
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int PlayerNumber;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    ACPP_Planet* Planet;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ACPP_Satellite> SatelliteBlueprintClass;
     
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerLaunchSatellite(FOrbitalElements OrbitalElements);
@@ -29,4 +40,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+private:
+    ACPP_GravityManager* GravityManager;
 };
