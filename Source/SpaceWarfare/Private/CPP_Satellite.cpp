@@ -22,7 +22,6 @@ void ACPP_Satellite::BeginPlay()
     {
 	    SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
         GravityComponent = FindComponentByClass<UCPP_GravityComponent>();
-        SatelliteStatus.PlayerNumber = PlayerNumber;
     }
 }
 

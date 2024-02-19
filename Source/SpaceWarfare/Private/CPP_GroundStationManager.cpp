@@ -3,6 +3,7 @@
 
 #include "CPP_GroundStationManager.h"
 #include "CPP_GroundStation.h"
+#include "CPP_Satellite.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -29,22 +30,22 @@ void ACPP_GroundStationManager::Tick(float DeltaTime)
 
 }
 
-void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
+void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite)
 {
-    if (FriendlyTrackedSatellites.Contains(SatelliteName) || EnemyTrackedSatellites.Contains(SatelliteName))
+    if (FriendlyTrackedSatellites.Contains(Satellite->Name) || EnemyTrackedSatellites.Contains(Satellite->Name))
     {
         return;
     }
 
-    if (SatelliteStatus.PlayerNumber == PlayerNumber)
+    if (Satellite->PlayerNumber == PlayerNumber)
     {
-        FriendlyTrackedSatellites.Emplace(SatelliteName, SatelliteStatus);
-        ClientNewFriendlySatelliteTracked(SatelliteName, SatelliteStatus);
+        FriendlyTrackedSatellites.Emplace(Satellite->Name, Satellite->GetSatelliteStatus());
+        ClientNewFriendlySatelliteTracked(Satellite->Name, Satellite->GetSatelliteStatus());
     }
     else
     {
-        EnemyTrackedSatellites.Emplace(SatelliteName, SatelliteStatus);
-        ClientNewEnemySatelliteTracked(SatelliteName, SatelliteStatus);
+        EnemyTrackedSatellites.Emplace(Satellite->Name, Satellite->GetSatelliteStatus());
+        ClientNewEnemySatelliteTracked(Satellite->Name, Satellite->GetSatelliteStatus());
     }
 }
 

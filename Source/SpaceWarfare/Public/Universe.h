@@ -79,9 +79,6 @@ struct FSatelliteStatus
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	int PlayerNumber;
-
-	UPROPERTY(BlueprintReadOnly)
 	FVector Position;
 
 	UPROPERTY(BlueprintReadOnly)
