@@ -12,6 +12,7 @@
 // Forward Declarations
 class ACPP_GravityManager;
 class ACPP_GroundStationManager;
+class ACPP_SatelliteLauncher;
 
 
 USTRUCT(BlueprintType)
@@ -89,6 +90,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<ACPP_GroundStationManager> GroundStationManagerBlueprint;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<ACPP_SatelliteLauncher> SatelliteLauncherBlueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AActor> SatelliteBlueprintClass;	// Satellite BP used to spawn satellites on initialization from config

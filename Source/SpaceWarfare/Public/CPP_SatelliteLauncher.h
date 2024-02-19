@@ -14,6 +14,9 @@ class SPACEWARFARE_API ACPP_SatelliteLauncher : public AActor
 	GENERATED_BODY()
 	
 public:	
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int PlayerNumber;
+    
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerLaunchSatellite(FOrbitalElements OrbitalElements);
 

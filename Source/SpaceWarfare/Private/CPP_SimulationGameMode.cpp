@@ -9,6 +9,7 @@
 #include "CPP_CameraOrbitController.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_GroundStation.h"
+#include "CPP_SatelliteLauncher.h"
 #include "JsonReadWrite.h"
 #include "Universe.h"
 
@@ -49,6 +50,7 @@ void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
     ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(NewPlayer);
     CameraOrbitController->PlayerNumber = CurrentPlayerNumber;
 
+    // Create a GroundStationManager for each player
     ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(GetWorld()->SpawnActor(GroundStationManagerBlueprint));
     GroundStationManager->SetOwner(CameraOrbitController);
     GroundStationManager->PlayerNumber = CurrentPlayerNumber;
@@ -77,6 +79,11 @@ void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
             Satellite->SetOwner(CameraOrbitController);
         }
     }
+
+    // Create a SatelliteLauncher for each player
+    ACPP_SatelliteLauncher* SatelliteLauncher = Cast<ACPP_SatelliteLauncher>(GetWorld()->SpawnActor(SatelliteLauncherBlueprint));
+    SatelliteLauncher->SetOwner(CameraOrbitController);
+    SatelliteLauncher->PlayerNumber = CurrentPlayerNumber;
 
     CurrentPlayerNumber++;
 }
