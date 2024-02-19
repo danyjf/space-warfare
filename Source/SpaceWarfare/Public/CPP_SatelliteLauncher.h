@@ -29,7 +29,7 @@ public:
 	TSubclassOf<ACPP_Satellite> SatelliteBlueprintClass;
     
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerLaunchSatellite(FOrbitalElements OrbitalElements);
+    void ServerLaunchSatellite(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Name);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

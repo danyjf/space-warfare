@@ -36,29 +36,23 @@ void ACPP_SatelliteLauncher::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements)
+void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Name)
 {
-    UKismetSystemLibrary::PrintString(this, "Launching Satellite");
-
     UCPP_GravityComponent* PlanetGravityComponent = Planet->FindComponentByClass<UCPP_GravityComponent>();
     FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, PlanetGravityComponent->GetGravitationalParameter());
 
     ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
-    float TempSize = 100.0f;
     Satellite->SetActorLocation(OrbitalState.Location);
-    Satellite->SetActorScale3D(FVector(TempSize));
+    Satellite->SetActorScale3D(FVector(Size));
     Satellite->OrbitingPlanet = Planet;
-    Satellite->Name = "TempTestLaunchName";
+    Satellite->Name = Name;
     Satellite->PlayerNumber = PlayerNumber;
     Satellite->SetOwner(GetOwner());
 
-    //UKismetSystemLibrary::PrintString(this, FString::FromInt(PlayerNumber));
-
     UCPP_GravityComponent* SatelliteGravityComponent = Satellite->FindComponentByClass<UCPP_GravityComponent>();
-    float TempMass = 100000.0f;
     SatelliteGravityComponent->SetVelocity(OrbitalState.Velocity);
-    SatelliteGravityComponent->SetMass(TempMass);
-    SatelliteGravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * TempMass);
+    SatelliteGravityComponent->SetMass(Mass);
+    SatelliteGravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * Mass);
 
     GravityManager->GravityComponents.Add(SatelliteGravityComponent);
 }
