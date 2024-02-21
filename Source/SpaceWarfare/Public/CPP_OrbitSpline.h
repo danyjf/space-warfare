@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Components/SplineMeshComponent.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "CPP_OrbitSpline.generated.h"
@@ -12,6 +14,17 @@ class SPACEWARFARE_API ACPP_OrbitSpline : public AActor
 	GENERATED_BODY()
 	
 public:	
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UStaticMesh* SplineMesh;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TEnumAsByte<ESplineMeshAxis::Type> ForwardAxis;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float SplineMeshScale;
+
+    virtual void OnConstruction(const FTransform& Transform) override;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -23,8 +36,11 @@ protected:
     USceneComponent* Root;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    class USplineComponent* Spline;
+    class USplineComponent* SplineComponent;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+private:
+    void CreateSplineMeshComponent(const FVector& StartPoint, const FVector& StartTangent, const FVector& EndPoint, const FVector& EndTangent);
 };
