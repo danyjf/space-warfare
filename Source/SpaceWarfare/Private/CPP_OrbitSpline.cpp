@@ -70,6 +70,7 @@ void ACPP_OrbitSpline::CreateSplineMeshComponent(const FVector& StartPoint, cons
     SplineMeshComponent->CreationMethod = EComponentCreationMethod::UserConstructionScript;
     SplineMeshComponent->RegisterComponentWithWorld(GetWorld());
     SplineMeshComponent->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
+    SplineMeshComponent->SetCastShadow(false);
 
     SplineMeshComponent->SetForwardAxis(ForwardAxis);
     SplineMeshComponent->SetStartScale(FVector2D(SplineMeshScale));
