@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/SplineMeshComponent.h"
+#include "Universe.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -23,6 +24,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float SplineMeshScale;
 
+    UFUNCTION(BlueprintCallable)
+    void UpdateOrbit(FOrbitalElements OrbitalElements, class ACPP_Planet* Planet);
+
     virtual void OnConstruction(const FTransform& Transform) override;
 
 	// Called every frame
@@ -42,5 +46,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+    TArray<USplineMeshComponent*> SplineMeshComponents;
+
     void CreateSplineMeshComponent(const FVector& StartPoint, const FVector& StartTangent, const FVector& EndPoint, const FVector& EndTangent);
 };

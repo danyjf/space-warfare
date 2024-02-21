@@ -8,7 +8,7 @@
 #include "Kismet/KismetMathLibrary.h"
 
 
-FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(FOrbitalElements OrbitalElements, double GM)
+FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(const FOrbitalElements& OrbitalElements, double GM)
 {
 	float e = OrbitalElements.Eccentricity;
 	float a = OrbitalElements.SemiMajorAxis;

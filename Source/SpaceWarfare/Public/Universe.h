@@ -99,7 +99,7 @@ class SPACEWARFARE_API UUniverse : public UBlueprintFunctionLibrary
 	
 public:
     UFUNCTION(BlueprintCallable)
-	static FOrbitalState ConvertOrbitalElementsToOrbitalState(FOrbitalElements OrbitalElements, double GM);
+	static FOrbitalState ConvertOrbitalElementsToOrbitalState(const FOrbitalElements& OrbitalElements, double GM);
 
     UFUNCTION(BlueprintCallable)
 	static double GetEarthRotationAngle(double JulianDay);

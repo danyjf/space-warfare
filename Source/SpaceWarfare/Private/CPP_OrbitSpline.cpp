@@ -2,8 +2,11 @@
 
 
 #include "CPP_OrbitSpline.h"
+#include "CPP_Planet.h"
+#include "CPP_GravityComponent.h"
 
 #include "Components/SplineComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 ACPP_OrbitSpline::ACPP_OrbitSpline()
@@ -77,4 +80,36 @@ void ACPP_OrbitSpline::CreateSplineMeshComponent(const FVector& StartPoint, cons
     SplineMeshComponent->SetEndScale(FVector2D(SplineMeshScale));
 
     SplineMeshComponent->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent);
+
+    SplineMeshComponents.Add(SplineMeshComponent);
+}
+
+void ACPP_OrbitSpline::UpdateOrbit(FOrbitalElements OrbitalElements, ACPP_Planet* Planet)
+{
+    OrbitalElements.MeanAnomaly = 0.0f;
+
+    for (int i = 0; i < SplineComponent->GetNumberOfSplinePoints(); i++)
+    {
+        FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, Planet->GetComponentByClass<UCPP_GravityComponent>()->GetGravitationalParameter());
+
+        SplineComponent->SetWorldLocationAtSplinePoint(i, OrbitalState.Location);
+
+        OrbitalElements.MeanAnomaly += 30.0f;
+    }
+    
+    for (int i = 0; i < SplineMeshComponents.Num() - 1; i++)
+    {
+        const FVector StartPoint = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
+        const FVector StartTangent = SplineComponent->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::Local);
+        const FVector EndPoint = SplineComponent->GetLocationAtSplinePoint(i + 1, ESplineCoordinateSpace::Local);
+        const FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(i + 1, ESplineCoordinateSpace::Local);
+
+        SplineMeshComponents[i]->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent);
+    }
+
+    const FVector StartPoint = SplineComponent->GetLocationAtSplinePoint(SplineMeshComponents.Num() - 1, ESplineCoordinateSpace::Local);
+    const FVector StartTangent = SplineComponent->GetTangentAtSplinePoint(SplineMeshComponents.Num() - 1, ESplineCoordinateSpace::Local);
+    const FVector EndPoint = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::Local);
+    const FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(0, ESplineCoordinateSpace::Local);
+    SplineMeshComponents[SplineMeshComponents.Num() - 1]->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent);
 }
