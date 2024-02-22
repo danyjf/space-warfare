@@ -94,7 +94,7 @@ void ACPP_OrbitSpline::UpdateOrbit(FOrbitalElements OrbitalElements, ACPP_Planet
 
         SplineComponent->SetWorldLocationAtSplinePoint(i, OrbitalState.Location);
 
-        OrbitalElements.MeanAnomaly += 30.0f;
+        OrbitalElements.MeanAnomaly += 15.0f;
     }
     
     for (int i = 0; i < SplineMeshComponents.Num() - 1; i++)
