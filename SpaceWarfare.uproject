@@ -7,8 +7,16 @@
 		{
 			"Name": "SpaceWarfare",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		}
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		},
+        {
+            "Name": "FileReadWrite",
+            "Type": "Runtime",
+            "LoadingPhase": "Default"
+        }
 	],
 	"Plugins": [
 		{
