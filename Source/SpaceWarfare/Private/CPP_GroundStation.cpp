@@ -15,6 +15,15 @@ ACPP_GroundStation::ACPP_GroundStation()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+    Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+    RootComponent = Root;
+
+    DetectionCone = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DetectionCone"));
+    DetectionCone->SetupAttachment(Root);
+    DetectionCone->SetEnableGravity(false);
+    DetectionCone->SetCollisionProfileName(TEXT("Trigger"));
+    DetectionCone->SetCastShadow(false);
+
     DetectionFieldOfView = 90.0f;
     DetectionHeight = 2000.0f;
 }
@@ -23,6 +32,16 @@ void ACPP_GroundStation::OnConstruction(const FTransform& Transform)
 {
     Super::OnConstruction(Transform);
 
+    // set the detection cone size
+    if (!DetectionCone)
+    {
+        return;
+    }
+
+    float RadiusOfBase = DetectionHeight * tan(UKismetMathLibrary::DegreesToRadians(DetectionFieldOfView / 2.0f));
+    DetectionCone->SetWorldScale3D(FVector(RadiusOfBase, RadiusOfBase, DetectionHeight));
+
+    // set the ground station position on the earth surface
     if (!Planet)
     {
         return;

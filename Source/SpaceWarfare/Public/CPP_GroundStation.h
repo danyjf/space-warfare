@@ -58,6 +58,12 @@ public:
 	ACPP_GroundStation();
 
 protected:
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    USceneComponent* Root;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    UStaticMeshComponent* DetectionCone;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
