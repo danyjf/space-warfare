@@ -15,13 +15,19 @@ ACPP_GroundStation::ACPP_GroundStation()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+    DetectionFieldOfView = 90.0f;
+    DetectionHeight = 2000.0f;
 }
 
-// Called when the game starts or when spawned
-void ACPP_GroundStation::BeginPlay()
+void ACPP_GroundStation::OnConstruction(const FTransform& Transform)
 {
-	Super::BeginPlay();
-	
+    Super::OnConstruction(Transform);
+
+    if (!Planet)
+    {
+        return;
+    }
+
     // set the location from the latitude and longitude
     FVector ECILocation = UUniverse::ConvertGeographicCoordinatesToECILocation(Planet, GeographicCoordinates);
     ECILocation.Y = -ECILocation.Y;     // convert coordinates to left handed system
@@ -29,6 +35,12 @@ void ACPP_GroundStation::BeginPlay()
 
     // set the rotation to be orthogonal to earths surface
     SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Planet->GetActorLocation(), GetActorLocation()));
+}
+
+// Called when the game starts or when spawned
+void ACPP_GroundStation::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 // Called every frame

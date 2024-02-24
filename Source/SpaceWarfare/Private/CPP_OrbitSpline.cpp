@@ -27,6 +27,8 @@ ACPP_OrbitSpline::ACPP_OrbitSpline()
 
 void ACPP_OrbitSpline::OnConstruction(const FTransform& Transform)
 {
+    Super::OnConstruction(Transform);
+
     if (!SplineMesh)
     {
         return;

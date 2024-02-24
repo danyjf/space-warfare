@@ -10,12 +10,9 @@
 
 
 // Forward Declaration
-class ACPP_Planet;
+//class ACPP_Planet;
 class ACPP_Satellite;
-class ACPP_GroundStationManager;
-
-
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FString, SatelliteName);
+//class ACPP_GroundStationManager;
 
 
 UCLASS()
@@ -25,7 +22,7 @@ class SPACEWARFARE_API ACPP_GroundStation : public AActor
 	
 public:	
     UPROPERTY(BlueprintReadWrite)
-    ACPP_GroundStationManager* GroundStationManager;
+    class ACPP_GroundStationManager* GroundStationManager;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FString Name;
@@ -34,16 +31,16 @@ public:
     int PlayerNumber;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    ACPP_Planet* Planet;
+    class ACPP_Planet* Planet;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FGeographicCoordinates GeographicCoordinates;
 
-    //UPROPERTY(BlueprintAssignable)
-    //FNewSatelliteDetected OnNewSatelliteDetected;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float DetectionFieldOfView;
 
-    //UFUNCTION(BlueprintCallable, Client, Reliable)
-    //void SatelliteEnteredOverpassArea(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float DetectionHeight;
 
     UFUNCTION(BlueprintCallable)
     const TArray<ACPP_Satellite*> GetOverpassingSatellites() const { return OverpassingSatellites; }
@@ -52,11 +49,13 @@ public:
     UFUNCTION(BlueprintCallable)
     void RemoveOverpassingSatellite(ACPP_Satellite* Satellite);
 
-	// Sets default values for this actor's properties
-	ACPP_GroundStation();
+    virtual void OnConstruction(const FTransform& Transform) override;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	// Sets default values for this actor's properties
+	ACPP_GroundStation();
 
 protected:
 	// Called when the game starts or when spawned
@@ -64,5 +63,4 @@ protected:
 
 private:
     TArray<ACPP_Satellite*> OverpassingSatellites;
-    //TMap<FString, FSatelliteStatus> TrackedSatellites;
 };
