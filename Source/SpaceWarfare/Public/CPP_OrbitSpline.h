@@ -24,6 +24,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float SplineMeshScale;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int NumberOfPoints;
+
     UFUNCTION(BlueprintCallable)
     void UpdateOrbit(FOrbitalElements OrbitalElements, class ACPP_Planet* Planet);
 
