@@ -42,6 +42,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float DetectionHeight;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float DetectionVisualizationHeight;
+
     UFUNCTION(BlueprintCallable)
     const TArray<ACPP_Satellite*> GetOverpassingSatellites() const { return OverpassingSatellites; }
     UFUNCTION(BlueprintCallable)
@@ -63,6 +66,9 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     UStaticMeshComponent* DetectionCone;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    UStaticMeshComponent* DetectionConeVisualization;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

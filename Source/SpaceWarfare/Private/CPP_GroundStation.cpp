@@ -23,9 +23,18 @@ ACPP_GroundStation::ACPP_GroundStation()
     DetectionCone->SetEnableGravity(false);
     DetectionCone->SetCollisionProfileName(TEXT("Trigger"));
     DetectionCone->SetCastShadow(false);
+    DetectionCone->SetHiddenInGame(true);
+    DetectionCone->SetVisibility(false);
+
+    DetectionConeVisualization = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DetectionConeVisualization"));
+    DetectionConeVisualization->SetupAttachment(Root);
+    DetectionConeVisualization->SetEnableGravity(false);
+    DetectionConeVisualization->SetCollisionProfileName(TEXT("NoCollision"));
+    DetectionConeVisualization->SetCastShadow(false);
 
     DetectionFieldOfView = 90.0f;
     DetectionHeight = 2000.0f;
+    DetectionVisualizationHeight = 2000.0f;
 }
 
 void ACPP_GroundStation::OnConstruction(const FTransform& Transform)
@@ -40,6 +49,9 @@ void ACPP_GroundStation::OnConstruction(const FTransform& Transform)
 
     float RadiusOfBase = DetectionHeight * tan(UKismetMathLibrary::DegreesToRadians(DetectionFieldOfView / 2.0f));
     DetectionCone->SetWorldScale3D(FVector(RadiusOfBase, RadiusOfBase, DetectionHeight));
+
+    float VisualizationRadiusOfBase = DetectionVisualizationHeight * tan(UKismetMathLibrary::DegreesToRadians(DetectionFieldOfView / 2.0f));
+    DetectionConeVisualization->SetWorldScale3D(FVector(VisualizationRadiusOfBase, VisualizationRadiusOfBase, DetectionVisualizationHeight));
 
     // set the ground station position on the earth surface
     if (!Planet)
