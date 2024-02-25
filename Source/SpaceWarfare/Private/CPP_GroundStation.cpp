@@ -8,6 +8,7 @@
 
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACPP_GroundStation::ACPP_GroundStation()
@@ -33,15 +34,15 @@ ACPP_GroundStation::ACPP_GroundStation()
     DetectionConeVisualization->SetCastShadow(false);
 
     DetectionFieldOfView = 90.0f;
-    DetectionHeight = 2000.0f;
-    DetectionVisualizationHeight = 2000.0f;
+    DetectionHeight = 50000.0f;
+    DetectionVisualizationHeight = 700.0f;
 }
 
 void ACPP_GroundStation::OnConstruction(const FTransform& Transform)
 {
     Super::OnConstruction(Transform);
 
-    // set the detection cone size
+    // Set the detection cone size
     if (!DetectionCone)
     {
         return;
@@ -53,18 +54,18 @@ void ACPP_GroundStation::OnConstruction(const FTransform& Transform)
     float VisualizationRadiusOfBase = DetectionVisualizationHeight * tan(UKismetMathLibrary::DegreesToRadians(DetectionFieldOfView / 2.0f));
     DetectionConeVisualization->SetWorldScale3D(FVector(VisualizationRadiusOfBase, VisualizationRadiusOfBase, DetectionVisualizationHeight));
 
-    // set the ground station position on the earth surface
+    // Set the ground station position on the earth surface
     if (!Planet)
     {
         return;
     }
 
-    // set the location from the latitude and longitude
+    // Set the location from the latitude and longitude
     FVector ECILocation = UUniverse::ConvertGeographicCoordinatesToECILocation(Planet, GeographicCoordinates);
     ECILocation.Y = -ECILocation.Y;     // convert coordinates to left handed system
     SetActorLocation(ECILocation);
 
-    // set the rotation to be orthogonal to earths surface
+    // Set the rotation to be orthogonal to earths surface
     SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Planet->GetActorLocation(), GetActorLocation()));
 }
 
@@ -72,24 +73,22 @@ void ACPP_GroundStation::OnConstruction(const FTransform& Transform)
 void ACPP_GroundStation::BeginPlay()
 {
 	Super::BeginPlay();
+
+    // Hide enemy ground stations on listen server
+    if (HasAuthority() && UGameplayStatics::GetPlayerController(GetWorld(), 0) != GetOwner())
+    {
+        SetActorHiddenInGame(true);
+    }
+    else if (!HasAuthority())
+    {
+        SetActorHiddenInGame(false);
+    }
 }
 
 // Called every frame
 void ACPP_GroundStation::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-    //for (ACPP_Satellite* Satellite : OverpassingSatellites)
-    //{
-    //    // Update the data of the tracked satellites while their overpassing
-    //    TrackedSatellites.Emplace(Satellite, Satellite->GetSatelliteStatus());
-    //    UE_LOG(LogTemp, Warning, TEXT("%s: Position(%s), Rotation(%s), Velocity(%s)"), 
-    //        *Satellite->Name, 
-    //        *TrackedSatellites.Find(Satellite)->Position.ToString(),
-    //        *TrackedSatellites.Find(Satellite)->Rotation.ToString(),
-    //        *TrackedSatellites.Find(Satellite)->Velocity.ToString()
-    //    )
-    //}
 }
 
 void ACPP_GroundStation::AddOverpassingSatellite(ACPP_Satellite* Satellite)

@@ -9,12 +9,6 @@
 #include "CPP_GroundStation.generated.h"
 
 
-// Forward Declaration
-//class ACPP_Planet;
-class ACPP_Satellite;
-//class ACPP_GroundStationManager;
-
-
 UCLASS()
 class SPACEWARFARE_API ACPP_GroundStation : public AActor
 {
@@ -46,11 +40,13 @@ public:
     float DetectionVisualizationHeight;
 
     UFUNCTION(BlueprintCallable)
-    const TArray<ACPP_Satellite*> GetOverpassingSatellites() const { return OverpassingSatellites; }
+    const TArray<class ACPP_Satellite*> GetOverpassingSatellites() const { return OverpassingSatellites; }
+
     UFUNCTION(BlueprintCallable)
-    void AddOverpassingSatellite(ACPP_Satellite* Satellite);
+    void AddOverpassingSatellite(class ACPP_Satellite* Satellite);
+
     UFUNCTION(BlueprintCallable)
-    void RemoveOverpassingSatellite(ACPP_Satellite* Satellite);
+    void RemoveOverpassingSatellite(class ACPP_Satellite* Satellite);
 
     virtual void OnConstruction(const FTransform& Transform) override;
 
@@ -74,5 +70,5 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-    TArray<ACPP_Satellite*> OverpassingSatellites;
+    TArray<class ACPP_Satellite*> OverpassingSatellites;
 };
