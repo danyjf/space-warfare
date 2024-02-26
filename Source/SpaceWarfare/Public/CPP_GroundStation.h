@@ -9,15 +9,6 @@
 #include "CPP_GroundStation.generated.h"
 
 
-// Forward Declaration
-class ACPP_Planet;
-class ACPP_Satellite;
-class ACPP_GroundStationManager;
-
-
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FString, SatelliteName);
-
-
 UCLASS()
 class SPACEWARFARE_API ACPP_GroundStation : public AActor
 {
@@ -25,7 +16,7 @@ class SPACEWARFARE_API ACPP_GroundStation : public AActor
 	
 public:	
     UPROPERTY(BlueprintReadWrite)
-    ACPP_GroundStationManager* GroundStationManager;
+    class ACPP_GroundStationManager* GroundStationManager;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FString Name;
@@ -34,35 +25,38 @@ public:
     int PlayerNumber;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    ACPP_Planet* Planet;
+    class ACPP_Planet* Planet;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FGeographicCoordinates GeographicCoordinates;
 
-    //UPROPERTY(BlueprintAssignable)
-    //FNewSatelliteDetected OnNewSatelliteDetected;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float DetectionFieldOfView;
 
-    //UFUNCTION(BlueprintCallable, Client, Reliable)
-    //void SatelliteEnteredOverpassArea(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float DetectionHeight;
 
-    UFUNCTION(BlueprintCallable)
-    const TArray<ACPP_Satellite*> GetOverpassingSatellites() const { return OverpassingSatellites; }
-    UFUNCTION(BlueprintCallable)
-    void AddOverpassingSatellite(ACPP_Satellite* Satellite);
-    UFUNCTION(BlueprintCallable)
-    void RemoveOverpassingSatellite(ACPP_Satellite* Satellite);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float DetectionVisualizationHeight;
 
-	// Sets default values for this actor's properties
-	ACPP_GroundStation();
+    virtual void OnConstruction(const FTransform& Transform) override;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Sets default values for this actor's properties
+	ACPP_GroundStation();
+
 protected:
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    USceneComponent* Root;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    UStaticMeshComponent* DetectionCone;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    UStaticMeshComponent* DetectionConeVisualization;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-private:
-    TArray<ACPP_Satellite*> OverpassingSatellites;
-    //TMap<FString, FSatelliteStatus> TrackedSatellites;
 };

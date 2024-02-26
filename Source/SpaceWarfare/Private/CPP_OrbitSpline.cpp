@@ -7,6 +7,7 @@
 
 #include "Components/SplineComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ACPP_OrbitSpline::ACPP_OrbitSpline()
@@ -20,14 +21,33 @@ ACPP_OrbitSpline::ACPP_OrbitSpline()
     SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
     SplineComponent->SetupAttachment(Root);
 
-    SplineMeshScale = 1.0f;
+    SplineMeshScale = 0.25f;
+    NumberOfPoints = 24;
 }
 
 void ACPP_OrbitSpline::OnConstruction(const FTransform& Transform)
 {
+    Super::OnConstruction(Transform);
+
     if (!SplineMesh)
     {
         return;
+    }
+    
+    SplineComponent->ClearSplinePoints();
+
+    float Angle = 0.0f;
+    float IncrementAngle = 360.0f / NumberOfPoints;
+    float Radius = 300.0f;
+    for (int i = 0; i < NumberOfPoints; i++)
+    {
+        FVector PointPosition;
+        PointPosition.X = cos(UKismetMathLibrary::DegreesToRadians(Angle)) * Radius;
+        PointPosition.Y = sin(UKismetMathLibrary::DegreesToRadians(Angle)) * Radius;
+
+        SplineComponent->AddSplinePoint(PointPosition, ESplineCoordinateSpace::World);
+
+        Angle += IncrementAngle;
     }
 
     for (int i = 0; i < (SplineComponent->GetNumberOfSplinePoints() - 1); i++)
@@ -87,6 +107,7 @@ void ACPP_OrbitSpline::CreateSplineMeshComponent(const FVector& StartPoint, cons
 void ACPP_OrbitSpline::UpdateOrbit(FOrbitalElements OrbitalElements, ACPP_Planet* Planet)
 {
     OrbitalElements.MeanAnomaly = 0.0f;
+    float IncrementAngle = 360.0f / NumberOfPoints;
 
     for (int i = 0; i < SplineComponent->GetNumberOfSplinePoints(); i++)
     {
@@ -94,7 +115,7 @@ void ACPP_OrbitSpline::UpdateOrbit(FOrbitalElements OrbitalElements, ACPP_Planet
 
         SplineComponent->SetWorldLocationAtSplinePoint(i, OrbitalState.Location);
 
-        OrbitalElements.MeanAnomaly += 15.0f;
+        OrbitalElements.MeanAnomaly += IncrementAngle;
     }
     
     for (int i = 0; i < SplineMeshComponents.Num() - 1; i++)

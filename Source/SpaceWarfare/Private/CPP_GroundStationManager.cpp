@@ -32,20 +32,31 @@ void ACPP_GroundStationManager::Tick(float DeltaTime)
 
 void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite)
 {
-    if (FriendlyTrackedSatellites.Contains(Satellite->Name) || EnemyTrackedSatellites.Contains(Satellite->Name))
-    {
-        return;
-    }
-
     if (Satellite->PlayerNumber == PlayerNumber)
     {
-        FriendlyTrackedSatellites.Emplace(Satellite->Name, Satellite->GetSatelliteStatus());
-        ClientNewFriendlySatelliteTracked(Satellite->Name, Satellite->GetSatelliteStatus());
+        OverpassingSatellites.Add(Satellite);
+
+        if (!FriendlyTrackedSatellites.Contains(Satellite->Name))
+        {
+            FriendlyTrackedSatellites.Emplace(Satellite->Name, Satellite->GetSatelliteStatus());
+            ClientNewFriendlySatelliteTracked(Satellite->Name, Satellite->GetSatelliteStatus());
+        }
     }
     else
     {
-        EnemyTrackedSatellites.Emplace(Satellite->Name, Satellite->GetSatelliteStatus());
-        ClientNewEnemySatelliteTracked(Satellite->Name, Satellite->GetSatelliteStatus());
+        if (!EnemyTrackedSatellites.Contains(Satellite->Name))
+        {
+            EnemyTrackedSatellites.Emplace(Satellite->Name, Satellite->GetSatelliteStatus());
+            ClientNewEnemySatelliteTracked(Satellite->Name, Satellite->GetSatelliteStatus());
+        }
+    }
+}
+
+void ACPP_GroundStationManager::SatelliteExitedOverpassArea(ACPP_Satellite* Satellite)
+{
+    if (Satellite->PlayerNumber == PlayerNumber)
+    {
+        OverpassingSatellites.Remove(Satellite);
     }
 }
 
