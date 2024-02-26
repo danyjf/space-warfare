@@ -38,6 +38,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite);
 
+    UFUNCTION(BlueprintCallable)
+    void SatelliteExitedOverpassArea(ACPP_Satellite* Satellite);
+
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientNewFriendlySatelliteTracked(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
@@ -60,4 +63,5 @@ protected:
 private:
     TMap<FString, FSatelliteStatus> FriendlyTrackedSatellites;
     TMap<FString, FSatelliteStatus> EnemyTrackedSatellites;
+    TSet<ACPP_Satellite*> OverpassingSatellites;
 };

@@ -90,13 +90,3 @@ void ACPP_GroundStation::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-void ACPP_GroundStation::AddOverpassingSatellite(ACPP_Satellite* Satellite)
-{
-    OverpassingSatellites.Add(Satellite);
-}
-
-void ACPP_GroundStation::RemoveOverpassingSatellite(ACPP_Satellite* Satellite)
-{
-    OverpassingSatellites.Remove(Satellite);
-}

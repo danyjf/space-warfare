@@ -39,15 +39,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float DetectionVisualizationHeight;
 
-    UFUNCTION(BlueprintCallable)
-    const TArray<class ACPP_Satellite*> GetOverpassingSatellites() const { return OverpassingSatellites; }
-
-    UFUNCTION(BlueprintCallable)
-    void AddOverpassingSatellite(class ACPP_Satellite* Satellite);
-
-    UFUNCTION(BlueprintCallable)
-    void RemoveOverpassingSatellite(class ACPP_Satellite* Satellite);
-
     virtual void OnConstruction(const FTransform& Transform) override;
 
 	// Called every frame
@@ -68,7 +59,4 @@ protected:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-private:
-    TArray<class ACPP_Satellite*> OverpassingSatellites;
 };
