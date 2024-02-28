@@ -47,6 +47,9 @@ public:
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientNewEnemySatelliteTracked(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
+    UFUNCTION(BlueprintCallable, Server, Reliable)
+    void ServerRunSatelliteCommand(const FString& SatelliteName);
+
     UFUNCTION(BlueprintCallable)
     void AddGroundStation(ACPP_GroundStation* GroundStation);
 

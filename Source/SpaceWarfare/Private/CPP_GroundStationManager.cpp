@@ -72,6 +72,11 @@ void ACPP_GroundStationManager::ClientNewEnemySatelliteTracked_Implementation(co
     OnNewEnemySatelliteDetected.Broadcast(SatelliteName);
 }
 
+void ACPP_GroundStationManager::ServerRunSatelliteCommand_Implementation(const FString& SatelliteName)
+{
+    
+}
+
 void ACPP_GroundStationManager::AddGroundStation(ACPP_GroundStation* GroundStation)
 {
     GroundStations.Add(GroundStation);
