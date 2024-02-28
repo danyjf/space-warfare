@@ -14,6 +14,34 @@ class ACPP_GroundStation;
 class ACPP_Satellite;
 
 
+USTRUCT(BlueprintType)
+struct FSatelliteCommand
+{
+    GENERATED_BODY();
+
+    UPROPERTY(BlueprintReadWrite)
+    FString SatelliteName;
+};
+
+USTRUCT(BlueprintType)
+struct FTorqueCommand : public FSatelliteCommand
+{
+    GENERATED_BODY();
+
+    UPROPERTY(BlueprintReadWrite)
+    FVector Torque;
+};
+
+USTRUCT(BlueprintType)
+struct FThrustCommand : public FSatelliteCommand
+{
+    GENERATED_BODY();
+
+    UPROPERTY(BlueprintReadWrite)
+    bool IsActive;
+};
+
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FString, SatelliteName);
 
 
@@ -47,6 +75,12 @@ public:
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientNewEnemySatelliteTracked(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
+    UFUNCTION(BlueprintCallable, Server, Reliable)
+    void ServerSatelliteTorqueCommand(const FTorqueCommand& TorqueCommand);
+
+    UFUNCTION(BlueprintCallable, Server, Reliable)
+    void ServerSatelliteThrustCommand(const FThrustCommand& ThrustCommand);
+
     UFUNCTION(BlueprintCallable)
     void AddGroundStation(ACPP_GroundStation* GroundStation);
 
@@ -63,5 +97,5 @@ protected:
 private:
     TMap<FString, FSatelliteStatus> FriendlyTrackedSatellites;
     TMap<FString, FSatelliteStatus> EnemyTrackedSatellites;
-    TSet<ACPP_Satellite*> OverpassingSatellites;
+    TMap<FString, ACPP_Satellite*> OverpassingSatellites;
 };

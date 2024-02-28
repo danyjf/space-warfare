@@ -78,9 +78,13 @@ void ACPP_CameraOrbitController::HandleLeftMouseButtonRelease()
     GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, HitResult);
 
     AActor* HitActor = HitResult.GetActor();
-    UCPP_CameraOrbitableComponent* HitCameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(HitActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
+    if (!IsValid(HitActor) || HitActor == OrbitingActor)
+    {
+        return;
+    }
 
-    if (IsValid(HitActor) && HitActor != OrbitingActor && IsValid(HitCameraOrbitableComponent))
+    UCPP_CameraOrbitableComponent* HitCameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(HitActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
+    if (IsValid(HitCameraOrbitableComponent))
     {
         CameraOrbitableComponent = HitCameraOrbitableComponent;
         SpringArmComponent->TargetArmLength = CameraOrbitableComponent->StartOrbitDistance;
