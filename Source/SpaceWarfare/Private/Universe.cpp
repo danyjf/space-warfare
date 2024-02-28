@@ -6,6 +6,7 @@
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Math/UnrealMathUtility.h"
 
 
 FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(const FOrbitalElements& OrbitalElements, double GM)
@@ -65,6 +66,103 @@ FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(const FOrbitalElem
 	OrbitalState.Velocity.Y *= -1;
 
 	return OrbitalState;
+}
+
+FOrbitalElements UUniverse::ConvertOrbitalStateToOrbitalElements(const FOrbitalState& OrbitalState, double GM)
+{
+    FOrbitalElements OrbitalElements;
+
+    FVector r = OrbitalState.Location;
+    FVector v = OrbitalState.Velocity;
+
+    FVector h = FVector::CrossProduct(r, v);                // Angular momentum
+    FVector n = FVector::CrossProduct(FVector(0, 0, 1), h); // Node vector
+
+    FVector ev = ((v.SizeSquared() - GM / r.Size()) * r - FVector::DotProduct(r, v) * v) / GM;  // Eccentricity vector
+
+    float E = v.SizeSquared() / 2.0f - GM / r.Size();   // Specific orbital energy
+
+    OrbitalElements.SemiMajorAxis = -GM / (2.0f * E);
+    OrbitalElements.Eccentricity = ev.Size();
+
+    // Inclination is the angle between the angular momentum vector and its z component
+    OrbitalElements.Inclination = acos(h.Z / h.Size());
+
+    if (FMath::IsNearlyZero(OrbitalElements.Inclination))
+    {
+        // For non-inclined orbits, the ascending node is undefined; set to zero by convention
+        OrbitalElements.LongitudeOfAscendingNode = 0.0f;
+        if (FMath::IsNearlyZero(OrbitalElements.Eccentricity))
+        {
+            // For circular orbits, place periapsis at ascending node by convention
+            OrbitalElements.ArgumentOfPeriapsis = 0.0f;
+        }
+        else
+        {
+            // Argument of periapsis is the angle between eccentricity vector and its x component.
+            OrbitalElements.ArgumentOfPeriapsis = acos(ev.X / ev.Size());
+        }
+    }
+    else
+    {
+        // Right ascension of ascending node is the angle between the node vector and its x component.
+        OrbitalElements.LongitudeOfAscendingNode = acos(n.X / n.Size());
+        if (n.Y < 0.0f)
+        {
+            OrbitalElements.LongitudeOfAscendingNode = 2 * PI - OrbitalElements.LongitudeOfAscendingNode;
+        }
+
+        // Argument of periapsis is angle between node and eccentricity vectors.
+        OrbitalElements.ArgumentOfPeriapsis = acos(FVector::DotProduct(n, ev) / (n.Size() * ev.Size()));
+    }
+
+    float f = 0.0f;
+    if (FMath::IsNearlyZero(OrbitalElements.Eccentricity))
+    {
+        if (FMath::IsNearlyZero(OrbitalElements.Inclination))
+        {
+            // True anomaly is angle between position vector and its x component.
+            f = acos(r.X / r.Size());
+            if (v.X > 0.0f)
+            {
+                f = 2.0f * PI - f;
+            }
+        }
+        else
+        {
+            // True anomaly is angle between node vector and position vector.
+            f = acos(FVector::DotProduct(n, r) / (n.Size() * r.Size()));
+            if (FVector::DotProduct(n, v) > 0.0f)
+            {
+                f = 2.0f * PI - f;
+            }
+        }
+    }
+    else
+    {
+        if (ev.Z < 0.0f)
+        {
+            OrbitalElements.ArgumentOfPeriapsis = 2.0f * PI - OrbitalElements.ArgumentOfPeriapsis;
+        }
+
+        // True anomaly is angle between eccentricity vector and position vector.
+        f = acos(FVector::DotProduct(ev, r) / (ev.Size() * r.Size()));
+
+        if (FVector::DotProduct(r, v) < 0.0f)
+        {
+            f = 2.0f * PI - f;
+        }
+    }
+
+    // TODO: calculate mean anomaly from true anomaly
+    OrbitalElements.MeanAnomaly = f;
+
+    OrbitalElements.Inclination = UKismetMathLibrary::RadiansToDegrees(OrbitalElements.Inclination);
+    OrbitalElements.LongitudeOfAscendingNode = UKismetMathLibrary::RadiansToDegrees(OrbitalElements.LongitudeOfAscendingNode);
+    OrbitalElements.ArgumentOfPeriapsis = UKismetMathLibrary::RadiansToDegrees(OrbitalElements.ArgumentOfPeriapsis);
+    OrbitalElements.MeanAnomaly = UKismetMathLibrary::RadiansToDegrees(OrbitalElements.MeanAnomaly);
+
+    return OrbitalElements;
 }
 
 FGeographicCoordinates UUniverse::ConvertECILocationToGeographicCoordinates(ACPP_Planet* Planet, FVector Location)

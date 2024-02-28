@@ -102,11 +102,14 @@ public:
 	static FOrbitalState ConvertOrbitalElementsToOrbitalState(const FOrbitalElements& OrbitalElements, double GM);
 
     UFUNCTION(BlueprintCallable)
-	static double GetEarthRotationAngle(double JulianDay);
+	static FOrbitalElements ConvertOrbitalStateToOrbitalElements(const FOrbitalState& OrbitalState, double GM);
 
 	UFUNCTION(BlueprintCallable)
 	static FGeographicCoordinates ConvertECILocationToGeographicCoordinates(ACPP_Planet* Planet, FVector Location);
 
     UFUNCTION(BlueprintCallable)
     static FVector ConvertGeographicCoordinatesToECILocation(ACPP_Planet* Planet, const FGeographicCoordinates& GeographicCoordinates);
+
+    UFUNCTION(BlueprintCallable)
+	static double GetEarthRotationAngle(double JulianDay);
 };
