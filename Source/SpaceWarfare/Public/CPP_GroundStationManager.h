@@ -32,6 +32,15 @@ struct FTorqueCommand : public FSatelliteCommand
     FVector Torque;
 };
 
+USTRUCT(BlueprintType)
+struct FThrustCommand : public FSatelliteCommand
+{
+    GENERATED_BODY();
+
+    UPROPERTY(BlueprintReadWrite)
+    bool IsActive;
+};
+
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FString, SatelliteName);
 
@@ -68,6 +77,9 @@ public:
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSatelliteTorqueCommand(const FTorqueCommand& TorqueCommand);
+
+    UFUNCTION(BlueprintCallable, Server, Reliable)
+    void ServerSatelliteThrustCommand(const FThrustCommand& ThrustCommand);
 
     UFUNCTION(BlueprintCallable)
     void AddGroundStation(ACPP_GroundStation* GroundStation);

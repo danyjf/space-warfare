@@ -4,6 +4,7 @@
 #include "CPP_GroundStationManager.h"
 #include "CPP_GroundStation.h"
 #include "CPP_Satellite.h"
+#include "CPP_Thruster.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -85,6 +86,26 @@ void ACPP_GroundStationManager::ServerSatelliteTorqueCommand_Implementation(cons
 
     UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Satellite->FindComponentByClass(UStaticMeshComponent::StaticClass()));
     StaticMeshComponent->AddTorqueInDegrees(LocalTorque, FName(NAME_None), true);
+}
+
+void ACPP_GroundStationManager::ServerSatelliteThrustCommand_Implementation(const FThrustCommand& ThrustCommand)
+{
+    if (!OverpassingSatellites.Contains(ThrustCommand.SatelliteName))
+    {
+        return;
+    }
+
+    ACPP_Satellite* Satellite = OverpassingSatellites[ThrustCommand.SatelliteName];
+
+    UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
+    if (ThrustCommand.IsActive)
+    {
+        Thruster->ActivateThruster();
+    }
+    else
+    {
+        Thruster->DeactivateThruster();
+    }
 }
 
 void ACPP_GroundStationManager::AddGroundStation(ACPP_GroundStation* GroundStation)
