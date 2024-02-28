@@ -5,9 +5,12 @@
 #include "CPP_GroundStation.h"
 #include "CPP_Satellite.h"
 #include "CPP_Thruster.h"
+#include "CPP_OrbitSpline.h"
+#include "CPP_Planet.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -23,6 +26,7 @@ void ACPP_GroundStationManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
+    Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
 }
 
 // Called every frame
@@ -66,6 +70,14 @@ void ACPP_GroundStationManager::ClientNewFriendlySatelliteTracked_Implementation
 {
     FriendlyTrackedSatellites.Emplace(SatelliteName, SatelliteStatus);
     OnNewFriendlySatelliteDetected.Broadcast(SatelliteName);
+
+    if (!OrbitSplineBlueprint)
+    {
+        return;
+    }
+
+    ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
+    //OrbitSpline->UpdateOrbit(GetTheOrbitalElementsHere, Planet)
 }
 
 void ACPP_GroundStationManager::ClientNewEnemySatelliteTracked_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)

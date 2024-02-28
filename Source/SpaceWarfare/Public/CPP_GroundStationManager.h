@@ -9,11 +9,6 @@
 #include "CPP_GroundStationManager.generated.h"
 
 
-// Forward Declarations
-class ACPP_GroundStation;
-class ACPP_Satellite;
-
-
 USTRUCT(BlueprintType)
 struct FSatelliteCommand
 {
@@ -52,10 +47,13 @@ class SPACEWARFARE_API ACPP_GroundStationManager : public AActor
 	
 public:	
     UPROPERTY(BlueprintReadWrite)
-    TArray<ACPP_GroundStation*> GroundStations;
+    TArray<class ACPP_GroundStation*> GroundStations;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int PlayerNumber;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
 
     UPROPERTY(BlueprintAssignable)
     FNewSatelliteDetected OnNewFriendlySatelliteDetected;
@@ -64,10 +62,10 @@ public:
     FNewSatelliteDetected OnNewEnemySatelliteDetected;
 
     UFUNCTION(BlueprintCallable)
-    void SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite);
+    void SatelliteEnteredOverpassArea(class ACPP_Satellite* Satellite);
 
     UFUNCTION(BlueprintCallable)
-    void SatelliteExitedOverpassArea(ACPP_Satellite* Satellite);
+    void SatelliteExitedOverpassArea(class ACPP_Satellite* Satellite);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientNewFriendlySatelliteTracked(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
@@ -82,7 +80,7 @@ public:
     void ServerSatelliteThrustCommand(const FThrustCommand& ThrustCommand);
 
     UFUNCTION(BlueprintCallable)
-    void AddGroundStation(ACPP_GroundStation* GroundStation);
+    void AddGroundStation(class ACPP_GroundStation* GroundStation);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -98,4 +96,5 @@ private:
     TMap<FString, FSatelliteStatus> FriendlyTrackedSatellites;
     TMap<FString, FSatelliteStatus> EnemyTrackedSatellites;
     TMap<FString, ACPP_Satellite*> OverpassingSatellites;
+    class ACPP_Planet* Planet;
 };
