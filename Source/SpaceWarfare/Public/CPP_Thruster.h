@@ -16,9 +16,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float ThrusterStrength;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float TorqueStrength;
-
     UPROPERTY(BlueprintReadWrite)
     UStaticMeshComponent* StaticMeshComponent;
 

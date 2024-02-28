@@ -6,6 +6,7 @@
 #include "CPP_Satellite.h"
 
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 // Sets default values
@@ -34,7 +35,7 @@ void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Sat
 {
     if (Satellite->PlayerNumber == PlayerNumber)
     {
-        OverpassingSatellites.Add(Satellite);
+        OverpassingSatellites.Emplace(Satellite->Name, Satellite);
 
         if (!FriendlyTrackedSatellites.Contains(Satellite->Name))
         {
@@ -56,7 +57,7 @@ void ACPP_GroundStationManager::SatelliteExitedOverpassArea(ACPP_Satellite* Sate
 {
     if (Satellite->PlayerNumber == PlayerNumber)
     {
-        OverpassingSatellites.Remove(Satellite);
+        OverpassingSatellites.Remove(Satellite->Name);
     }
 }
 
@@ -72,9 +73,18 @@ void ACPP_GroundStationManager::ClientNewEnemySatelliteTracked_Implementation(co
     OnNewEnemySatelliteDetected.Broadcast(SatelliteName);
 }
 
-void ACPP_GroundStationManager::ServerRunSatelliteCommand_Implementation(const FString& SatelliteName)
+void ACPP_GroundStationManager::ServerSatelliteTorqueCommand_Implementation(const FTorqueCommand& TorqueCommand)
 {
-    
+    if (!OverpassingSatellites.Contains(TorqueCommand.SatelliteName))
+    {
+        return;
+    }
+
+    ACPP_Satellite* Satellite = OverpassingSatellites[TorqueCommand.SatelliteName];
+    FVector LocalTorque = UKismetMathLibrary::TransformDirection(Satellite->GetActorTransform(), TorqueCommand.Torque);
+
+    UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Satellite->FindComponentByClass(UStaticMeshComponent::StaticClass()));
+    StaticMeshComponent->AddTorqueInDegrees(LocalTorque, FName(NAME_None), true);
 }
 
 void ACPP_GroundStationManager::AddGroundStation(ACPP_GroundStation* GroundStation)
