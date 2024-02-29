@@ -61,10 +61,7 @@ FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(const FOrbitalElem
 	OrbitalState.Velocity.Z = OrbitalVelocity.X * (sin(w) * sin(i)) +
 		OrbitalVelocity.Y * (cos(w) * sin(i));
 
-	// Transform to left hand coordinate system
-	//OrbitalState.Location.Y *= -1;
     OrbitalState.Location = ToLeftHandSystem(OrbitalState.Location);
-	//OrbitalState.Velocity.Y *= -1;
     OrbitalState.Velocity = ToLeftHandSystem(OrbitalState.Velocity);
 
 	return OrbitalState;
@@ -75,9 +72,7 @@ FOrbitalElements UUniverse::ConvertOrbitalStateToOrbitalElements(const FOrbitalS
     FOrbitalElements OrbitalElements;
 
     FVector r = ToRightHandSystem(OrbitalState.Location);
-    //r.Y *= -1;
     FVector v = ToRightHandSystem(OrbitalState.Velocity);
-    //v.Y *= -1;
 
     FVector h = FVector::CrossProduct(r, v);                // Angular momentum
     FVector n = FVector::CrossProduct(FVector(0, 0, 1), h); // Node vector
@@ -175,11 +170,11 @@ FGeographicCoordinates UUniverse::ConvertECILocationToGeographicCoordinates(ACPP
 	
     Location = ToRightHandSystem(Location);
 
-    // calculate latitude
+    // Calculate latitude
 	GeographicCoordinates.Latitude = atan(Location.Z / sqrt(pow(Location.X, 2) + pow(Location.Y, 2)));
 	GeographicCoordinates.Latitude = UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Latitude);
 	
-    // calculate longitude
+    // Calculate longitude
 	float EarthRotationAngle = -UKismetMathLibrary::DegreesToRadians(Planet->GetActorRotation().Yaw);
 	if (EarthRotationAngle < 0)
 	{
@@ -189,7 +184,7 @@ FGeographicCoordinates UUniverse::ConvertECILocationToGeographicCoordinates(ACPP
 	GeographicCoordinates.Longitude = atan2(Location.Y, Location.X) - EarthRotationAngle;
 	GeographicCoordinates.Longitude = FRotator::NormalizeAxis(UKismetMathLibrary::RadiansToDegrees(GeographicCoordinates.Longitude));
 
-    // calculate altitude
+    // Calculate altitude
 	GeographicCoordinates.Altitude = Location.Length() - (Planet->GetActorScale().X / 2);
 
 	return GeographicCoordinates;
@@ -199,7 +194,6 @@ FVector UUniverse::ConvertGeographicCoordinatesToECILocation(ACPP_Planet* Planet
 {
     FVector ECIPosition;
 
-    //ECIPosition.Set(0, 0, Planet->GetActorScale().X / 2);
 	float EarthRotationAngle = -UKismetMathLibrary::DegreesToRadians(Planet->GetActorRotation().Yaw);
 	if (EarthRotationAngle < 0)
 	{
@@ -218,7 +212,7 @@ FVector UUniverse::ConvertGeographicCoordinatesToECILocation(ACPP_Planet* Planet
 
 double UUniverse::GetEarthRotationAngle(double JulianDay)
 {
-	// is negative because of unreal's left handed system
+	// Is negative because of unreal's left handed system
 	return -UKismetMathLibrary::RadiansToDegrees(2 * PI * (0.7790572732640 + 1.00273781191135448 * (JulianDay - 2451545.0)));
 }
 
