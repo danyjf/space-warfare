@@ -118,4 +118,7 @@ public:
 
     UFUNCTION(BlueprintCallable)
     static FVector ToLeftHandSystem(const FVector& Vector);
+
+    UFUNCTION(BlueprintCallable)
+    static float GetMeanAnomaly(float Eccentricity, float TrueAnomaly);
 };

@@ -153,8 +153,7 @@ FOrbitalElements UUniverse::ConvertOrbitalStateToOrbitalElements(const FOrbitalS
         }
     }
 
-    // TODO: calculate mean anomaly from true anomaly
-    OrbitalElements.MeanAnomaly = f;
+    OrbitalElements.MeanAnomaly = GetMeanAnomaly(OrbitalElements.Eccentricity, f);
 
     OrbitalElements.Inclination = UKismetMathLibrary::RadiansToDegrees(OrbitalElements.Inclination);
     OrbitalElements.LongitudeOfAscendingNode = UKismetMathLibrary::RadiansToDegrees(OrbitalElements.LongitudeOfAscendingNode);
@@ -224,4 +223,9 @@ FVector UUniverse::ToRightHandSystem(const FVector& Vector)
 FVector UUniverse::ToLeftHandSystem(const FVector& Vector)
 {
     return FVector(Vector.X, -Vector.Y, Vector.Z);
+}
+
+float UUniverse::GetMeanAnomaly(float Eccentricity, float TrueAnomaly)
+{
+    return atan2(-sqrt(1 - pow(Eccentricity, 2.0f)) * sin(TrueAnomaly), -Eccentricity - cos(TrueAnomaly)) + PI - Eccentricity * (sqrt(1 - pow(Eccentricity, 2.0f)) * sin(TrueAnomaly)) / (1 + Eccentricity * cos(TrueAnomaly));
 }
