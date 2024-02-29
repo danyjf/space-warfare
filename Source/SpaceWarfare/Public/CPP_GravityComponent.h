@@ -15,6 +15,9 @@ class SPACEWARFARE_API UCPP_GravityComponent : public UActorComponent
 public:	
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FBodyInstanceAsyncPhysicsTickHandle RigidBody;
+    
+    UPROPERTY(Replicated, BlueprintReadWrite)
+    double GravitationalParameter;  // gravitational constant multiplied by mass
 
     UFUNCTION(BlueprintCallable)
     void AddGravityForce(const FVector& Force);
@@ -46,13 +49,14 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 private:
     double Mass;                    // in kilograms
-    double GravitationalParameter;  // gravitational constant multiplied by mass
     FVector GravityForce;           // sum of gravitational forces exerted on this actor
     FVector Velocity;               // current velocity of this actor
 };

@@ -119,11 +119,6 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 
 			    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
 
-                UE_LOG(LogTemp, Warning, TEXT("OriginalOrbitalElements > %s"), *UUniverse::OrbitalElementsToString(SatelliteConfig.OrbitalElements));
-                UE_LOG(LogTemp, Warning, TEXT("OrbitalState > %s"), *UUniverse::OrbitalStateToString(OrbitalState));
-                FOrbitalElements ComputedOrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, SimulationConfig.Planet.GM);
-                UE_LOG(LogTemp, Warning, TEXT("ComputedOrbitalElements > %s"), *UUniverse::OrbitalElementsToString(ComputedOrbitalElements));
-
                 Satellite->SetActorLocation(OrbitalState.Location);
                 Satellite->SetActorScale3D(FVector(SatelliteConfig.Size));
                 GravityComponent->SetVelocity(OrbitalState.Velocity);

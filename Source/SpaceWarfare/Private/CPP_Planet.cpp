@@ -3,11 +3,20 @@
 
 #include "CPP_Planet.h"
 #include "Universe.h"
+#include "CPP_GravityComponent.h"
 
 
 ACPP_Planet::ACPP_Planet()
 {
     PrimaryActorTick.bCanEverTick = true;
+}
+
+// Called when the game starts or when spawned
+void ACPP_Planet::BeginPlay()
+{
+	Super::BeginPlay();
+	
+    MyGravityComponent = Cast<UCPP_GravityComponent>(GetComponentByClass<UCPP_GravityComponent>());
 }
 
 // Called every frame

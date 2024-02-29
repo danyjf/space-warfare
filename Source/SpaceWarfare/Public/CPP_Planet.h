@@ -20,9 +20,16 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRotator RotationSpeed;
 
+    UPROPERTY()
+    class UCPP_GravityComponent* MyGravityComponent;
+
     UFUNCTION(BlueprintCallable)
     void SetRotationAtEpoch(const FDateTime& Epoch);
 
     ACPP_Planet();    
 	virtual void Tick(float DeltaTime) override;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 };

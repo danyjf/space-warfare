@@ -4,6 +4,7 @@
 #include "CPP_GravityComponent.h"
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
 UCPP_GravityComponent::UCPP_GravityComponent()
@@ -27,6 +28,13 @@ void UCPP_GravityComponent::BeginPlay()
 void UCPP_GravityComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+
+void UCPP_GravityComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME(UCPP_GravityComponent, GravitationalParameter);
 }
 
 void UCPP_GravityComponent::SetMass(double Value)

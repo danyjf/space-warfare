@@ -7,6 +7,8 @@
 #include "CPP_Thruster.h"
 #include "CPP_OrbitSpline.h"
 #include "CPP_Planet.h"
+#include "Universe.h"
+#include "CPP_GravityComponent.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -77,7 +79,26 @@ void ACPP_GroundStationManager::ClientNewFriendlySatelliteTracked_Implementation
     }
 
     ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
-    //OrbitSpline->UpdateOrbit(GetTheOrbitalElementsHere, Planet)
+
+    FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->MyGravityComponent->GetGravitationalParameter());
+
+    OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
+    /*
+    *   ISS     ->  Err
+    *   Test1   ->  Ok
+    *   Test2   ->  Ok
+    *   Test3   ->  Err
+    *   
+    *   Error happening because GM is 0.0 on the client 
+    */
+    if (SatelliteName == "ISS")
+    {
+        UE_LOG(LogTemp, Warning, TEXT("GM> %f"), Planet->MyGravityComponent->GetGravitationalParameter());
+        UE_LOG(LogTemp, Warning, TEXT("OrbitalState> %s"), *UUniverse::OrbitalStateToString(OrbitalState));
+        UE_LOG(LogTemp, Warning, TEXT("OrbitalElements> %s"), *UUniverse::OrbitalElementsToString(OrbitalElements));
+        //OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
+    }
 }
 
 void ACPP_GroundStationManager::ClientNewEnemySatelliteTracked_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
