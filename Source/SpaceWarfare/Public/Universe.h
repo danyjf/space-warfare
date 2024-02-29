@@ -112,4 +112,10 @@ public:
 
     UFUNCTION(BlueprintCallable)
 	static double GetEarthRotationAngle(double JulianDay);
+
+    UFUNCTION(BlueprintCallable)
+    static FVector ToRightHandSystem(const FVector& Vector);
+
+    UFUNCTION(BlueprintCallable)
+    static FVector ToLeftHandSystem(const FVector& Vector);
 };

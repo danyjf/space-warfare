@@ -62,8 +62,10 @@ FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(const FOrbitalElem
 		OrbitalVelocity.Y * (cos(w) * sin(i));
 
 	// Transform to left hand coordinate system
-	OrbitalState.Location.Y *= -1;
-	OrbitalState.Velocity.Y *= -1;
+	//OrbitalState.Location.Y *= -1;
+    OrbitalState.Location = ToLeftHandSystem(OrbitalState.Location);
+	//OrbitalState.Velocity.Y *= -1;
+    OrbitalState.Velocity = ToLeftHandSystem(OrbitalState.Velocity);
 
 	return OrbitalState;
 }
@@ -72,10 +74,10 @@ FOrbitalElements UUniverse::ConvertOrbitalStateToOrbitalElements(const FOrbitalS
 {
     FOrbitalElements OrbitalElements;
 
-    FVector r = OrbitalState.Location;
-    r.X *= -1;
-    FVector v = OrbitalState.Velocity;
-    v.X *= -1;
+    FVector r = ToRightHandSystem(OrbitalState.Location);
+    //r.Y *= -1;
+    FVector v = ToRightHandSystem(OrbitalState.Velocity);
+    //v.Y *= -1;
 
     FVector h = FVector::CrossProduct(r, v);                // Angular momentum
     FVector n = FVector::CrossProduct(FVector(0, 0, 1), h); // Node vector
@@ -171,7 +173,7 @@ FGeographicCoordinates UUniverse::ConvertECILocationToGeographicCoordinates(ACPP
 {
 	FGeographicCoordinates GeographicCoordinates;
 	
-	Location.Y = -Location.Y;	// transform location to right hand coordinate system
+    Location = ToRightHandSystem(Location);
 
     // calculate latitude
 	GeographicCoordinates.Latitude = atan(Location.Z / sqrt(pow(Location.X, 2) + pow(Location.Y, 2)));
@@ -218,4 +220,14 @@ double UUniverse::GetEarthRotationAngle(double JulianDay)
 {
 	// is negative because of unreal's left handed system
 	return -UKismetMathLibrary::RadiansToDegrees(2 * PI * (0.7790572732640 + 1.00273781191135448 * (JulianDay - 2451545.0)));
+}
+
+FVector UUniverse::ToRightHandSystem(const FVector& Vector)
+{
+    return FVector(Vector.X, -Vector.Y, Vector.Z);
+}
+
+FVector UUniverse::ToLeftHandSystem(const FVector& Vector)
+{
+    return FVector(Vector.X, -Vector.Y, Vector.Z);
 }
