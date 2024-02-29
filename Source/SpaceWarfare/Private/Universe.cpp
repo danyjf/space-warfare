@@ -18,7 +18,7 @@ FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(const FOrbitalElem
 	float w = UKismetMathLibrary::DegreesToRadians(OrbitalElements.ArgumentOfPeriapsis);
 	float M = UKismetMathLibrary::DegreesToRadians(OrbitalElements.MeanAnomaly);
 
-	// Solve Kepler’s Equation for the eccentric anomaly using Newton's method
+	// Solve Keplers Equation for the eccentric anomaly using Newton's method
 	float E = M;
 	float F = E - e * sin(E) - M;
 	float Delta = 0.000001;
@@ -73,14 +73,16 @@ FOrbitalElements UUniverse::ConvertOrbitalStateToOrbitalElements(const FOrbitalS
     FOrbitalElements OrbitalElements;
 
     FVector r = OrbitalState.Location;
+    r.X *= -1;
     FVector v = OrbitalState.Velocity;
+    v.X *= -1;
 
     FVector h = FVector::CrossProduct(r, v);                // Angular momentum
     FVector n = FVector::CrossProduct(FVector(0, 0, 1), h); // Node vector
 
     FVector ev = ((v.SizeSquared() - GM / r.Size()) * r - FVector::DotProduct(r, v) * v) / GM;  // Eccentricity vector
 
-    float E = v.SizeSquared() / 2.0f - GM / r.Size();   // Specific orbital energy
+    float E = v.SizeSquared() / 2.0f - GM / r.Size();       // Specific orbital energy
 
     OrbitalElements.SemiMajorAxis = -GM / (2.0f * E);
     OrbitalElements.Eccentricity = ev.Size();

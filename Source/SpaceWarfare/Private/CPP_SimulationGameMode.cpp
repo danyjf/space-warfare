@@ -118,6 +118,15 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 			    }
 
 			    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
+
+                //UKismetSystemLibrary::PrintString(GetWorld(), FString::Printf(TEXT("OriginalOrbitalElements > Eccentricity: %f; SemiMajorAxis: %f; Inclination: %f; LongitudeOfAscendingNode: %f; ArgumentOfPeriapsis: %f; MeanAnomaly: %f"), SatelliteConfig.OrbitalElements.Eccentricity, SatelliteConfig.OrbitalElements.SemiMajorAxis, SatelliteConfig.OrbitalElements.Inclination, SatelliteConfig.OrbitalElements.LongitudeOfAscendingNode, SatelliteConfig.OrbitalElements.ArgumentOfPeriapsis, SatelliteConfig.OrbitalElements.MeanAnomaly));
+                UE_LOG(LogTemp, Warning, TEXT("OriginalOrbitalElements > Eccentricity: %f; SemiMajorAxis: %f; Inclination: %f; LongitudeOfAscendingNode: %f; ArgumentOfPeriapsis: %f; MeanAnomaly: %f"), SatelliteConfig.OrbitalElements.Eccentricity, SatelliteConfig.OrbitalElements.SemiMajorAxis, SatelliteConfig.OrbitalElements.Inclination, SatelliteConfig.OrbitalElements.LongitudeOfAscendingNode, SatelliteConfig.OrbitalElements.ArgumentOfPeriapsis, SatelliteConfig.OrbitalElements.MeanAnomaly);
+                //UKismetSystemLibrary::PrintString(GetWorld(), FString::Printf(TEXT("OrbitalState > Position: %s; Velocity: %s"), *OrbitalState.Location.ToString(), *OrbitalState.Velocity.ToString()));
+                UE_LOG(LogTemp, Warning, TEXT("OrbitalState > Position: %s; Velocity: %s"), *OrbitalState.Location.ToString(), *OrbitalState.Velocity.ToString());
+                FOrbitalElements ComputedOrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, SimulationConfig.Planet.GM);
+                //UKismetSystemLibrary::PrintString(GetWorld(), FString::Printf(TEXT("ComputedOrbitalElements > Eccentricity: %f; SemiMajorAxis: %f; Inclination: %f; LongitudeOfAscendingNode: %f; ArgumentOfPeriapsis: %f; MeanAnomaly: %f"), ComputedOrbitalElements.Eccentricity, ComputedOrbitalElements.SemiMajorAxis, ComputedOrbitalElements.Inclination, ComputedOrbitalElements.LongitudeOfAscendingNode, ComputedOrbitalElements.ArgumentOfPeriapsis, ComputedOrbitalElements.MeanAnomaly));
+                UE_LOG(LogTemp, Warning, TEXT("ComputedOrbitalElements > Eccentricity: %f; SemiMajorAxis: %f; Inclination: %f; LongitudeOfAscendingNode: %f; ArgumentOfPeriapsis: %f; MeanAnomaly: %f"), ComputedOrbitalElements.Eccentricity, ComputedOrbitalElements.SemiMajorAxis, ComputedOrbitalElements.Inclination, ComputedOrbitalElements.LongitudeOfAscendingNode, ComputedOrbitalElements.ArgumentOfPeriapsis, ComputedOrbitalElements.MeanAnomaly);
+
                 Satellite->SetActorLocation(OrbitalState.Location);
                 Satellite->SetActorScale3D(FVector(SatelliteConfig.Size));
                 GravityComponent->SetVelocity(OrbitalState.Velocity);
