@@ -229,3 +229,13 @@ float UUniverse::GetMeanAnomaly(float Eccentricity, float TrueAnomaly)
 {
     return atan2(-sqrt(1 - pow(Eccentricity, 2.0f)) * sin(TrueAnomaly), -Eccentricity - cos(TrueAnomaly)) + PI - Eccentricity * (sqrt(1 - pow(Eccentricity, 2.0f)) * sin(TrueAnomaly)) / (1 + Eccentricity * cos(TrueAnomaly));
 }
+
+FString UUniverse::OrbitalElementsToString(const FOrbitalElements& OrbitalElements)
+{
+    return FString::Printf(TEXT("Eccentricity: %f; SemiMajorAxis: %f; Inclination: %f; LongitudeOfAscendingNode: %f; ArgumentOfPeriapsis: %f; MeanAnomaly: %f"), OrbitalElements.Eccentricity, OrbitalElements.SemiMajorAxis, OrbitalElements.Inclination, OrbitalElements.LongitudeOfAscendingNode, OrbitalElements.ArgumentOfPeriapsis, OrbitalElements.MeanAnomaly);
+}
+
+FString UUniverse::OrbitalStateToString(const FOrbitalState& OrbitalState)
+{
+    return FString::Printf(TEXT("Location: %s; Velocity: %s"), *OrbitalState.Location.ToString(), *OrbitalState.Velocity.ToString());
+}

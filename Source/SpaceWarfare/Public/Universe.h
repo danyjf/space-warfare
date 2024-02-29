@@ -121,4 +121,10 @@ public:
 
     UFUNCTION(BlueprintCallable)
     static float GetMeanAnomaly(float Eccentricity, float TrueAnomaly);
+
+    UFUNCTION(BlueprintCallable)
+    static FString OrbitalElementsToString(const FOrbitalElements& OrbitalElements);
+
+    UFUNCTION(BlueprintCallable)
+    static FString OrbitalStateToString(const FOrbitalState& OrbitalState);
 };
