@@ -37,8 +37,12 @@ void ACPP_CameraOrbitController::Tick(float DeltaTime)
     if (!OrbitingActor)
     {
         OrbitingActor = UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass());
-        CameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(OrbitingActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
-        PlayerPawn->SetActorLocation(OrbitingActor->GetActorLocation());
+        if (OrbitingActor)
+        {
+            CameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(OrbitingActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
+            PlayerPawn->SetActorLocation(OrbitingActor->GetActorLocation());
+        }
+        return;
     }
 
     switch (InputMode)
