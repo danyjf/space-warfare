@@ -7,6 +7,7 @@
 #include "CPP_GravityComponent.h"
 #include "CPP_GravityManager.h"
 #include "CPP_SimulationGameMode.h"
+#include "CPP_GroundStationManager.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -55,4 +56,13 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
     SatelliteGravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * Mass);
 
     GravityManager->GravityComponents.Add(SatelliteGravityComponent);
+
+    // TODO: Change later, this is just to show the satellite on all players when it is launched
+    TArray<AActor*> GroundStationManagers;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);
+    for (AActor* Actor : GroundStationManagers)
+    {
+        ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
+        GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
+    }
 }

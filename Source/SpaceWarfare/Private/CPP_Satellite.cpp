@@ -32,9 +32,6 @@ void ACPP_Satellite::Tick(float DeltaTime)
     if (HasAuthority())
     {
 	    GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
-        SatelliteStatus.Position = GetActorLocation();
-        SatelliteStatus.Rotation = GetActorRotation();
-        SatelliteStatus.Velocity = GravityComponent->GetVelocity();
     }
 }
 

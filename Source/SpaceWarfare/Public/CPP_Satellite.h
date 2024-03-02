@@ -31,14 +31,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ACPP_Planet* OrbitingPlanet;
 
+    UCPP_GravityComponent* GravityComponent;
+
     UFUNCTION(BlueprintCallable)
 	const FGeographicCoordinates& GetGeographicCoordinates() const;
 
     UFUNCTION(BlueprintCallable)
     void PrintGeographicCoordinates();
 
-    UFUNCTION(BlueprintCallable)
-    const FSatelliteStatus& GetSatelliteStatus() const { return SatelliteStatus; }
+    //UFUNCTION(BlueprintCallable)
+    //const FSatelliteStatus& GetSatelliteStatus() const { return SatelliteStatus; }
 
     ACPP_Satellite();    
 	virtual void Tick(float DeltaTime) override;
@@ -49,7 +51,5 @@ protected:
 
 private:
 	FGeographicCoordinates GeographicCoordinates;
-    FSatelliteStatus SatelliteStatus;
     ACPP_SimulationGameMode* SimulationGameMode;
-    UCPP_GravityComponent* GravityComponent;
 };

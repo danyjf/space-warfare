@@ -40,22 +40,24 @@ void ACPP_GroundStationManager::Tick(float DeltaTime)
 
 void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite)
 {
+    FSatelliteStatus SatelliteStatus(Satellite->GetActorLocation(), Satellite->GetActorRotation(), Satellite->GravityComponent->GetVelocity());
+
     if (Satellite->PlayerNumber == PlayerNumber)
     {
         OverpassingSatellites.Emplace(Satellite->Name, Satellite);
 
         if (!FriendlyTrackedSatellites.Contains(Satellite->Name))
         {
-            FriendlyTrackedSatellites.Emplace(Satellite->Name, Satellite->GetSatelliteStatus());
-            ClientNewFriendlySatelliteTracked(Satellite->Name, Satellite->GetSatelliteStatus());
+            FriendlyTrackedSatellites.Emplace(Satellite->Name, SatelliteStatus);
+            ClientNewFriendlySatelliteTracked(Satellite->Name, SatelliteStatus);
         }
     }
     else
     {
         if (!EnemyTrackedSatellites.Contains(Satellite->Name))
         {
-            EnemyTrackedSatellites.Emplace(Satellite->Name, Satellite->GetSatelliteStatus());
-            ClientNewEnemySatelliteTracked(Satellite->Name, Satellite->GetSatelliteStatus());
+            EnemyTrackedSatellites.Emplace(Satellite->Name, SatelliteStatus);
+            ClientNewEnemySatelliteTracked(Satellite->Name, SatelliteStatus);
         }
     }
 }
