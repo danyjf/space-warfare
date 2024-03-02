@@ -106,6 +106,9 @@ public:
     UPROPERTY(BlueprintReadOnly)
 	FDateTime CurrentEpoch;
 
+	UFUNCTION(BlueprintCallable)
+	void InitializeSimulationVariables();
+
 	ACPP_SimulationGameMode();
 
 	// Called at a fixed DeltaTime to update physics
@@ -113,9 +116,6 @@ public:
 
     // Called after each player logs in
     virtual void PostLogin(APlayerController* NewPlayer) override;
-
-	UFUNCTION(BlueprintCallable)
-	void InitializeSimulationVariables();
 
 private:
 	FDateTime InitialEpoch;

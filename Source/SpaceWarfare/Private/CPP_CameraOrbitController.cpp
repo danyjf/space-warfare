@@ -25,18 +25,25 @@ void ACPP_CameraOrbitController::BeginPlay()
 {
 	Super::BeginPlay();
 
-    OrbitingActor = UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass());
-    CameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(OrbitingActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
     PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
     SpringArmComponent = Cast<USpringArmComponent>(PlayerPawn->GetComponentByClass(USpringArmComponent::StaticClass()));
-
-    PlayerPawn->SetActorLocation(OrbitingActor->GetActorLocation());
 }
 
 // Called every frame
 void ACPP_CameraOrbitController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+    if (!OrbitingActor)
+    {
+        OrbitingActor = UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass());
+        if (OrbitingActor)
+        {
+            CameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(OrbitingActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
+            PlayerPawn->SetActorLocation(OrbitingActor->GetActorLocation());
+        }
+        return;
+    }
 
     switch (InputMode)
     {

@@ -5,9 +5,14 @@
 #include "CPP_GroundStation.h"
 #include "CPP_Satellite.h"
 #include "CPP_Thruster.h"
+#include "CPP_OrbitSpline.h"
+#include "CPP_Planet.h"
+#include "Universe.h"
+#include "CPP_GravityComponent.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -23,6 +28,7 @@ void ACPP_GroundStationManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
+    Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
 }
 
 // Called every frame
@@ -34,22 +40,24 @@ void ACPP_GroundStationManager::Tick(float DeltaTime)
 
 void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite)
 {
+    FSatelliteStatus SatelliteStatus(Satellite->GetActorLocation(), Satellite->GetActorRotation(), Satellite->GravityComponent->GetVelocity());
+
     if (Satellite->PlayerNumber == PlayerNumber)
     {
         OverpassingSatellites.Emplace(Satellite->Name, Satellite);
 
         if (!FriendlyTrackedSatellites.Contains(Satellite->Name))
         {
-            FriendlyTrackedSatellites.Emplace(Satellite->Name, Satellite->GetSatelliteStatus());
-            ClientNewFriendlySatelliteTracked(Satellite->Name, Satellite->GetSatelliteStatus());
+            FriendlyTrackedSatellites.Emplace(Satellite->Name, SatelliteStatus);
+            ClientNewFriendlySatelliteTracked(Satellite->Name, SatelliteStatus);
         }
     }
     else
     {
         if (!EnemyTrackedSatellites.Contains(Satellite->Name))
         {
-            EnemyTrackedSatellites.Emplace(Satellite->Name, Satellite->GetSatelliteStatus());
-            ClientNewEnemySatelliteTracked(Satellite->Name, Satellite->GetSatelliteStatus());
+            EnemyTrackedSatellites.Emplace(Satellite->Name, SatelliteStatus);
+            ClientNewEnemySatelliteTracked(Satellite->Name, SatelliteStatus);
         }
     }
 }
@@ -66,12 +74,40 @@ void ACPP_GroundStationManager::ClientNewFriendlySatelliteTracked_Implementation
 {
     FriendlyTrackedSatellites.Emplace(SatelliteName, SatelliteStatus);
     OnNewFriendlySatelliteDetected.Broadcast(SatelliteName);
+
+    // Create the orbit spline of the satellite
+    if (!OrbitSplineBlueprint)
+    {
+        return;
+    }
+
+    ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
+
+    FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->MyGravityComponent->GetGravitationalParameter());
+
+    OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
+    OrbitSpline->SetColor(FLinearColor::Green);
 }
 
 void ACPP_GroundStationManager::ClientNewEnemySatelliteTracked_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
 {
     EnemyTrackedSatellites.Emplace(SatelliteName, SatelliteStatus);
     OnNewEnemySatelliteDetected.Broadcast(SatelliteName);
+
+    // Create the orbit spline of the satellite
+    if (!OrbitSplineBlueprint)
+    {
+        return;
+    }
+
+    ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
+
+    FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->MyGravityComponent->GetGravitationalParameter());
+
+    OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
+    OrbitSpline->SetColor(FLinearColor::Red);
 }
 
 void ACPP_GroundStationManager::ServerSatelliteTorqueCommand_Implementation(const FTorqueCommand& TorqueCommand)

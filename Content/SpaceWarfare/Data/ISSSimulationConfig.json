@@ -29,7 +29,7 @@
             "mass": 1410,
             "size": 100,
             "orbitalElements": {
-                "eccentricity": 0.19131,
+                "eccentricity": 0.09131,
                 "semiMajorAxis": 7726,
                 "inclination": 51.792,
                 "longitudeOfAscendingNode": 144.79,
@@ -45,8 +45,8 @@
             "orbitalElements": {
                 "eccentricity": 0.008,
                 "semiMajorAxis": 7000,
-                "inclination": 200,
-                "longitudeOfAscendingNode": -30,
+                "inclination": 170,
+                "longitudeOfAscendingNode": 30,
                 "argumentOfPeriapsis": 70,
                 "meanAnomaly": -30,
                 "epoch": "2023-10-23T12:19:42.000Z"
@@ -59,7 +59,7 @@
             "orbitalElements": {
                 "eccentricity": 0.0002,
                 "semiMajorAxis": 8000,
-                "inclination": 15,
+                "inclination": 100,
                 "longitudeOfAscendingNode": 170,
                 "argumentOfPeriapsis": 27,
                 "meanAnomaly": 2,

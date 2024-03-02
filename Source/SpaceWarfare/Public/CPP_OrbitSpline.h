@@ -30,6 +30,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void UpdateOrbit(FOrbitalElements OrbitalElements, class ACPP_Planet* Planet);
 
+    UFUNCTION(BlueprintCallable)
+    void SetColor(FLinearColor Color);
+
     virtual void OnConstruction(const FTransform& Transform) override;
 
 	// Called every frame
@@ -50,6 +53,7 @@ protected:
 
 private:
     TArray<USplineMeshComponent*> SplineMeshComponents;
+    UMaterialInstanceDynamic* DynamicMaterial;
 
     void CreateSplineMeshComponent(const FVector& StartPoint, const FVector& StartTangent, const FVector& EndPoint, const FVector& EndTangent);
 };

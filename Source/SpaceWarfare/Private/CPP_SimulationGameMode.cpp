@@ -118,6 +118,7 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 			    }
 
 			    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
+
                 Satellite->SetActorLocation(OrbitalState.Location);
                 Satellite->SetActorScale3D(FVector(SatelliteConfig.Size));
                 GravityComponent->SetVelocity(OrbitalState.Velocity);

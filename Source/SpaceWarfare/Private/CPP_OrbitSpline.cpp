@@ -33,6 +33,9 @@ void ACPP_OrbitSpline::OnConstruction(const FTransform& Transform)
     {
         return;
     }
+
+    UMaterialInterface* Material = SplineMesh->GetMaterial(0);
+    DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
     
     SplineComponent->ClearSplinePoints();
 
@@ -76,6 +79,7 @@ void ACPP_OrbitSpline::OnConstruction(const FTransform& Transform)
 void ACPP_OrbitSpline::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 // Called every frame
@@ -94,6 +98,7 @@ void ACPP_OrbitSpline::CreateSplineMeshComponent(const FVector& StartPoint, cons
     SplineMeshComponent->RegisterComponentWithWorld(GetWorld());
     SplineMeshComponent->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
     SplineMeshComponent->SetCastShadow(false);
+    SplineMeshComponent->SetMaterial(0, DynamicMaterial);
 
     SplineMeshComponent->SetForwardAxis(ForwardAxis);
     SplineMeshComponent->SetStartScale(FVector2D(SplineMeshScale));
@@ -133,4 +138,9 @@ void ACPP_OrbitSpline::UpdateOrbit(FOrbitalElements OrbitalElements, ACPP_Planet
     const FVector EndPoint = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::Local);
     const FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(0, ESplineCoordinateSpace::Local);
     SplineMeshComponents[SplineMeshComponents.Num() - 1]->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent);
+}
+
+void ACPP_OrbitSpline::SetColor(FLinearColor Color)
+{
+    DynamicMaterial->SetVectorParameterValue(TEXT("Color"), Color);
 }
