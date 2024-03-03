@@ -8,11 +8,6 @@
 #include "CPP_Satellite.generated.h"
 
 
-// Forward declarations
-class ACPP_SimulationGameMode;
-class UCPP_GravityComponent;
-
-
 /**
  * 
  */
@@ -29,9 +24,9 @@ public:
     int PlayerNumber;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ACPP_Planet* OrbitingPlanet;
+	class ACPP_Planet* OrbitingPlanet;
 
-    UCPP_GravityComponent* GravityComponent;
+    class UCPP_GravityComponent* GravityComponent;
 
     UFUNCTION(BlueprintCallable)
 	const FGeographicCoordinates& GetGeographicCoordinates() const;
@@ -39,10 +34,8 @@ public:
     UFUNCTION(BlueprintCallable)
     void PrintGeographicCoordinates();
 
-    //UFUNCTION(BlueprintCallable)
-    //const FSatelliteStatus& GetSatelliteStatus() const { return SatelliteStatus; }
-
     ACPP_Satellite();    
+
 	virtual void Tick(float DeltaTime) override;
 
 protected:
@@ -51,5 +44,5 @@ protected:
 
 private:
 	FGeographicCoordinates GeographicCoordinates;
-    ACPP_SimulationGameMode* SimulationGameMode;
+    class ACPP_SimulationGameMode* SimulationGameMode;
 };

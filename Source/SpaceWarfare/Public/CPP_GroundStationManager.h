@@ -73,6 +73,9 @@ public:
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientNewEnemySatelliteTracked(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
+    UFUNCTION(BlueprintCallable, Client, Reliable)
+    void ClientUpdateSatelliteStatus(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
+
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSatelliteTorqueCommand(const FTorqueCommand& TorqueCommand);
 
@@ -94,7 +97,9 @@ protected:
 
 private:
     TMap<FString, FSatelliteStatus> FriendlyTrackedSatellites;
+    TMap<FString, class ACPP_OrbitSpline*> FriendlySatelliteOrbits;
     TMap<FString, FSatelliteStatus> EnemyTrackedSatellites;
+    TMap<FString, class ACPP_OrbitSpline*> EnemySatelliteOrbits;
     TMap<FString, ACPP_Satellite*> OverpassingSatellites;
     class ACPP_Planet* Planet;
 };

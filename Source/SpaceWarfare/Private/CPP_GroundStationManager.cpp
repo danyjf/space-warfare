@@ -88,6 +88,7 @@ void ACPP_GroundStationManager::ClientNewFriendlySatelliteTracked_Implementation
 
     OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
     OrbitSpline->SetColor(FLinearColor::Green);
+    FriendlySatelliteOrbits.Emplace(SatelliteName, OrbitSpline);
 }
 
 void ACPP_GroundStationManager::ClientNewEnemySatelliteTracked_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
@@ -108,6 +109,22 @@ void ACPP_GroundStationManager::ClientNewEnemySatelliteTracked_Implementation(co
 
     OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
     OrbitSpline->SetColor(FLinearColor::Red);
+    EnemySatelliteOrbits.Emplace(SatelliteName, OrbitSpline);
+}
+
+void ACPP_GroundStationManager::ClientUpdateSatelliteStatus_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
+{
+    FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->MyGravityComponent->GetGravitationalParameter());
+
+    if (FriendlySatelliteOrbits.Contains(SatelliteName))
+    {
+        FriendlySatelliteOrbits[SatelliteName]->UpdateOrbit(OrbitalElements, Planet);
+    }
+    else if (EnemySatelliteOrbits.Contains(SatelliteName))
+    {
+        EnemySatelliteOrbits[SatelliteName]->UpdateOrbit(OrbitalElements, Planet);
+    }
 }
 
 void ACPP_GroundStationManager::ServerSatelliteTorqueCommand_Implementation(const FTorqueCommand& TorqueCommand)
