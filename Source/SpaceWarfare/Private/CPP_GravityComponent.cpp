@@ -23,7 +23,6 @@ void UCPP_GravityComponent::BeginPlay()
 	RigidBody = GetOwner()->GetComponentByClass<UStaticMeshComponent>()->GetBodyInstanceAsyncPhysicsTickHandle();
 }
 
-
 // Called every frame
 void UCPP_GravityComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {

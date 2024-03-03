@@ -40,6 +40,15 @@ const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const
 	return GeographicCoordinates;
 }
 
+const FSatelliteStatus& ACPP_Satellite::GetSatelliteStatus()
+{
+    SatelliteStatus.Position = GetActorLocation();
+    SatelliteStatus.Rotation = GetActorRotation();
+    SatelliteStatus.Velocity = GravityComponent->GetVelocity();
+
+	return SatelliteStatus;
+}
+
 void ACPP_Satellite::PrintGeographicCoordinates()
 {
 	UE_LOG(

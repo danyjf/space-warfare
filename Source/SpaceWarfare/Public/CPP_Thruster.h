@@ -16,9 +16,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float ThrusterStrength;
 
-    UPROPERTY(BlueprintReadWrite)
-    UStaticMeshComponent* StaticMeshComponent;
-
     UFUNCTION(BlueprintCallable)
     void ActivateThruster() { bThrusterIsActive = true; }
 
@@ -37,4 +34,5 @@ protected:
 
 private:
     bool bThrusterIsActive;
+    class UCPP_GravityComponent* GravityComponent;
 };

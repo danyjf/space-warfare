@@ -55,6 +55,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    TMap<FString, ACPP_Satellite*> OverpassingSatellites;
+
     UPROPERTY(BlueprintAssignable)
     FNewSatelliteDetected OnNewFriendlySatelliteDetected;
 
@@ -100,6 +103,5 @@ private:
     TMap<FString, class ACPP_OrbitSpline*> FriendlySatelliteOrbits;
     TMap<FString, FSatelliteStatus> EnemyTrackedSatellites;
     TMap<FString, class ACPP_OrbitSpline*> EnemySatelliteOrbits;
-    TMap<FString, ACPP_Satellite*> OverpassingSatellites;
     class ACPP_Planet* Planet;
 };

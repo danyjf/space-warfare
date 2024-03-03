@@ -29,8 +29,8 @@ void ACPP_GravityManager::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 
-    //SemiImplicitEulerIntegrator(DeltaTime * TimeScale);
-    LeapFrogIntegrator(DeltaTime * TimeScale);
+    SemiImplicitEulerIntegrator(DeltaTime * TimeScale);
+    //LeapFrogIntegrator(DeltaTime * TimeScale);
 }
 
 void ACPP_GravityManager::CalculateGravityForces()

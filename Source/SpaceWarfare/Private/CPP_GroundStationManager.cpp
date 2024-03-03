@@ -40,7 +40,7 @@ void ACPP_GroundStationManager::Tick(float DeltaTime)
 
 void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite)
 {
-    FSatelliteStatus SatelliteStatus(Satellite->GetActorLocation(), Satellite->GetActorRotation(), Satellite->GravityComponent->GetVelocity());
+    FSatelliteStatus SatelliteStatus = Satellite->GetSatelliteStatus();
 
     if (Satellite->PlayerNumber == PlayerNumber)
     {
