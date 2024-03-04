@@ -8,74 +8,6 @@
 #include "GameFramework/GameModeBase.h"
 #include "CPP_SimulationGameMode.generated.h"
 
-
-// Forward Declarations
-class ACPP_GravityManager;
-class ACPP_GroundStationManager;
-class ACPP_SatelliteLauncher;
-
-
-USTRUCT(BlueprintType)
-struct FPlanetStruct
-{
-	GENERATED_BODY();
-
-	UPROPERTY()
-	FString Name;
-
-	UPROPERTY()
-	double Mass;			// kilograms
-
-	UPROPERTY()
-	float Size;				// kilometers
-
-	UPROPERTY()
-	double GM;              // gravitational parameter
-
-	UPROPERTY()
-	double RotationSpeed;	// degrees per second
-
-	UPROPERTY()
-	FString Epoch;			// epoch for earth rotation in ISO 8601
-};
-
-USTRUCT(BlueprintType)
-struct FSatelliteStruct
-{
-	GENERATED_BODY();
-
-	UPROPERTY()
-	FString Name;
-
-	UPROPERTY()
-	double Mass;	// kilograms
-
-	UPROPERTY()
-	float Size;		// kilometers
-
-	UPROPERTY()
-	FOrbitalElements OrbitalElements;
-};
-
-USTRUCT(BlueprintType)
-struct FSimulationConfigStruct
-{
-	GENERATED_BODY();
-
-	UPROPERTY()
-	int TimeScale;	// seconds
-
-	UPROPERTY()
-	double GravitationalConstant;
-
-	UPROPERTY()
-	FPlanetStruct Planet;
-
-	UPROPERTY()
-	TArray<FSatelliteStruct> Satellites;
-};
-
-
 /**
  * 
  */
@@ -86,16 +18,19 @@ class SPACEWARFARE_API ACPP_SimulationGameMode : public AGameModeBase
 	
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    ACPP_GravityManager* GravityManager;
+    class ACPP_GravityManager* GravityManager;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TSubclassOf<ACPP_GroundStationManager> GroundStationManagerBlueprint;
+    TSubclassOf<class ACPP_GravityManager> GravityManagerBlueprint;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TSubclassOf<ACPP_SatelliteLauncher> SatelliteLauncherBlueprint;
+    TSubclassOf<class ACPP_GroundStationManager> GroundStationManagerBlueprint;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<class ACPP_SatelliteLauncher> SatelliteLauncherBlueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<AActor> SatelliteBlueprintClass;	// Satellite BP used to spawn satellites on initialization from config
+	TSubclassOf<class ACPP_Satellite> SatelliteBlueprintClass;
 
     UPROPERTY(BlueprintReadOnly)
 	FSimulationConfigStruct SimulationConfig;
@@ -116,6 +51,10 @@ public:
 
     // Called after each player logs in
     virtual void PostLogin(APlayerController* NewPlayer) override;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 private:
 	FDateTime InitialEpoch;
