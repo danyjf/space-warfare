@@ -84,7 +84,7 @@ void ACPP_GroundStationManager::ClientNewFriendlySatelliteTracked_Implementation
     ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
 
     FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
-    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->MyGravityComponent->GetGravitationalParameter());
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
     OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
     OrbitSpline->SetColor(FLinearColor::Green);
@@ -105,7 +105,7 @@ void ACPP_GroundStationManager::ClientNewEnemySatelliteTracked_Implementation(co
     ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
 
     FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
-    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->MyGravityComponent->GetGravitationalParameter());
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
     OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
     OrbitSpline->SetColor(FLinearColor::Red);
@@ -115,7 +115,7 @@ void ACPP_GroundStationManager::ClientNewEnemySatelliteTracked_Implementation(co
 void ACPP_GroundStationManager::ClientUpdateSatelliteStatus_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
 {
     FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
-    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->MyGravityComponent->GetGravitationalParameter());
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
     if (FriendlySatelliteOrbits.Contains(SatelliteName))
     {
