@@ -7,7 +7,6 @@
 #include "CoreMinimal.h"
 #include "CPP_Satellite.generated.h"
 
-
 /**
  * 
  */

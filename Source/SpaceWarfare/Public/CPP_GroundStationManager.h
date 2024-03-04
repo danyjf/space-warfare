@@ -8,7 +8,6 @@
 #include "GameFramework/Actor.h"
 #include "CPP_GroundStationManager.generated.h"
 
-
 USTRUCT(BlueprintType)
 struct FSatelliteCommand
 {
@@ -36,9 +35,7 @@ struct FThrustCommand : public FSatelliteCommand
     bool IsActive;
 };
 
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FString, SatelliteName);
-
 
 UCLASS()
 class SPACEWARFARE_API ACPP_GroundStationManager : public AActor

@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "CPP_Thruster.generated.h"
 
-
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPACEWARFARE_API UCPP_Thruster : public UActorComponent
 {

@@ -8,7 +8,6 @@
 #include "GameFramework/Actor.h"
 #include "CPP_GroundStation.generated.h"
 
-
 UCLASS()
 class SPACEWARFARE_API ACPP_GroundStation : public AActor
 {

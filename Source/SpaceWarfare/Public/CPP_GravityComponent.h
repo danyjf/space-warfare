@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "CPP_GravityComponent.generated.h"
 
-
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPACEWARFARE_API UCPP_GravityComponent : public UActorComponent
 {

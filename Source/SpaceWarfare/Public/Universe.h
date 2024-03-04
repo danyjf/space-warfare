@@ -6,11 +6,6 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Universe.generated.h"
 
-
-// Forward Declarations
-class ACPP_Planet;
-
-
 USTRUCT(BlueprintType)
 struct FOrbitalState
 {
@@ -164,10 +159,10 @@ public:
 	static FOrbitalElements ConvertOrbitalStateToOrbitalElements(const FOrbitalState& OrbitalState, double GM);
 
 	UFUNCTION(BlueprintCallable)
-	static FGeographicCoordinates ConvertECILocationToGeographicCoordinates(ACPP_Planet* Planet, FVector Location);
+	static FGeographicCoordinates ConvertECILocationToGeographicCoordinates(class ACPP_Planet* Planet, FVector Location);
 
     UFUNCTION(BlueprintCallable)
-    static FVector ConvertGeographicCoordinatesToECILocation(ACPP_Planet* Planet, const FGeographicCoordinates& GeographicCoordinates);
+    static FVector ConvertGeographicCoordinatesToECILocation(class ACPP_Planet* Planet, const FGeographicCoordinates& GeographicCoordinates);
 
     UFUNCTION(BlueprintCallable)
 	static double GetEarthRotationAngle(double JulianDay);
