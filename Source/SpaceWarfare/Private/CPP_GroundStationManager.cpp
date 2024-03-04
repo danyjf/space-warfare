@@ -137,8 +137,7 @@ void ACPP_GroundStationManager::ServerSatelliteTorqueCommand_Implementation(cons
     ACPP_Satellite* Satellite = OverpassingSatellites[TorqueCommand.SatelliteName];
     FVector LocalTorque = UKismetMathLibrary::TransformDirection(Satellite->GetActorTransform(), TorqueCommand.Torque);
 
-    UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Satellite->FindComponentByClass(UStaticMeshComponent::StaticClass()));
-    StaticMeshComponent->AddTorqueInDegrees(LocalTorque, FName(NAME_None), true);
+    Satellite->StaticMeshComponent->AddTorqueInDegrees(LocalTorque, FName(NAME_None), true);
 }
 
 void ACPP_GroundStationManager::ServerSatelliteThrustCommand_Implementation(const FThrustCommand& ThrustCommand)

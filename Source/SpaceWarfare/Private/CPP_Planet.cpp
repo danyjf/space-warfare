@@ -9,6 +9,14 @@
 ACPP_Planet::ACPP_Planet()
 {
     PrimaryActorTick.bCanEverTick = true;
+
+    //StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+    //StaticMeshComponent->SetSimulatePhysics(true);
+    //StaticMeshComponent->SetLinearDamping(0.0f);
+    //StaticMeshComponent->SetAngularDamping(0.0f);
+    //StaticMeshComponent->SetEnableGravity(false);
+    //StaticMeshComponent->SetCollisionProfileName(TEXT("PhysicsActor"));
+    //RootComponent = StaticMeshComponent;
 }
 
 // Called when the game starts or when spawned

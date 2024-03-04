@@ -20,6 +20,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRotator RotationSpeed;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    class UStaticMeshComponent* StaticMeshComponent;
+
     UPROPERTY()
     class UCPP_GravityComponent* MyGravityComponent;
 

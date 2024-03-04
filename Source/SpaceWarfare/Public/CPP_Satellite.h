@@ -25,7 +25,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACPP_Planet* OrbitingPlanet;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     class UCPP_GravityComponent* GravityComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    class UStaticMeshComponent* StaticMeshComponent;
 
     UFUNCTION(BlueprintCallable)
 	const FGeographicCoordinates& GetGeographicCoordinates() const;
