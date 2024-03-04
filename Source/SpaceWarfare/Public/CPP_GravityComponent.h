@@ -41,7 +41,7 @@ public:
     UFUNCTION(BlueprintCallable)
     const FVector& GetVelocity() const { return Velocity; }
     UFUNCTION(BlueprintCallable)
-    void SetVelocity(const FVector& Value) { Velocity = Value; }
+    void SetVelocity(const FVector& Value);
 
 	// Sets default values for this component's properties
 	UCPP_GravityComponent();

@@ -42,6 +42,12 @@ void UCPP_GravityComponent::SetMass(double Value)
 	GetOwner()->GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), Value);
 }
 
+void UCPP_GravityComponent::SetVelocity(const FVector& Value)
+{
+    Velocity = Value;
+	GetOwner()->GetComponentByClass<UStaticMeshComponent>()->SetPhysicsLinearVelocity(Velocity);
+}
+
 void UCPP_GravityComponent::AddGravityForce(const FVector& Force)
 {
     GravityForce += Force;

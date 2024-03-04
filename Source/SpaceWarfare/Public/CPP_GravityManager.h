@@ -40,6 +40,7 @@ protected:
 
 private:
     void CalculateGravityForces();
+    void NativeEngineIntegrator(float DeltaTime);
     void SemiImplicitEulerIntegrator(float DeltaTime);
     void LeapFrogIntegrator(float DeltaTime);
 };

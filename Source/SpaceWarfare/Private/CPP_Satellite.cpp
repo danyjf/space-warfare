@@ -44,7 +44,9 @@ const FSatelliteStatus& ACPP_Satellite::GetSatelliteStatus()
 {
     SatelliteStatus.Position = GetActorLocation();
     SatelliteStatus.Rotation = GetActorRotation();
-    SatelliteStatus.Velocity = GravityComponent->GetVelocity();
+    //SatelliteStatus.Velocity = GravityComponent->GetVelocity();
+    SatelliteStatus.Velocity = GetVelocity();
+    //SatelliteStatus.Velocity = GetVelocity() + GravityComponent->GetVelocity();
 
 	return SatelliteStatus;
 }

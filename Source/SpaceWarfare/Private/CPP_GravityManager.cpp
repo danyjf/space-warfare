@@ -29,8 +29,9 @@ void ACPP_GravityManager::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 
-    SemiImplicitEulerIntegrator(DeltaTime * TimeScale);
-    //LeapFrogIntegrator(DeltaTime * TimeScale);
+    //NativeEngineIntegrator(DeltaTime * TimeScale);
+    //SemiImplicitEulerIntegrator(DeltaTime * TimeScale);
+    LeapFrogIntegrator(DeltaTime * TimeScale);
 }
 
 void ACPP_GravityManager::CalculateGravityForces()
@@ -84,9 +85,16 @@ void ACPP_GravityManager::LeapFrogIntegrator(float DeltaTime)
 
     for (UCPP_GravityComponent* GravityComponent : GravityComponents)
     {
-        FVector Acceleration = GravityComponent->GetGravityForce() / GravityComponent->GetMass();
-        GravityComponent->SetVelocity(GravityComponent->GetVelocity() + Acceleration * 0.5 * DeltaTime);
-	    GravityComponent->RigidBody->SetX(GravityComponent->RigidBody->X() + GravityComponent->GetVelocity() * DeltaTime);
+        //FVector Acceleration = GravityComponent->GetGravityForce() / GravityComponent->GetMass();
+        FVector Acceleration = GravityComponent->RigidBody->Acceleration() + GravityComponent->GetGravityForce() / GravityComponent->GetMass();
+        //GravityComponent->RigidBody->SetAcceleration(GravityComponent->RigidBody->Acceleration() + GravityComponent->GetGravityForce() / GravityComponent->GetMass());
+        
+        //GravityComponent->SetVelocity(GravityComponent->GetVelocity() + Acceleration * 0.5 * DeltaTime);
+        //GravityComponent->RigidBody->SetV(GravityComponent->RigidBody->V() + GravityComponent->RigidBody->Acceleration() * 0.5 * DeltaTime); 
+        GravityComponent->RigidBody->SetV(GravityComponent->RigidBody->V() + Acceleration * 0.5 * DeltaTime); 
+
+	    //GravityComponent->RigidBody->SetX(GravityComponent->RigidBody->X() + GravityComponent->GetVelocity() * DeltaTime);
+        GravityComponent->RigidBody->SetX(GravityComponent->RigidBody->X() + GravityComponent->RigidBody->V() * DeltaTime);
 
         GravityComponent->ClearGravityForce();
     }
@@ -95,8 +103,29 @@ void ACPP_GravityManager::LeapFrogIntegrator(float DeltaTime)
 
     for (UCPP_GravityComponent* GravityComponent : GravityComponents)
     {
-        FVector Acceleration = GravityComponent->GetGravityForce() / GravityComponent->GetMass();
-        GravityComponent->SetVelocity(GravityComponent->GetVelocity() + Acceleration * 0.5 * DeltaTime);
+        //FVector Acceleration = GravityComponent->GetGravityForce() / GravityComponent->GetMass();
+        GravityComponent->RigidBody->SetAcceleration(GravityComponent->RigidBody->Acceleration() + GravityComponent->GetGravityForce() / GravityComponent->GetMass());
+
+        //GravityComponent->SetVelocity(GravityComponent->GetVelocity() + Acceleration * 0.5 * DeltaTime);
+        GravityComponent->RigidBody->SetV(GravityComponent->RigidBody->V() + GravityComponent->RigidBody->Acceleration() * 0.5 * DeltaTime); 
+
+        GravityComponent->ClearGravityForce();
+    }
+}
+
+void ACPP_GravityManager::NativeEngineIntegrator(float DeltaTime)
+{
+    CalculateGravityForces();
+
+    for (UCPP_GravityComponent* GravityComponent : GravityComponents)
+    {
+        //GravityComponent->RigidBody->AddForce(GravityComponent->GetGravityForce());
+
+        GravityComponent->RigidBody->SetAcceleration(GravityComponent->RigidBody->Acceleration() + GravityComponent->GetGravityForce() / GravityComponent->RigidBody->M());
+        //FVector Acceleration = GravityComponent->GetGravityForce() / GravityComponent->GetMass();
+        GravityComponent->RigidBody->SetV(GravityComponent->RigidBody->V() + GravityComponent->RigidBody->Acceleration() * DeltaTime); 
+        //GravityComponent->RigidBody->SetV(GravityComponent->RigidBody->V() + Acceleration * DeltaTime); 
+        GravityComponent->RigidBody->SetX(GravityComponent->RigidBody->X() + GravityComponent->RigidBody->V() * DeltaTime);
 
         GravityComponent->ClearGravityForce();
     }
