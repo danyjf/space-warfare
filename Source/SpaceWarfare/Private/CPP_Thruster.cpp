@@ -2,6 +2,7 @@
 
 
 #include "CPP_Thruster.h"
+#include "CPP_GravityComponent.h"
 
 // Sets default values for this component's properties
 UCPP_Thruster::UCPP_Thruster()
@@ -17,7 +18,7 @@ void UCPP_Thruster::BeginPlay()
 {
 	Super::BeginPlay();
 
-    StaticMeshComponent = Cast<UStaticMeshComponent>(GetOwner()->FindComponentByClass(UStaticMeshComponent::StaticClass()));
+    GravityComponent = Cast<UCPP_GravityComponent>(GetOwner()->FindComponentByClass(UCPP_GravityComponent::StaticClass()));
 }
 
 
@@ -28,6 +29,6 @@ void UCPP_Thruster::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
     if (bThrusterIsActive)
     {
-        StaticMeshComponent->AddForce(ThrusterStrength * GetOwner()->GetActorForwardVector(), NAME_None, true);
+        GravityComponent->AddGravityForce(ThrusterStrength * GetOwner()->GetActorForwardVector());
     }
 }

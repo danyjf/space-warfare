@@ -20,8 +20,14 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRotator RotationSpeed;
 
-    UPROPERTY()
-    class UCPP_GravityComponent* MyGravityComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    class UStaticMeshComponent* StaticMeshComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    class UCPP_GravityComponent* GravityComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    class UCPP_CameraOrbitableComponent* CameraOrbitableComponent;
 
     UFUNCTION(BlueprintCallable)
     void SetRotationAtEpoch(const FDateTime& Epoch);

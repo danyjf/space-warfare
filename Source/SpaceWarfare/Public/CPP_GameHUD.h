@@ -6,11 +6,6 @@
 #include "GameFramework/HUD.h"
 #include "CPP_GameHUD.generated.h"
 
-
-// Forward Declarations
-class UUserWidget;
-
-
 /**
  * 
  */
@@ -21,5 +16,5 @@ class SPACEWARFARE_API ACPP_GameHUD : public AHUD
 	
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    UUserWidget* GameScreenWidget;
+    class UUserWidget* GameScreenWidget;
 };

@@ -6,10 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "CPP_GravityManager.generated.h"
 
-
-class UCPP_GravityComponent;
-
-
 UCLASS()
 class SPACEWARFARE_API ACPP_GravityManager : public AActor
 {
@@ -20,7 +16,7 @@ public:
     float TimeScale;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TArray<UCPP_GravityComponent*> GravityComponents;
+    TArray<class UCPP_GravityComponent*> GravityComponents;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     double GravitationalConstant;

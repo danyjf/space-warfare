@@ -27,6 +27,15 @@ ACPP_SimulationGameMode::ACPP_SimulationGameMode()
     CurrentPlayerNumber = 0;
 }
 
+void ACPP_SimulationGameMode::BeginPlay()
+{
+    Super::BeginPlay();
+
+    GravityManager = Cast<ACPP_GravityManager>(GetWorld()->SpawnActor(GravityManagerBlueprint));
+
+    InitializeSimulationVariables();
+}
+
 // Called at a fixed DeltaTime to update physics
 void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {

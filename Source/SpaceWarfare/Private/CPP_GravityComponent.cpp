@@ -14,15 +14,14 @@ UCPP_GravityComponent::UCPP_GravityComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-
 // Called when the game starts
 void UCPP_GravityComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	RigidBody = GetOwner()->GetComponentByClass<UStaticMeshComponent>()->GetBodyInstanceAsyncPhysicsTickHandle();
+    StaticMeshComponent = GetOwner()->GetComponentByClass<UStaticMeshComponent>();
+	RigidBody = StaticMeshComponent->GetBodyInstanceAsyncPhysicsTickHandle();
 }
-
 
 // Called every frame
 void UCPP_GravityComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -37,10 +36,27 @@ void UCPP_GravityComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
     DOREPLIFETIME(UCPP_GravityComponent, GravitationalParameter);
 }
 
+double UCPP_GravityComponent::GetMass()
+{
+    return StaticMeshComponent->GetMass();
+}
+
 void UCPP_GravityComponent::SetMass(double Value)
 {
-    Mass = Value;
-	GetOwner()->GetComponentByClass<UStaticMeshComponent>()->SetMassOverrideInKg(FName(NAME_None), Value);
+    if (!StaticMeshComponent)
+    {
+        StaticMeshComponent = GetOwner()->GetComponentByClass<UStaticMeshComponent>();
+    }
+	StaticMeshComponent->SetMassOverrideInKg(FName(NAME_None), Value);
+}
+
+void UCPP_GravityComponent::SetVelocity(const FVector& Value)
+{
+    if (!StaticMeshComponent)
+    {
+        StaticMeshComponent = GetOwner()->GetComponentByClass<UStaticMeshComponent>();
+    }
+	StaticMeshComponent->SetPhysicsLinearVelocity(Value);
 }
 
 void UCPP_GravityComponent::AddGravityForce(const FVector& Force)

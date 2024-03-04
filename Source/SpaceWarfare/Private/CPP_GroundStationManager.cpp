@@ -40,7 +40,7 @@ void ACPP_GroundStationManager::Tick(float DeltaTime)
 
 void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite)
 {
-    FSatelliteStatus SatelliteStatus(Satellite->GetActorLocation(), Satellite->GetActorRotation(), Satellite->GravityComponent->GetVelocity());
+    FSatelliteStatus SatelliteStatus = Satellite->GetSatelliteStatus();
 
     if (Satellite->PlayerNumber == PlayerNumber)
     {
@@ -84,10 +84,11 @@ void ACPP_GroundStationManager::ClientNewFriendlySatelliteTracked_Implementation
     ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
 
     FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
-    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->MyGravityComponent->GetGravitationalParameter());
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
     OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
     OrbitSpline->SetColor(FLinearColor::Green);
+    FriendlySatelliteOrbits.Emplace(SatelliteName, OrbitSpline);
 }
 
 void ACPP_GroundStationManager::ClientNewEnemySatelliteTracked_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
@@ -104,10 +105,26 @@ void ACPP_GroundStationManager::ClientNewEnemySatelliteTracked_Implementation(co
     ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
 
     FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
-    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->MyGravityComponent->GetGravitationalParameter());
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
     OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
     OrbitSpline->SetColor(FLinearColor::Red);
+    EnemySatelliteOrbits.Emplace(SatelliteName, OrbitSpline);
+}
+
+void ACPP_GroundStationManager::ClientUpdateSatelliteStatus_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
+{
+    FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
+
+    if (FriendlySatelliteOrbits.Contains(SatelliteName))
+    {
+        FriendlySatelliteOrbits[SatelliteName]->UpdateOrbit(OrbitalElements, Planet);
+    }
+    else if (EnemySatelliteOrbits.Contains(SatelliteName))
+    {
+        EnemySatelliteOrbits[SatelliteName]->UpdateOrbit(OrbitalElements, Planet);
+    }
 }
 
 void ACPP_GroundStationManager::ServerSatelliteTorqueCommand_Implementation(const FTorqueCommand& TorqueCommand)
@@ -120,8 +137,7 @@ void ACPP_GroundStationManager::ServerSatelliteTorqueCommand_Implementation(cons
     ACPP_Satellite* Satellite = OverpassingSatellites[TorqueCommand.SatelliteName];
     FVector LocalTorque = UKismetMathLibrary::TransformDirection(Satellite->GetActorTransform(), TorqueCommand.Torque);
 
-    UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Satellite->FindComponentByClass(UStaticMeshComponent::StaticClass()));
-    StaticMeshComponent->AddTorqueInDegrees(LocalTorque, FName(NAME_None), true);
+    Satellite->StaticMeshComponent->AddTorqueInDegrees(LocalTorque, FName(NAME_None), true);
 }
 
 void ACPP_GroundStationManager::ServerSatelliteThrustCommand_Implementation(const FThrustCommand& ThrustCommand)

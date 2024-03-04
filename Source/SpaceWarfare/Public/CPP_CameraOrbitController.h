@@ -6,19 +6,12 @@
 #include "GameFramework/PlayerController.h"
 #include "CPP_CameraOrbitController.generated.h"
 
-
-// Forward Declarations
-class UCPP_CameraOrbitableComponent;
-class USpringArmComponent;
-
-
 UENUM(BlueprintType)
 enum class EInputMode : uint8 
 {
     GROUNDSTATIONINPUT = 0  UMETA(DisplayName = "GroundStationInput"),
     GODMODEINPUT = 1        UMETA(DisplayName = "GodModeInput")
 };
-
 
 /**
  * 
@@ -39,10 +32,10 @@ public:
     APawn* PlayerPawn;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    UCPP_CameraOrbitableComponent* CameraOrbitableComponent;
+    class UCPP_CameraOrbitableComponent* CameraOrbitableComponent;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    USpringArmComponent* SpringArmComponent;
+    class USpringArmComponent* SpringArmComponent;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     EInputMode InputMode;

@@ -6,16 +6,15 @@
 #include "Components/ActorComponent.h"
 #include "CPP_GravityComponent.generated.h"
 
-
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPACEWARFARE_API UCPP_GravityComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY()
     FBodyInstanceAsyncPhysicsTickHandle RigidBody;
-    
+
     UPROPERTY(Replicated, BlueprintReadWrite)
     double GravitationalParameter;  // gravitational constant multiplied by mass
 
@@ -26,7 +25,7 @@ public:
     void ClearGravityForce();
 
     UFUNCTION(BlueprintCallable)
-    double GetMass() { return Mass; }
+    double GetMass();
     UFUNCTION(BlueprintCallable)
     void SetMass(double Value);
 
@@ -39,9 +38,7 @@ public:
     const FVector& GetGravityForce() const { return GravityForce; }
 
     UFUNCTION(BlueprintCallable)
-    const FVector& GetVelocity() const { return Velocity; }
-    UFUNCTION(BlueprintCallable)
-    void SetVelocity(const FVector& Value) { Velocity = Value; }
+    void SetVelocity(const FVector& Value);
 
 	// Sets default values for this component's properties
 	UCPP_GravityComponent();
@@ -56,7 +53,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-    double Mass;                    // in kilograms
+    class UStaticMeshComponent* StaticMeshComponent;
     FVector GravityForce;           // sum of gravitational forces exerted on this actor
-    FVector Velocity;               // current velocity of this actor
 };

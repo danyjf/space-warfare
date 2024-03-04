@@ -29,8 +29,8 @@ void ACPP_GravityManager::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 
-    //SemiImplicitEulerIntegrator(DeltaTime * TimeScale);
-    LeapFrogIntegrator(DeltaTime * TimeScale);
+    SemiImplicitEulerIntegrator(DeltaTime * TimeScale);
+    //LeapFrogIntegrator(DeltaTime * TimeScale);
 }
 
 void ACPP_GravityManager::CalculateGravityForces()
@@ -44,11 +44,11 @@ void ACPP_GravityManager::CalculateGravityForces()
 
             if (GravityComponents[i]->GetGravitationalParameter() > GravityComponents[j]->GetGravitationalParameter())
             {
-                ForceMagnitude = GravityComponents[i]->GetGravitationalParameter() * GravityComponents[j]->GetMass() / Direction.SquaredLength();
+                ForceMagnitude = GravityComponents[i]->GetGravitationalParameter() * GravityComponents[j]->RigidBody->M() / Direction.SquaredLength();
             }
             else
             {
-                ForceMagnitude = GravityComponents[j]->GetGravitationalParameter() * GravityComponents[i]->GetMass() / Direction.SquaredLength();
+                ForceMagnitude = GravityComponents[j]->GetGravitationalParameter() * GravityComponents[i]->RigidBody->M() / Direction.SquaredLength();
             }
 
             Direction.Normalize();
@@ -66,15 +66,11 @@ void ACPP_GravityManager::SemiImplicitEulerIntegrator(float DeltaTime)
 
     for (UCPP_GravityComponent* GravityComponent : GravityComponents)
     {
-	    // Update velocity
-        FVector Acceleration = GravityComponent->GetGravityForce() / GravityComponent->GetMass();
-        GravityComponent->SetVelocity(GravityComponent->GetVelocity() + Acceleration * DeltaTime);
+        GravityComponent->RigidBody->SetAcceleration(GravityComponent->RigidBody->Acceleration() + GravityComponent->GetGravityForce() / GravityComponent->RigidBody->M());
+        GravityComponent->RigidBody->SetV(GravityComponent->RigidBody->V() + GravityComponent->RigidBody->Acceleration() * DeltaTime); 
+        GravityComponent->RigidBody->SetX(GravityComponent->RigidBody->X() + GravityComponent->RigidBody->V() * DeltaTime);
 
-	    // Update position
-	    GravityComponent->RigidBody->SetX(GravityComponent->RigidBody->X() + GravityComponent->GetVelocity() * DeltaTime);
-	
-	    // Set forces back to zero
-	    GravityComponent->ClearGravityForce();
+        GravityComponent->ClearGravityForce();
     }
 }
 
@@ -84,9 +80,9 @@ void ACPP_GravityManager::LeapFrogIntegrator(float DeltaTime)
 
     for (UCPP_GravityComponent* GravityComponent : GravityComponents)
     {
-        FVector Acceleration = GravityComponent->GetGravityForce() / GravityComponent->GetMass();
-        GravityComponent->SetVelocity(GravityComponent->GetVelocity() + Acceleration * 0.5 * DeltaTime);
-	    GravityComponent->RigidBody->SetX(GravityComponent->RigidBody->X() + GravityComponent->GetVelocity() * DeltaTime);
+        FVector HalfAcceleration = 0.5 * (GravityComponent->RigidBody->Acceleration() + GravityComponent->GetGravityForce() / GravityComponent->RigidBody->M());
+        GravityComponent->RigidBody->SetV(GravityComponent->RigidBody->V() + HalfAcceleration * DeltaTime); 
+        GravityComponent->RigidBody->SetX(GravityComponent->RigidBody->X() + GravityComponent->RigidBody->V() * DeltaTime);
 
         GravityComponent->ClearGravityForce();
     }
@@ -95,8 +91,8 @@ void ACPP_GravityManager::LeapFrogIntegrator(float DeltaTime)
 
     for (UCPP_GravityComponent* GravityComponent : GravityComponents)
     {
-        FVector Acceleration = GravityComponent->GetGravityForce() / GravityComponent->GetMass();
-        GravityComponent->SetVelocity(GravityComponent->GetVelocity() + Acceleration * 0.5 * DeltaTime);
+        GravityComponent->RigidBody->SetAcceleration(GravityComponent->RigidBody->Acceleration() + GravityComponent->GetGravityForce() / GravityComponent->RigidBody->M());
+        GravityComponent->RigidBody->SetV(GravityComponent->RigidBody->V() + GravityComponent->RigidBody->Acceleration() * 0.5 * DeltaTime); 
 
         GravityComponent->ClearGravityForce();
     }

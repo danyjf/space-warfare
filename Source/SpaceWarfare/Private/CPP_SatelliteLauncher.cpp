@@ -50,12 +50,11 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
     Satellite->PlayerNumber = PlayerNumber;
     Satellite->SetOwner(GetOwner());
 
-    UCPP_GravityComponent* SatelliteGravityComponent = Satellite->FindComponentByClass<UCPP_GravityComponent>();
-    SatelliteGravityComponent->SetVelocity(OrbitalState.Velocity);
-    SatelliteGravityComponent->SetMass(Mass);
-    SatelliteGravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * Mass);
+    Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
+    Satellite->GravityComponent->SetMass(Mass);
+    Satellite->GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * Mass);
 
-    GravityManager->GravityComponents.Add(SatelliteGravityComponent);
+    GravityManager->GravityComponents.Add(Satellite->GravityComponent);
 
     // TODO: Change later, this is just to show the satellite on all players when it is launched
     TArray<AActor*> GroundStationManagers;
