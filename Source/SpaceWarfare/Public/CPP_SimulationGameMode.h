@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Universe.h"
+#include "SimulationConfigStructs.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"

@@ -3,37 +3,11 @@
 #pragma once
 
 #include "Universe.h"
+#include "SatelliteCommands.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "CPP_GroundStationManager.generated.h"
-
-USTRUCT(BlueprintType)
-struct FSatelliteCommand
-{
-    GENERATED_BODY();
-
-    UPROPERTY(BlueprintReadWrite)
-    FString SatelliteName;
-};
-
-USTRUCT(BlueprintType)
-struct FTorqueCommand : public FSatelliteCommand
-{
-    GENERATED_BODY();
-
-    UPROPERTY(BlueprintReadWrite)
-    FVector Torque;
-};
-
-USTRUCT(BlueprintType)
-struct FThrustCommand : public FSatelliteCommand
-{
-    GENERATED_BODY();
-
-    UPROPERTY(BlueprintReadWrite)
-    bool IsActive;
-};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FString, SatelliteName);
 
