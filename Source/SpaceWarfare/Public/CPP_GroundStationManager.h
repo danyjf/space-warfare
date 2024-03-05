@@ -50,6 +50,9 @@ public:
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientUpdateSatelliteStatus(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
+    UFUNCTION(BlueprintCallable, Client, Reliable)
+    void ClientSatelliteDestroyed(const FString& SatelliteName);
+
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSatelliteTorqueCommand(const FTorqueCommand& TorqueCommand);
 
