@@ -40,6 +40,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void PrintGeographicCoordinates();
 
+    UFUNCTION()
+    void OnComponentHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
     ACPP_Satellite();    
 
 	virtual void Tick(float DeltaTime) override;

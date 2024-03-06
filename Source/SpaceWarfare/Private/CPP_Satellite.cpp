@@ -6,6 +6,7 @@
 #include "CPP_GravityComponent.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 ACPP_Satellite::ACPP_Satellite()
@@ -31,6 +32,7 @@ void ACPP_Satellite::BeginPlay()
     if (HasAuthority())
     {
 	    SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+        StaticMeshComponent->OnComponentHit.AddDynamic(this, &ACPP_Satellite::OnComponentHit);
     }
 }
 
@@ -42,6 +44,15 @@ void ACPP_Satellite::Tick(float DeltaTime)
     {
 	    GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
     }
+}
+
+void ACPP_Satellite::OnComponentHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+    if (ACPP_Satellite* HitSatellite = Cast<ACPP_Satellite>(OtherActor))
+    {
+        HitSatellite->Destroy();
+    }
+    this->Destroy();
 }
 
 const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const
