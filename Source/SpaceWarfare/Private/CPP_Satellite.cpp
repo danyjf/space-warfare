@@ -4,8 +4,11 @@
 #include "CPP_Satellite.h"
 #include "CPP_SimulationGameMode.h"
 #include "CPP_GravityComponent.h"
+#include "CPP_GroundStationManager.h"
+#include "CPP_GravityManager.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 ACPP_Satellite::ACPP_Satellite()
@@ -31,6 +34,7 @@ void ACPP_Satellite::BeginPlay()
     if (HasAuthority())
     {
 	    SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+        StaticMeshComponent->OnComponentHit.AddDynamic(this, &ACPP_Satellite::OnComponentHit);
     }
 }
 
@@ -42,6 +46,35 @@ void ACPP_Satellite::Tick(float DeltaTime)
     {
 	    GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
     }
+}
+
+void ACPP_Satellite::Destroyed()
+{
+    Super::Destroyed();
+
+    if (!HasAuthority() || !SimulationGameMode)
+    {
+        return;
+    }
+
+    SimulationGameMode->GravityManager->GravityComponents.Remove(GravityComponent);
+
+    TArray<AActor*> GroundStationManagers;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);
+    for (AActor* Actor : GroundStationManagers)
+    {
+        ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
+        GroundStationManager->ClientSatelliteDestroyed(Name);
+    }
+}
+
+void ACPP_Satellite::OnComponentHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+    if (ACPP_Satellite* HitSatellite = Cast<ACPP_Satellite>(OtherActor))
+    {
+        HitSatellite->Destroy();
+    }
+    this->Destroy();
 }
 
 const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const

@@ -127,6 +127,24 @@ void ACPP_GroundStationManager::ClientUpdateSatelliteStatus_Implementation(const
     }
 }
 
+void ACPP_GroundStationManager::ClientSatelliteDestroyed_Implementation(const FString& SatelliteName)
+{
+    OnSatelliteDestroyed.Broadcast(SatelliteName);
+
+    if (FriendlyTrackedSatellites.Contains(SatelliteName))
+    {
+        FriendlyTrackedSatellites.Remove(SatelliteName);
+        FriendlySatelliteOrbits[SatelliteName]->Destroy();
+        FriendlySatelliteOrbits.Remove(SatelliteName);
+    }
+    else if (EnemyTrackedSatellites.Contains(SatelliteName))
+    {
+        EnemyTrackedSatellites.Remove(SatelliteName);
+        EnemySatelliteOrbits[SatelliteName]->Destroy();
+        EnemySatelliteOrbits.Remove(SatelliteName);
+    }
+}
+
 void ACPP_GroundStationManager::ServerSatelliteTorqueCommand_Implementation(const FTorqueCommand& TorqueCommand)
 {
     if (!OverpassingSatellites.Contains(TorqueCommand.SatelliteName))
