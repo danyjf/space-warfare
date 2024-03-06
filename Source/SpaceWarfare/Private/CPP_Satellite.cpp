@@ -4,6 +4,8 @@
 #include "CPP_Satellite.h"
 #include "CPP_SimulationGameMode.h"
 #include "CPP_GravityComponent.h"
+#include "CPP_GroundStationManager.h"
+#include "CPP_GravityManager.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -43,6 +45,26 @@ void ACPP_Satellite::Tick(float DeltaTime)
     if (HasAuthority())
     {
 	    GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
+    }
+}
+
+void ACPP_Satellite::Destroyed()
+{
+    Super::Destroyed();
+
+    if (!HasAuthority() || !SimulationGameMode)
+    {
+        return;
+    }
+
+    SimulationGameMode->GravityManager->GravityComponents.Remove(GravityComponent);
+
+    TArray<AActor*> GroundStationManagers;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);
+    for (AActor* Actor : GroundStationManagers)
+    {
+        ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
+        GroundStationManager->ClientSatelliteDestroyed(Name);
     }
 }
 
