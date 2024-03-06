@@ -10,6 +10,7 @@
 #include "CPP_GroundStationManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FString, SatelliteName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSatelliteDestroyed, FString, SatelliteName);
 
 UCLASS()
 class SPACEWARFARE_API ACPP_GroundStationManager : public AActor
@@ -34,6 +35,9 @@ public:
 
     UPROPERTY(BlueprintAssignable)
     FNewSatelliteDetected OnNewEnemySatelliteDetected;
+
+    UPROPERTY(BlueprintAssignable)
+    FSatelliteDestroyed OnSatelliteDestroyed;
 
     UFUNCTION(BlueprintCallable)
     void SatelliteEnteredOverpassArea(class ACPP_Satellite* Satellite);

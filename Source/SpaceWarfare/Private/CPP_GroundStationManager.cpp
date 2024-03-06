@@ -129,6 +129,8 @@ void ACPP_GroundStationManager::ClientUpdateSatelliteStatus_Implementation(const
 
 void ACPP_GroundStationManager::ClientSatelliteDestroyed_Implementation(const FString& SatelliteName)
 {
+    OnSatelliteDestroyed.Broadcast(SatelliteName);
+
     if (FriendlyTrackedSatellites.Contains(SatelliteName))
     {
         FriendlyTrackedSatellites.Remove(SatelliteName);
