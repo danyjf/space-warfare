@@ -52,8 +52,6 @@ void ACPP_Asteroid::Destroyed()
         return;
     }
 
-    SimulationGameMode->GravityManager->GravityComponents.Remove(GravityComponent);
-
     // TODO: Change later, this is to remove the satellite on all players when it is destroyed
     TArray<AActor*> GroundStationManagers;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);

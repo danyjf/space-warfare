@@ -7,6 +7,7 @@
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values for this component's properties
 UCPP_GravityComponent::UCPP_GravityComponent()
@@ -35,6 +36,16 @@ void UCPP_GravityComponent::BeginPlay()
 void UCPP_GravityComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+
+void UCPP_GravityComponent::OnComponentDestroyed(bool bDestroyingHierarchy)
+{
+    Super::OnComponentDestroyed(bDestroyingHierarchy);
+
+    if (GetOwner()->HasAuthority())
+    {
+        GravityManager->GravityComponents.Remove(this);
+    }
 }
 
 void UCPP_GravityComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
