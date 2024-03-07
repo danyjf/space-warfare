@@ -136,35 +136,4 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
             Satellite->GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * SatelliteConfig.Mass);
         }
     }
-    
-    //for (UCPP_GravityComponent* GravityComponent : GravityManager->GravityComponents)
-    //{
-    //    if (ACPP_Planet* Planet = Cast<ACPP_Planet>(GravityComponent->GetOwner()))
-    //    {
-    //        Planet->Name = SimulationConfig.Planet.Name;
-    //        Planet->RotationSpeed = FRotator(0, -SimulationConfig.Planet.RotationSpeed * TimeScale, 0);
-    //        Planet->SetRotationAtEpoch(InitialEpoch);
-    //        Planet->SetActorScale3D(FVector(SimulationConfig.Planet.Size));
-    //        GravityComponent->SetMass(SimulationConfig.Planet.Mass);
-    //        GravityComponent->SetGravitationalParameter(SimulationConfig.Planet.GM);
-    //    }
-    //    else if (ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GravityComponent->GetOwner()))
-    //    {
-    //        for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
-    //        {
-			 //   if (Satellite->Name != SatelliteConfig.Name)
-			 //   {
-			 //   	continue;
-			 //   }
-
-			 //   FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
-
-    //            Satellite->SetActorLocation(OrbitalState.Location);
-    //            Satellite->SetActorScale3D(FVector(SatelliteConfig.Size));
-    //            GravityComponent->SetVelocity(OrbitalState.Velocity);
-    //            GravityComponent->SetMass(SatelliteConfig.Mass);
-    //            GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * SatelliteConfig.Mass);
-    //        }
-    //    }
-    //}
 }
