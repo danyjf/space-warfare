@@ -2,6 +2,7 @@
 
 #include "CPP_AsteroidSpawner.h"
 #include "CPP_Planet.h"
+#include "CPP_GravityComponent.h"
 
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -38,7 +39,7 @@ void ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit()
     OrbitalElements.ArgumentOfPeriapsis = UKismetMathLibrary::RandomFloatInRange(0.0f, 360.0f);
     OrbitalElements.MeanAnomaly = UKismetMathLibrary::RandomFloatInRange(0.0f, 360.0f);
     
-    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, SpawnAtPlanet->GetGravitationalParameter());
+    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, SpawnAtPlanet->GravityComponent->GetGravitationalParameter());
 
     // TODO: Spawn Asteroid at OrbitalState
 }
