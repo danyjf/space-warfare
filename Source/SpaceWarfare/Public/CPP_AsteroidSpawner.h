@@ -17,6 +17,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class ACPP_Planet* SpawnAtPlanet;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<class ACPP_Asteroid> AsteroidBlueprintClass;
+
     UFUNCTION(BlueprintCallable)
     void SpawnAsteroidAtRandomOrbit();
 
@@ -29,4 +32,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+private:
+    class ACPP_SimulationGameMode* SimulationGameMode;
 };

@@ -3,6 +3,9 @@
 #include "CPP_AsteroidSpawner.h"
 #include "CPP_Planet.h"
 #include "CPP_GravityComponent.h"
+#include "CPP_Asteroid.h"
+#include "CPP_SimulationGameMode.h"
+#include "CPP_GravityManager.h"
 
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -19,6 +22,7 @@ void ACPP_AsteroidSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     SpawnAtPlanet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
 }
 
@@ -32,7 +36,7 @@ void ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit()
 {
     FOrbitalElements OrbitalElements;
 
-    OrbitalElements.Eccentricity = UKismetMathLibrary::RandomFloatInRange(0.0f, 0.3f);
+    OrbitalElements.Eccentricity = UKismetMathLibrary::RandomFloatInRange(0.0f, 0.03f);
     OrbitalElements.SemiMajorAxis = UKismetMathLibrary::RandomFloatInRange(6800.0f, 9000.0f);
     OrbitalElements.Inclination = UKismetMathLibrary::RandomFloatInRange(0.0f, 180.0f);
     OrbitalElements.LongitudeOfAscendingNode = UKismetMathLibrary::RandomFloatInRange(0.0f, 360.0f);
@@ -41,5 +45,12 @@ void ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit()
     
     FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, SpawnAtPlanet->GravityComponent->GetGravitationalParameter());
 
-    // TODO: Spawn Asteroid at OrbitalState
+    double AsteroidMass = 10000.0;
+    ACPP_Asteroid* Asteroid = Cast<ACPP_Asteroid>(GetWorld()->SpawnActor(AsteroidBlueprintClass));
+    Asteroid->SetActorLocation(OrbitalState.Location);
+    Asteroid->GravityComponent->SetVelocity(OrbitalState.Velocity);
+    Asteroid->GravityComponent->SetMass(10000.0);
+    Asteroid->GravityComponent->SetGravitationalParameter(SimulationGameMode->GravityManager->GravitationalConstant * AsteroidMass);
+
+    SimulationGameMode->GravityManager->GravityComponents.Add(Asteroid->GravityComponent);
 }
