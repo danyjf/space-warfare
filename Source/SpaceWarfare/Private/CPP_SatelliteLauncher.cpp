@@ -53,7 +53,7 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
     Satellite->GravityComponent->SetMass(Mass);
     Satellite->GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * Mass);
 
-    GravityManager->GravityComponents.Add(Satellite->GravityComponent);
+    //GravityManager->GravityComponents.Add(Satellite->GravityComponent);
 
     // TODO: Change later, this is just to show the satellite on all players when it is launched
     TArray<AActor*> GroundStationManagers;

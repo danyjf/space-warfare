@@ -24,7 +24,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+    virtual void Destroyed() override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+private:
+    class ACPP_SimulationGameMode* SimulationGameMode;
 };

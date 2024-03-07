@@ -6,8 +6,10 @@
 #include "CPP_Asteroid.h"
 #include "CPP_SimulationGameMode.h"
 #include "CPP_GravityManager.h"
+#include "CPP_GroundStationManager.h"
 
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -52,5 +54,14 @@ void ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit()
     Asteroid->GravityComponent->SetMass(10000.0);
     Asteroid->GravityComponent->SetGravitationalParameter(SimulationGameMode->GravityManager->GravitationalConstant * AsteroidMass);
 
-    SimulationGameMode->GravityManager->GravityComponents.Add(Asteroid->GravityComponent);
+    //SimulationGameMode->GravityManager->GravityComponents.Add(Asteroid->GravityComponent);
+
+    // TODO: Change later, this is just to show the satellite on all players when it is launched
+    TArray<AActor*> GroundStationManagers;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);
+    for (AActor* Actor : GroundStationManagers)
+    {
+        ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
+        GroundStationManager->ClientNewAsteroidTracked(UKismetSystemLibrary::GetObjectName(Asteroid), Asteroid->GetActorLocation(), Asteroid->GetVelocity());
+    }
 }

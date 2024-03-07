@@ -39,6 +39,11 @@ void ACPP_GravityManager::CalculateGravityForces()
     {
         for (int j = i + 1; j < GravityComponents.Num(); j++)
         {
+            if (!GravityComponents[i]->RigidBody || !GravityComponents[j]->RigidBody)
+            {
+                continue;
+            }
+
             double ForceMagnitude = 0.0;
             FVector Direction = GravityComponents[j]->RigidBody->X() - GravityComponents[i]->RigidBody->X();
 
@@ -66,6 +71,11 @@ void ACPP_GravityManager::SemiImplicitEulerIntegrator(float DeltaTime)
 
     for (UCPP_GravityComponent* GravityComponent : GravityComponents)
     {
+        if (!GravityComponent->RigidBody)
+        {
+            continue;
+        }
+
         GravityComponent->RigidBody->SetAcceleration(GravityComponent->RigidBody->Acceleration() + GravityComponent->GetGravityForce() / GravityComponent->RigidBody->M());
         GravityComponent->RigidBody->SetV(GravityComponent->RigidBody->V() + GravityComponent->RigidBody->Acceleration() * DeltaTime); 
         GravityComponent->RigidBody->SetX(GravityComponent->RigidBody->X() + GravityComponent->RigidBody->V() * DeltaTime);

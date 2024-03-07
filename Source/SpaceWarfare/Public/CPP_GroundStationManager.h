@@ -46,6 +46,9 @@ public:
     void SatelliteExitedOverpassArea(class ACPP_Satellite* Satellite);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
+    void ClientNewAsteroidTracked(const FString& ObjectName, const FVector& Location, const FVector& Velocity);
+
+    UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientNewFriendlySatelliteTracked(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
@@ -56,6 +59,9 @@ public:
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientSatelliteDestroyed(const FString& SatelliteName);
+
+    UFUNCTION(BlueprintCallable, Client, Reliable)
+    void ClientAsteroidDestroyed(const FString& ObjectName);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSatelliteTorqueCommand(const FTorqueCommand& TorqueCommand);
@@ -81,5 +87,6 @@ private:
     TMap<FString, class ACPP_OrbitSpline*> FriendlySatelliteOrbits;
     TMap<FString, FSatelliteStatus> EnemyTrackedSatellites;
     TMap<FString, class ACPP_OrbitSpline*> EnemySatelliteOrbits;
+    TMap<FString, class ACPP_OrbitSpline*> AsteroidOrbits;
     class ACPP_Planet* Planet;
 };

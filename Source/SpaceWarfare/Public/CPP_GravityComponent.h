@@ -54,5 +54,6 @@ protected:
 
 private:
     class UStaticMeshComponent* StaticMeshComponent;
+    class ACPP_GravityManager* GravityManager;
     FVector GravityForce;           // sum of gravitational forces exerted on this actor
 };

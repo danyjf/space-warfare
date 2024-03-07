@@ -2,6 +2,12 @@
 
 #include "CPP_Asteroid.h"
 #include "CPP_GravityComponent.h"
+#include "CPP_SimulationGameMode.h"
+#include "CPP_GroundStationManager.h"
+#include "CPP_GravityManager.h"
+
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACPP_Asteroid::ACPP_Asteroid()
@@ -24,10 +30,36 @@ ACPP_Asteroid::ACPP_Asteroid()
 void ACPP_Asteroid::BeginPlay()
 {
 	Super::BeginPlay();
+
+    if (HasAuthority())
+    {
+	    SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+    }
 }
 
 // Called every frame
 void ACPP_Asteroid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ACPP_Asteroid::Destroyed()
+{
+    Super::Destroyed();
+
+    if (!HasAuthority() || !SimulationGameMode)
+    {
+        return;
+    }
+
+    SimulationGameMode->GravityManager->GravityComponents.Remove(GravityComponent);
+
+    // TODO: Change later, this is to remove the satellite on all players when it is destroyed
+    TArray<AActor*> GroundStationManagers;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);
+    for (AActor* Actor : GroundStationManagers)
+    {
+        ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
+        GroundStationManager->ClientAsteroidDestroyed(UKismetSystemLibrary::GetObjectName(this));
+    }
 }

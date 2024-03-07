@@ -70,6 +70,24 @@ void ACPP_GroundStationManager::SatelliteExitedOverpassArea(ACPP_Satellite* Sate
     }
 }
 
+void ACPP_GroundStationManager::ClientNewAsteroidTracked_Implementation(const FString& ObjectName, const FVector& Location, const FVector& Velocity)
+{
+    ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
+
+    FOrbitalState OrbitalState = FOrbitalState(Location, Velocity);
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
+
+    OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
+    OrbitSpline->SetColor(FLinearColor::Yellow);
+    AsteroidOrbits.Emplace(ObjectName, OrbitSpline);
+}
+
+void ACPP_GroundStationManager::ClientAsteroidDestroyed_Implementation(const FString& ObjectName)
+{
+    AsteroidOrbits[ObjectName]->Destroy();
+    AsteroidOrbits.Remove(ObjectName);
+}
+
 void ACPP_GroundStationManager::ClientNewFriendlySatelliteTracked_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)
 {
     FriendlyTrackedSatellites.Emplace(SatelliteName, SatelliteStatus);
