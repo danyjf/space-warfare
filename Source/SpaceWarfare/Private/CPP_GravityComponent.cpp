@@ -8,6 +8,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Engine/World.h"
 
 // Sets default values for this component's properties
 UCPP_GravityComponent::UCPP_GravityComponent()
@@ -42,7 +43,7 @@ void UCPP_GravityComponent::OnComponentDestroyed(bool bDestroyingHierarchy)
 {
     Super::OnComponentDestroyed(bDestroyingHierarchy);
 
-    if (GetOwner()->HasAuthority())
+    if (GetOwner()->HasAuthority() && GetWorld() && GetWorld()->IsGameWorld())
     {
         GravityManager->GravityComponents.Remove(this);
     }
