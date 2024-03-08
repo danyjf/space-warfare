@@ -39,8 +39,7 @@ void ACPP_SatelliteLauncher::Tick(float DeltaTime)
 
 void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Name)
 {
-    UCPP_GravityComponent* PlanetGravityComponent = Planet->FindComponentByClass<UCPP_GravityComponent>();
-    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, PlanetGravityComponent->GetGravitationalParameter());
+    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
 
     ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
     Satellite->SetActorLocation(OrbitalState.Location);
@@ -54,7 +53,7 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
     Satellite->GravityComponent->SetMass(Mass);
     Satellite->GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * Mass);
 
-    GravityManager->GravityComponents.Add(Satellite->GravityComponent);
+    //GravityManager->GravityComponents.Add(Satellite->GravityComponent);
 
     // TODO: Change later, this is just to show the satellite on all players when it is launched
     TArray<AActor*> GroundStationManagers;

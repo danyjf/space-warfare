@@ -2,6 +2,8 @@
 
 
 #include "CPP_Satellite.h"
+#include "CPP_Planet.h"
+#include "CPP_Asteroid.h"
 #include "CPP_SimulationGameMode.h"
 #include "CPP_GravityComponent.h"
 #include "CPP_GroundStationManager.h"
@@ -57,8 +59,7 @@ void ACPP_Satellite::Destroyed()
         return;
     }
 
-    SimulationGameMode->GravityManager->GravityComponents.Remove(GravityComponent);
-
+    // TODO: Change later, this is to remove the satellite on all players when it is destroyed
     TArray<AActor*> GroundStationManagers;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);
     for (AActor* Actor : GroundStationManagers)
@@ -73,8 +74,16 @@ void ACPP_Satellite::OnComponentHit(UPrimitiveComponent* HitComp, AActor* OtherA
     if (ACPP_Satellite* HitSatellite = Cast<ACPP_Satellite>(OtherActor))
     {
         HitSatellite->Destroy();
+        this->Destroy();
     }
-    this->Destroy();
+    else if (ACPP_Planet* HitPlanet = Cast<ACPP_Planet>(OtherActor))
+    {
+        this->Destroy();
+    }
+    else if (ACPP_Asteroid* HitAsteroid = Cast<ACPP_Asteroid>(OtherActor))
+    {
+        HitAsteroid->Destroy();
+    }
 }
 
 const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const

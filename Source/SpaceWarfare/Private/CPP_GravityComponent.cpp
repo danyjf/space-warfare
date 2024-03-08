@@ -2,9 +2,13 @@
 
 
 #include "CPP_GravityComponent.h"
+#include "CPP_GravityManager.h"
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Engine/World.h"
 
 // Sets default values for this component's properties
 UCPP_GravityComponent::UCPP_GravityComponent()
@@ -19,14 +23,30 @@ void UCPP_GravityComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-    StaticMeshComponent = GetOwner()->GetComponentByClass<UStaticMeshComponent>();
-	RigidBody = StaticMeshComponent->GetBodyInstanceAsyncPhysicsTickHandle();
+    if (GetOwner()->HasAuthority())
+    {
+        StaticMeshComponent = GetOwner()->GetComponentByClass<UStaticMeshComponent>();
+	    RigidBody = StaticMeshComponent->GetBodyInstanceAsyncPhysicsTickHandle();
+
+        GravityManager = Cast<ACPP_GravityManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GravityManager::StaticClass()));
+        GravityManager->GravityComponents.Add(this);
+    }
 }
 
 // Called every frame
 void UCPP_GravityComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+
+void UCPP_GravityComponent::OnComponentDestroyed(bool bDestroyingHierarchy)
+{
+    Super::OnComponentDestroyed(bDestroyingHierarchy);
+
+    if (GetOwner()->HasAuthority() && GetWorld() && GetWorld()->IsGameWorld())
+    {
+        GravityManager->GravityComponents.Remove(this);
+    }
 }
 
 void UCPP_GravityComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

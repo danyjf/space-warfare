@@ -19,8 +19,7 @@
 ACPP_GroundStationManager::ACPP_GroundStationManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 // Called when the game starts or when spawned
@@ -35,7 +34,6 @@ void ACPP_GroundStationManager::BeginPlay()
 void ACPP_GroundStationManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite)
@@ -68,6 +66,24 @@ void ACPP_GroundStationManager::SatelliteExitedOverpassArea(ACPP_Satellite* Sate
     {
         OverpassingSatellites.Remove(Satellite->Name);
     }
+}
+
+void ACPP_GroundStationManager::ClientNewAsteroidTracked_Implementation(const FString& ObjectName, const FVector& Location, const FVector& Velocity)
+{
+    ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
+
+    FOrbitalState OrbitalState = FOrbitalState(Location, Velocity);
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
+
+    OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
+    OrbitSpline->SetColor(FLinearColor::Yellow);
+    AsteroidOrbits.Emplace(ObjectName, OrbitSpline);
+}
+
+void ACPP_GroundStationManager::ClientAsteroidDestroyed_Implementation(const FString& ObjectName)
+{
+    AsteroidOrbits[ObjectName]->Destroy();
+    AsteroidOrbits.Remove(ObjectName);
 }
 
 void ACPP_GroundStationManager::ClientNewFriendlySatelliteTracked_Implementation(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus)

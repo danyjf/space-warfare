@@ -46,6 +46,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+    virtual void OnComponentDestroyed(bool bDestroyingHierarchy);
+
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
@@ -54,5 +56,6 @@ protected:
 
 private:
     class UStaticMeshComponent* StaticMeshComponent;
+    class ACPP_GravityManager* GravityManager;
     FVector GravityForce;           // sum of gravitational forces exerted on this actor
 };

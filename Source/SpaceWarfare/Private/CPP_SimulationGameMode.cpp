@@ -106,34 +106,34 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 
 	FDateTime::ParseIso8601(*SimulationConfig.Planet.Epoch, InitialEpoch);
 
-    for (UCPP_GravityComponent* GravityComponent : GravityManager->GravityComponents)
+    ACPP_Planet* Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
+    Planet->Name = SimulationConfig.Planet.Name;
+    Planet->RotationSpeed = FRotator(0, -SimulationConfig.Planet.RotationSpeed * TimeScale, 0);
+    Planet->SetRotationAtEpoch(InitialEpoch);
+    Planet->SetActorScale3D(FVector(SimulationConfig.Planet.Size));
+    Planet->GravityComponent->SetMass(SimulationConfig.Planet.Mass);
+    Planet->GravityComponent->SetGravitationalParameter(SimulationConfig.Planet.GM);
+
+    TArray<AActor*> Satellites;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
+    for (AActor* Actor : Satellites)
     {
-        if (ACPP_Planet* Planet = Cast<ACPP_Planet>(GravityComponent->GetOwner()))
+        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
+
+        for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
         {
-            Planet->Name = SimulationConfig.Planet.Name;
-            Planet->RotationSpeed = FRotator(0, -SimulationConfig.Planet.RotationSpeed * TimeScale, 0);
-            Planet->SetRotationAtEpoch(InitialEpoch);
-            Planet->SetActorScale3D(FVector(SimulationConfig.Planet.Size));
-            GravityComponent->SetMass(SimulationConfig.Planet.Mass);
-            GravityComponent->SetGravitationalParameter(SimulationConfig.Planet.GM);
-        }
-        else if (ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GravityComponent->GetOwner()))
-        {
-            for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
+            if (Satellite->Name != SatelliteConfig.Name)
             {
-			    if (Satellite->Name != SatelliteConfig.Name)
-			    {
-			    	continue;
-			    }
-
-			    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
-
-                Satellite->SetActorLocation(OrbitalState.Location);
-                Satellite->SetActorScale3D(FVector(SatelliteConfig.Size));
-                GravityComponent->SetVelocity(OrbitalState.Velocity);
-                GravityComponent->SetMass(SatelliteConfig.Mass);
-                GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * SatelliteConfig.Mass);
+                continue;
             }
+
+			FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
+
+            Satellite->SetActorLocation(OrbitalState.Location);
+            Satellite->SetActorScale3D(FVector(SatelliteConfig.Size));
+            Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
+            Satellite->GravityComponent->SetMass(SatelliteConfig.Mass);
+            Satellite->GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * SatelliteConfig.Mass);
         }
     }
 }
