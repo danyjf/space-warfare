@@ -18,13 +18,13 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
-
 ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 {
     //FString JsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/SimulationConfig.json");
     FString JsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSSimulationConfig.json");
     UJsonReadWrite::ReadStructFromJsonFile<FSimulationConfigStruct>(JsonPath, &SimulationConfig);
     CurrentPlayerNumber = 0;
+    StartingCurrency = 300; // Millions
 }
 
 void ACPP_SimulationGameMode::BeginPlay()
@@ -58,6 +58,7 @@ void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
 
     ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(NewPlayer);
     CameraOrbitController->PlayerNumber = CurrentPlayerNumber;
+    PlayerCurrency.Add(StartingCurrency);
 
     // Create a GroundStationManager for each player
     ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(GetWorld()->SpawnActor(GroundStationManagerBlueprint));
