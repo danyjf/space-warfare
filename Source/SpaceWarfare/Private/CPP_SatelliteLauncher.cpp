@@ -19,6 +19,7 @@ ACPP_SatelliteLauncher::ACPP_SatelliteLauncher()
 	PrimaryActorTick.bCanEverTick = true;
 
     PlayerNumber = 0;
+    LaunchCost = 50;    // Millions
 }
 
 void ACPP_SatelliteLauncher::BeginPlay()
@@ -27,7 +28,7 @@ void ACPP_SatelliteLauncher::BeginPlay()
 
     if (HasAuthority())
     {
-        GravityManager = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->GravityManager;
+        SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     }
 }
 
@@ -51,9 +52,9 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
 
     Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
     Satellite->GravityComponent->SetMass(Mass);
-    Satellite->GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * Mass);
+    Satellite->GravityComponent->SetGravitationalParameter(SimulationGameMode->GravityManager->GravitationalConstant * Mass);
 
-    //GravityManager->GravityComponents.Add(Satellite->GravityComponent);
+    SimulationGameMode->SpendCurrency(PlayerNumber, LaunchCost);
 
     // TODO: Change later, this is just to show the satellite on all players when it is launched
     TArray<AActor*> GroundStationManagers;

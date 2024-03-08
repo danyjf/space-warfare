@@ -138,3 +138,8 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
         }
     }
 }
+
+void ACPP_SimulationGameMode::SpendCurrency(int PlayerNumber, int Amount)
+{
+    PlayerCurrency[PlayerNumber] -= Amount;
+}

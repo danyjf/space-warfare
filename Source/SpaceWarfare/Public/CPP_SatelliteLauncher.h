@@ -18,6 +18,9 @@ public:
     int PlayerNumber;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int LaunchCost;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class ACPP_Planet* Planet;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -37,5 +40,5 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-    class ACPP_GravityManager* GravityManager;
+    class ACPP_SimulationGameMode* SimulationGameMode;
 };
