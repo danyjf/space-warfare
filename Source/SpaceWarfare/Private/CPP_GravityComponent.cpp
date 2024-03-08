@@ -43,7 +43,8 @@ void UCPP_GravityComponent::OnComponentDestroyed(bool bDestroyingHierarchy)
 {
     Super::OnComponentDestroyed(bDestroyingHierarchy);
 
-    if (GetOwner()->HasAuthority() && GetWorld() && GetWorld()->IsGameWorld())
+    //if (GetOwner()->HasAuthority() && GetWorld() && GetWorld()->IsGameWorld())
+    if (GetOwner()->HasAuthority() && GravityManager)
     {
         GravityManager->GravityComponents.Remove(this);
     }
