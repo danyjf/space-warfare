@@ -33,11 +33,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ACPP_Satellite> SatelliteBlueprintClass;
 
-    UPROPERTY(BlueprintReadOnly)
-	FSimulationConfigStruct SimulationConfig;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int StartingCurrency;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int TimeScale;
+
+    UPROPERTY(BlueprintReadOnly)
+	FSimulationConfigStruct SimulationConfig;
 
     UPROPERTY(BlueprintReadOnly)
 	FDateTime CurrentEpoch;

@@ -8,6 +8,8 @@
 #include "CPP_GravityManager.h"
 #include "CPP_SimulationGameMode.h"
 #include "CPP_GroundStationManager.h"
+#include "CPP_CameraOrbitController.h"
+
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -19,6 +21,7 @@ ACPP_SatelliteLauncher::ACPP_SatelliteLauncher()
 	PrimaryActorTick.bCanEverTick = true;
 
     PlayerNumber = 0;
+    LaunchCost = 50;    // Millions
 }
 
 void ACPP_SatelliteLauncher::BeginPlay()
@@ -27,7 +30,7 @@ void ACPP_SatelliteLauncher::BeginPlay()
 
     if (HasAuthority())
     {
-        GravityManager = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->GravityManager;
+        SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     }
 }
 
@@ -39,6 +42,13 @@ void ACPP_SatelliteLauncher::Tick(float DeltaTime)
 
 void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Name)
 {
+    ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
+    if (CameraOrbitController->Currency < LaunchCost)
+    {
+        UKismetSystemLibrary::PrintString(GetWorld(), "Not enough money to launch!!!");
+        return;
+    }
+
     FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
 
     ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
@@ -47,13 +57,13 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
     Satellite->OrbitingPlanet = Planet;
     Satellite->Name = Name;
     Satellite->PlayerNumber = PlayerNumber;
-    Satellite->SetOwner(GetOwner());
+    Satellite->SetOwner(CameraOrbitController);
 
     Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
     Satellite->GravityComponent->SetMass(Mass);
-    Satellite->GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * Mass);
+    Satellite->GravityComponent->SetGravitationalParameter(SimulationGameMode->GravityManager->GravitationalConstant * Mass);
 
-    //GravityManager->GravityComponents.Add(Satellite->GravityComponent);
+    CameraOrbitController->SpendCurrency(LaunchCost);
 
     // TODO: Change later, this is just to show the satellite on all players when it is launched
     TArray<AActor*> GroundStationManagers;

@@ -13,6 +13,8 @@ enum class EInputMode : uint8
     GODMODEINPUT = 1        UMETA(DisplayName = "GodModeInput")
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCurrencyUpdated, int, Currency);
+
 /**
  * 
  */
@@ -24,6 +26,9 @@ class SPACEWARFARE_API ACPP_CameraOrbitController : public APlayerController
 public:
     UPROPERTY(BlueprintReadOnly)
     int PlayerNumber;
+
+    UPROPERTY(ReplicatedUsing=OnRep_Currency, EditAnywhere, BlueprintReadWrite)
+    int Currency;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     AActor* OrbitingActor;
@@ -46,6 +51,15 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float ClickThreshold;
 
+    UPROPERTY(BlueprintAssignable)
+    FCurrencyUpdated OnCurrencyUpdated;
+
+    UFUNCTION()
+    void OnRep_Currency();
+
+    UFUNCTION(BlueprintCallable)
+    void SpendCurrency(int Amount);
+
     UFUNCTION(BlueprintCallable)
     void HandleLeftMouseButtonPress();
 
@@ -57,6 +71,8 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	// Called when the game starts or when spawned
