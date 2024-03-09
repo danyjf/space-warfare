@@ -42,9 +42,14 @@ void ACPP_SatelliteLauncher::Tick(float DeltaTime)
 
 void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Name)
 {
-    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
-
     ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
+    if (CameraOrbitController->Currency < LaunchCost)
+    {
+        UKismetSystemLibrary::PrintString(GetWorld(), "Not enough money to launch!!!");
+        return;
+    }
+
+    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
 
     ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
     Satellite->SetActorLocation(OrbitalState.Location);
