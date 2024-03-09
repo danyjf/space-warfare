@@ -7,6 +7,8 @@
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -56,6 +58,27 @@ void ACPP_CameraOrbitController::Tick(float DeltaTime)
     
         default:
             break;
+    }
+}
+
+void ACPP_CameraOrbitController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME_CONDITION(ACPP_CameraOrbitController, Currency, COND_OwnerOnly);
+}
+
+void ACPP_CameraOrbitController::OnRep_Currency()
+{
+    OnCurrencyUpdated.Broadcast(Currency);
+}
+
+void ACPP_CameraOrbitController::SpendCurrency(int Amount)
+{
+    Currency -= Amount;
+    if (IsLocalPlayerController())
+    {
+        OnCurrencyUpdated.Broadcast(Currency);
     }
 }
 

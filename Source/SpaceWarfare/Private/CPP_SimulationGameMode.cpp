@@ -58,7 +58,7 @@ void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
 
     ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(NewPlayer);
     CameraOrbitController->PlayerNumber = CurrentPlayerNumber;
-    PlayerCurrency.Add(StartingCurrency);
+    CameraOrbitController->Currency = StartingCurrency;
 
     // Create a GroundStationManager for each player
     ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(GetWorld()->SpawnActor(GroundStationManagerBlueprint));
@@ -137,9 +137,4 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
             Satellite->GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * SatelliteConfig.Mass);
         }
     }
-}
-
-void ACPP_SimulationGameMode::SpendCurrency(int PlayerNumber, int Amount)
-{
-    PlayerCurrency[PlayerNumber] -= Amount;
 }

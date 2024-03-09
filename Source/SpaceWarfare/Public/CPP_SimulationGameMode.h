@@ -48,9 +48,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitializeSimulationVariables();
 
-	UFUNCTION(BlueprintCallable)
-    void SpendCurrency(int PlayerNumber, int Amount);
-
 	ACPP_SimulationGameMode();
 
 	// Called at a fixed DeltaTime to update physics
@@ -67,5 +64,4 @@ private:
 	FDateTime InitialEpoch;
 	float ElapsedTime;
     int CurrentPlayerNumber;
-    TArray<int> PlayerCurrency;
 };

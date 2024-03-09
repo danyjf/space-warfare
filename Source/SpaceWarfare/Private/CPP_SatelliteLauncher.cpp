@@ -8,6 +8,8 @@
 #include "CPP_GravityManager.h"
 #include "CPP_SimulationGameMode.h"
 #include "CPP_GroundStationManager.h"
+#include "CPP_CameraOrbitController.h"
+
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -42,19 +44,21 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
 {
     FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
 
+    ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
+
     ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
     Satellite->SetActorLocation(OrbitalState.Location);
     Satellite->SetActorScale3D(FVector(Size));
     Satellite->OrbitingPlanet = Planet;
     Satellite->Name = Name;
     Satellite->PlayerNumber = PlayerNumber;
-    Satellite->SetOwner(GetOwner());
+    Satellite->SetOwner(CameraOrbitController);
 
     Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
     Satellite->GravityComponent->SetMass(Mass);
     Satellite->GravityComponent->SetGravitationalParameter(SimulationGameMode->GravityManager->GravitationalConstant * Mass);
 
-    SimulationGameMode->SpendCurrency(PlayerNumber, LaunchCost);
+    CameraOrbitController->SpendCurrency(LaunchCost);
 
     // TODO: Change later, this is just to show the satellite on all players when it is launched
     TArray<AActor*> GroundStationManagers;
