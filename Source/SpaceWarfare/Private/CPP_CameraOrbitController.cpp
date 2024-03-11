@@ -29,6 +29,10 @@ void ACPP_CameraOrbitController::BeginPlay()
 {
 	Super::BeginPlay();
 
+    if (HasAuthority() && IsLocalPlayerController())
+    {
+        Ready = true;
+    }
     PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
     SpringArmComponent = Cast<USpringArmComponent>(PlayerPawn->GetComponentByClass(USpringArmComponent::StaticClass()));
     OrbitingActor = UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass());
@@ -41,7 +45,7 @@ void ACPP_CameraOrbitController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    if (!Ready)
+    if (!Ready && !HasAuthority())
     {
         if (UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass()))
         {

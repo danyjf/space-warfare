@@ -44,6 +44,12 @@ void ACPP_SimulationGameMode::Tick(float DeltaTime)
     {
         TArray<AActor*> PlayerControllers;
         UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
+
+        if (PlayerControllers.Num() < 2)
+        {
+            return;
+        }
+
         for (AActor* Actor : PlayerControllers)
         {
             ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
@@ -52,6 +58,7 @@ void ACPP_SimulationGameMode::Tick(float DeltaTime)
                 return;
             }
         }
+
         bWaitingForPlayers = false;
     }
 }
