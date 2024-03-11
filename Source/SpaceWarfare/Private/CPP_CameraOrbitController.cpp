@@ -4,6 +4,7 @@
 #include "CPP_CameraOrbitController.h"
 #include "CPP_CameraOrbitableComponent.h"
 #include "CPP_Planet.h"
+#include "CPP_GroundStationManager.h"
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -20,6 +21,7 @@ ACPP_CameraOrbitController::ACPP_CameraOrbitController()
     InputMode = EInputMode::GROUNDSTATIONINPUT;
     ClickTimer = 0.0f;
     ClickThreshold = 0.1f;
+    Ready = false;
 }
 
 // Called when the game starts or when spawned
@@ -29,6 +31,9 @@ void ACPP_CameraOrbitController::BeginPlay()
 
     PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
     SpringArmComponent = Cast<USpringArmComponent>(PlayerPawn->GetComponentByClass(USpringArmComponent::StaticClass()));
+    OrbitingActor = UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass());
+    CameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(OrbitingActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
+    PlayerPawn->SetActorLocation(OrbitingActor->GetActorLocation());
 }
 
 // Called every frame
@@ -36,15 +41,13 @@ void ACPP_CameraOrbitController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    if (!OrbitingActor)
+    if (!Ready)
     {
-        OrbitingActor = UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass());
-        if (OrbitingActor)
+        if (UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass()))
         {
-            CameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(OrbitingActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
-            PlayerPawn->SetActorLocation(OrbitingActor->GetActorLocation());
+            ServerPlayerReady();
+            Ready = true;
         }
-        return;
     }
 
     switch (InputMode)
@@ -71,6 +74,11 @@ void ACPP_CameraOrbitController::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 void ACPP_CameraOrbitController::OnRep_Currency()
 {
     OnCurrencyUpdated.Broadcast(Currency);
+}
+
+void ACPP_CameraOrbitController::ServerPlayerReady_Implementation()
+{
+    Ready = true;
 }
 
 void ACPP_CameraOrbitController::SpendCurrency(int Amount)

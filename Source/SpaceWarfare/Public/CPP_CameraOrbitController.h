@@ -31,6 +31,9 @@ public:
     int Currency;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool Ready;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     AActor* OrbitingActor;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -56,6 +59,9 @@ public:
 
     UFUNCTION()
     void OnRep_Currency();
+
+    UFUNCTION(BlueprintCallable, Server, Reliable)
+    void ServerPlayerReady();
 
     UFUNCTION(BlueprintCallable)
     void SpendCurrency(int Amount);

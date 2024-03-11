@@ -25,6 +25,7 @@ ACPP_SimulationGameMode::ACPP_SimulationGameMode()
     UJsonReadWrite::ReadStructFromJsonFile<FSimulationConfigStruct>(JsonPath, &SimulationConfig);
     CurrentPlayerNumber = 0;
     StartingCurrency = 300; // Millions
+    bWaitingForPlayers = true;
 }
 
 void ACPP_SimulationGameMode::BeginPlay()
@@ -34,6 +35,25 @@ void ACPP_SimulationGameMode::BeginPlay()
     GravityManager = Cast<ACPP_GravityManager>(GetWorld()->SpawnActor(GravityManagerBlueprint));
 
     InitializeSimulationVariables();
+}
+
+// Called every frame
+void ACPP_SimulationGameMode::Tick(float DeltaTime)
+{
+    if (bWaitingForPlayers)
+    {
+        TArray<AActor*> PlayerControllers;
+        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
+        for (AActor* Actor : PlayerControllers)
+        {
+            ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
+            if (!PlayerController->Ready)
+            {
+                return;
+            }
+        }
+        bWaitingForPlayers = false;
+    }
 }
 
 // Called at a fixed DeltaTime to update physics

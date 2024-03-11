@@ -19,6 +19,9 @@ class SPACEWARFARE_API ACPP_SimulationGameMode : public AGameModeBase
 	
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bWaitingForPlayers;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class ACPP_GravityManager* GravityManager;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -49,6 +52,9 @@ public:
 	void InitializeSimulationVariables();
 
 	ACPP_SimulationGameMode();
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	// Called at a fixed DeltaTime to update physics
 	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;

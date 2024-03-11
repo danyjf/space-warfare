@@ -45,6 +45,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void SatelliteExitedOverpassArea(class ACPP_Satellite* Satellite);
 
+    UFUNCTION()
+    void UpdateSatelliteStatus();
+
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientNewAsteroidTracked(const FString& ObjectName, const FVector& Location, const FVector& Velocity);
 
@@ -89,4 +92,7 @@ private:
     TMap<FString, class ACPP_OrbitSpline*> EnemySatelliteOrbits;
     TMap<FString, class ACPP_OrbitSpline*> AsteroidOrbits;
     class ACPP_Planet* Planet;
+    class ACPP_SimulationGameMode* SimulationGameMode;
+    bool bInitialized;
+    FTimerHandle UpdateSatellitesTimerHandle;
 };

@@ -9,6 +9,7 @@
 #include "CPP_Planet.h"
 #include "Universe.h"
 #include "CPP_GravityComponent.h"
+#include "CPP_SimulationGameMode.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -19,7 +20,9 @@
 ACPP_GroundStationManager::ACPP_GroundStationManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
+    
+    bInitialized = false;
 }
 
 // Called when the game starts or when spawned
@@ -28,12 +31,48 @@ void ACPP_GroundStationManager::BeginPlay()
 	Super::BeginPlay();
 	
     Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
+
+    if (HasAuthority())
+    {
+	    SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+    }
 }
 
 // Called every frame
 void ACPP_GroundStationManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+    if (!HasAuthority())
+    {
+        return;
+    }
+
+    if (!SimulationGameMode->bWaitingForPlayers && !bInitialized)
+    {
+        bInitialized = true;
+
+        TArray<AActor*> Satellites;
+        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
+        for (AActor* Actor : Satellites)
+        {
+            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
+            SatelliteEnteredOverpassArea(Satellite);
+        }
+
+        GetWorld()->GetTimerManager().SetTimer(UpdateSatellitesTimerHandle, this, &ACPP_GroundStationManager::UpdateSatelliteStatus, 0.1f, true);
+    }
+}
+
+void ACPP_GroundStationManager::UpdateSatelliteStatus()
+{
+    TArray<AActor*> Satellites;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
+    for (AActor* Actor : Satellites)
+    {
+        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
+        ClientUpdateSatelliteStatus(Satellite->Name, Satellite->GetSatelliteStatus());
+    }
 }
 
 void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite)
@@ -99,10 +138,14 @@ void ACPP_GroundStationManager::ClientNewFriendlySatelliteTracked_Implementation
 
     ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
 
-    FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
-    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
+    if (Planet && Planet->GravityComponent)
+    {
+        FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
+        FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
-    OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
+        OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
+    }
+
     OrbitSpline->SetColor(FLinearColor::Green);
     FriendlySatelliteOrbits.Emplace(SatelliteName, OrbitSpline);
 }
@@ -120,10 +163,14 @@ void ACPP_GroundStationManager::ClientNewEnemySatelliteTracked_Implementation(co
 
     ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
 
-    FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
-    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
+    if (Planet && Planet->GravityComponent)
+    {
+        FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
+        FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
-    OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
+        OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
+    }
+
     OrbitSpline->SetColor(FLinearColor::Red);
     EnemySatelliteOrbits.Emplace(SatelliteName, OrbitSpline);
 }
