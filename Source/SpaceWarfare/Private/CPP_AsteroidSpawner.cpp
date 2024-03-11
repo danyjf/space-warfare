@@ -36,6 +36,11 @@ void ACPP_AsteroidSpawner::Tick(float DeltaTime)
 
 void ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit()
 {
+    if (SimulationGameMode->bWaitingForPlayers)
+    {
+        return;
+    }
+
     FOrbitalElements OrbitalElements;
 
     OrbitalElements.Eccentricity = UKismetMathLibrary::RandomFloatInRange(0.0f, 0.03f);

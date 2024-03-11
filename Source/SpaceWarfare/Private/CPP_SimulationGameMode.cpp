@@ -60,6 +60,14 @@ void ACPP_SimulationGameMode::Tick(float DeltaTime)
             }
         }
 
+        TArray<AActor*> Satellites;
+        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
+        for (AActor* Actor : Satellites)
+        {
+            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
+            Satellite->StaticMeshComponent->SetSimulatePhysics(true);
+        }
+
         bWaitingForPlayers = false;
     }
 }
@@ -68,6 +76,11 @@ void ACPP_SimulationGameMode::Tick(float DeltaTime)
 void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
+
+    if (bWaitingForPlayers)
+    {
+        return;
+    }
 
 	float ScaledDeltaTime = DeltaTime * TimeScale;
 
@@ -148,6 +161,7 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
     for (AActor* Actor : Satellites)
     {
         ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
+        Satellite->StaticMeshComponent->SetSimulatePhysics(false);
 
         for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
         {
