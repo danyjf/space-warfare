@@ -10,6 +10,7 @@
 #include "CPP_GroundStationManager.h"
 #include "CPP_GroundStation.h"
 #include "CPP_SatelliteLauncher.h"
+#include "CPP_GameInstance.h"
 #include "JsonReadWrite.h"
 #include "Universe.h"
 
@@ -45,7 +46,7 @@ void ACPP_SimulationGameMode::Tick(float DeltaTime)
         TArray<AActor*> PlayerControllers;
         UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
 
-        if (PlayerControllers.Num() < 2)
+        if (PlayerControllers.Num() < Cast<UCPP_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->MaxNumberOfPlayersInSession)
         {
             return;
         }
