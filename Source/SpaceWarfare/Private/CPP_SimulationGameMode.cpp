@@ -46,7 +46,8 @@ void ACPP_SimulationGameMode::Tick(float DeltaTime)
         TArray<AActor*> PlayerControllers;
         UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
 
-        if (PlayerControllers.Num() < Cast<UCPP_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->MaxNumberOfPlayersInSession)
+        UCPP_GameInstance* GameInstance = Cast<UCPP_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+        if (PlayerControllers.Num() < GameInstance->MaxNumberOfPlayersInSession)
         {
             return;
         }
