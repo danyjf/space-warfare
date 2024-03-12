@@ -184,7 +184,7 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
 
         for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
         {
-            if (Satellite->Name != SatelliteConfig.Name)
+            if (Satellite->Label != SatelliteConfig.Name)
             {
                 continue;
             }

@@ -68,7 +68,7 @@ void UCPP_GravityComponent::SetMass(double Value)
     {
         StaticMeshComponent = GetOwner()->GetComponentByClass<UStaticMeshComponent>();
     }
-	StaticMeshComponent->SetMassOverrideInKg(FName(NAME_None), Value);
+	StaticMeshComponent->SetMassOverrideInKg(NAME_None, Value);
 }
 
 void UCPP_GravityComponent::SetVelocity(const FVector& Value)

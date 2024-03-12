@@ -40,7 +40,7 @@ void ACPP_SatelliteLauncher::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Name)
+void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Label)
 {
     ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
     if (CameraOrbitController->Currency < LaunchCost)
@@ -55,7 +55,7 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
     Satellite->SetActorLocation(OrbitalState.Location);
     Satellite->SetActorScale3D(FVector(Size));
     Satellite->OrbitingPlanet = Planet;
-    Satellite->Name = Name;
+    Satellite->Label = Label;
     Satellite->OwnerPlayerID = OwnerPlayerID;
     Satellite->SetOwner(CameraOrbitController);
 

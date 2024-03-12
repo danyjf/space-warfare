@@ -17,7 +17,7 @@ class SPACEWARFARE_API ACPP_Satellite : public AActor
 	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString Name;
+	FString Label;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int OwnerPlayerID;

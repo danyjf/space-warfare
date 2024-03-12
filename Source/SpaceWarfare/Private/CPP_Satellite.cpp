@@ -93,7 +93,7 @@ const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const
 
 const FSatelliteInfo& ACPP_Satellite::GetSatelliteStatus()
 {
-    SatelliteStatus.Label = Name;
+    SatelliteStatus.Label = Label;
     SatelliteStatus.Position = GetActorLocation();
     SatelliteStatus.Rotation = GetActorRotation();
     SatelliteStatus.Velocity = GetVelocity();
