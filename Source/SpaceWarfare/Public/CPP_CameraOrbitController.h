@@ -25,7 +25,7 @@ class SPACEWARFARE_API ACPP_CameraOrbitController : public APlayerController
 	
 public:
     UPROPERTY(BlueprintReadOnly)
-    int PlayerNumber;
+    int PlayerID;
 
     UPROPERTY(ReplicatedUsing=OnRep_Currency, EditAnywhere, BlueprintReadWrite)
     int Currency;

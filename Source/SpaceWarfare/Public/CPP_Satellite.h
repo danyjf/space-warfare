@@ -17,10 +17,10 @@ class SPACEWARFARE_API ACPP_Satellite : public AActor
 	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString Name;
+	FString Label;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int PlayerNumber;
+    int OwnerPlayerID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACPP_Planet* OrbitingPlanet;
@@ -35,7 +35,7 @@ public:
 	const FGeographicCoordinates& GetGeographicCoordinates() const;
 
     UFUNCTION(BlueprintCallable)
-    const FSatelliteStatus& GetSatelliteStatus();
+    const FSatelliteInfo& GetSatelliteStatus();
 
     UFUNCTION(BlueprintCallable)
     void PrintGeographicCoordinates();
@@ -55,6 +55,6 @@ protected:
 
 private:
 	FGeographicCoordinates GeographicCoordinates;
-    FSatelliteStatus SatelliteStatus;
+    FSatelliteInfo SatelliteStatus;
     class ACPP_SimulationGameMode* SimulationGameMode;
 };

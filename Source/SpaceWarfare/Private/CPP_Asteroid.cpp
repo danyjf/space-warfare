@@ -58,6 +58,6 @@ void ACPP_Asteroid::Destroyed()
     for (AActor* Actor : GroundStationManagers)
     {
         ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
-        GroundStationManager->ClientAsteroidDestroyed(UKismetSystemLibrary::GetObjectName(this));
+        GroundStationManager->ClientAsteroidDestroyed(GetFName());
     }
 }

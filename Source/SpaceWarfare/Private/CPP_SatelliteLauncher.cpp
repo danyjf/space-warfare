@@ -20,7 +20,7 @@ ACPP_SatelliteLauncher::ACPP_SatelliteLauncher()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-    PlayerNumber = 0;
+    OwnerPlayerID = 0;
     LaunchCost = 50;    // Millions
 }
 
@@ -40,7 +40,7 @@ void ACPP_SatelliteLauncher::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Name)
+void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Label)
 {
     ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
     if (CameraOrbitController->Currency < LaunchCost)
@@ -55,8 +55,8 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
     Satellite->SetActorLocation(OrbitalState.Location);
     Satellite->SetActorScale3D(FVector(Size));
     Satellite->OrbitingPlanet = Planet;
-    Satellite->Name = Name;
-    Satellite->PlayerNumber = PlayerNumber;
+    Satellite->Label = Label;
+    Satellite->OwnerPlayerID = OwnerPlayerID;
     Satellite->SetOwner(CameraOrbitController);
 
     Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);

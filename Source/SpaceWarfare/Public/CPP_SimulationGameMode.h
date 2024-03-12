@@ -73,7 +73,7 @@ protected:
 private:
 	FDateTime InitialEpoch;
 	float ElapsedTime;
-    int CurrentPlayerNumber;
+    int CurrentPlayerID;
     class UCPP_GameInstance* GameInstance;
 
     template <class T>

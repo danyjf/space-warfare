@@ -15,7 +15,7 @@ class SPACEWARFARE_API ACPP_SatelliteLauncher : public AActor
 	
 public:	
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int PlayerNumber;
+    int OwnerPlayerID;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int LaunchCost;
@@ -27,7 +27,7 @@ public:
 	TSubclassOf<class ACPP_Satellite> SatelliteBlueprintClass;
     
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerLaunchSatellite(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Name);
+    void ServerLaunchSatellite(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Label);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
