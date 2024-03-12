@@ -19,6 +19,13 @@ class SPACEWARFARE_API ACPP_SimulationGameMode : public AGameModeBase
 	
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bWaitingForPlayers;
+
+    /** Number of players to be used when not starting the game from the main menu */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int DefaultNumberOfPlayers;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class ACPP_GravityManager* GravityManager;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -50,6 +57,9 @@ public:
 
 	ACPP_SimulationGameMode();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 	// Called at a fixed DeltaTime to update physics
 	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
 
@@ -64,4 +74,8 @@ private:
 	FDateTime InitialEpoch;
 	float ElapsedTime;
     int CurrentPlayerNumber;
+    class UCPP_GameInstance* GameInstance;
+
+    template <class T>
+    void ShuffleArray(T& InArray);
 };

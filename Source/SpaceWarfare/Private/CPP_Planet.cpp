@@ -5,7 +5,9 @@
 #include "Universe.h"
 #include "CPP_GravityComponent.h"
 #include "CPP_CameraOrbitableComponent.h"
+#include "CPP_SimulationGameMode.h"
 
+#include "Kismet/GameplayStatics.h"
 
 ACPP_Planet::ACPP_Planet()
 {
@@ -32,12 +34,22 @@ ACPP_Planet::ACPP_Planet()
 void ACPP_Planet::BeginPlay()
 {
 	Super::BeginPlay();
+
+    if (HasAuthority())
+    {
+        SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+    }
 }
 
 // Called every frame
 void ACPP_Planet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+    if (HasAuthority() && SimulationGameMode->bWaitingForPlayers)
+    {
+        return;
+    }
 
 	SetActorRotation(GetActorRotation() + (RotationSpeed * DeltaTime));
 }

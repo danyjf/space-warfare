@@ -3,8 +3,10 @@
 
 #include "CPP_GravityManager.h"
 #include "CPP_GravityComponent.h"
+#include "CPP_SimulationGameMode.h"
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACPP_GravityManager::ACPP_GravityManager()
@@ -17,6 +19,11 @@ ACPP_GravityManager::ACPP_GravityManager()
 void ACPP_GravityManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+    if (HasAuthority())
+    {
+        SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+    }
 }
 
 // Called every frame
@@ -28,6 +35,11 @@ void ACPP_GravityManager::Tick(float DeltaTime)
 void ACPP_GravityManager::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
+
+    if (SimulationGameMode->bWaitingForPlayers)
+    {
+        return;
+    }
 
     SemiImplicitEulerIntegrator(DeltaTime * TimeScale);
     //LeapFrogIntegrator(DeltaTime * TimeScale);
