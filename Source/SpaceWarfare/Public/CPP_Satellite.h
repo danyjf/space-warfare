@@ -35,7 +35,7 @@ public:
 	const FGeographicCoordinates& GetGeographicCoordinates() const;
 
     UFUNCTION(BlueprintCallable)
-    const FSatelliteStatus& GetSatelliteStatus();
+    const FSatelliteInfo& GetSatelliteStatus();
 
     UFUNCTION(BlueprintCallable)
     void PrintGeographicCoordinates();
@@ -55,6 +55,6 @@ protected:
 
 private:
 	FGeographicCoordinates GeographicCoordinates;
-    FSatelliteStatus SatelliteStatus;
+    FSatelliteInfo SatelliteStatus;
     class ACPP_SimulationGameMode* SimulationGameMode;
 };

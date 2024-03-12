@@ -69,9 +69,12 @@ struct FGeographicCoordinates
 };
 
 USTRUCT(BlueprintType)
-struct FSatelliteStatus
+struct FSatelliteInfo
 {
 	GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadWrite)
+    FString Label;
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector Position;

@@ -9,7 +9,7 @@ struct FSatelliteCommand
     GENERATED_BODY();
 
     UPROPERTY(BlueprintReadWrite)
-    FString SatelliteName;
+    FName UniqueID;
 };
 
 USTRUCT(BlueprintType)

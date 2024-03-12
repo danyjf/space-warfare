@@ -65,7 +65,7 @@ void ACPP_Satellite::Destroyed()
     for (AActor* Actor : GroundStationManagers)
     {
         ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
-        GroundStationManager->ClientSatelliteDestroyed(Name);
+        GroundStationManager->ClientSatelliteDestroyed(GetFName());
     }
 }
 
@@ -91,8 +91,9 @@ const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const
 	return GeographicCoordinates;
 }
 
-const FSatelliteStatus& ACPP_Satellite::GetSatelliteStatus()
+const FSatelliteInfo& ACPP_Satellite::GetSatelliteStatus()
 {
+    SatelliteStatus.Label = Name;
     SatelliteStatus.Position = GetActorLocation();
     SatelliteStatus.Rotation = GetActorRotation();
     SatelliteStatus.Velocity = GetVelocity();

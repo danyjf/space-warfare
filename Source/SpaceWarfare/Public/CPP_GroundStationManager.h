@@ -9,8 +9,8 @@
 #include "GameFramework/Actor.h"
 #include "CPP_GroundStationManager.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FString, SatelliteName);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSatelliteDestroyed, FString, SatelliteName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FName, UniqueID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSatelliteDestroyed, FName, UniqueID);
 
 UCLASS()
 class SPACEWARFARE_API ACPP_GroundStationManager : public AActor
@@ -28,7 +28,22 @@ public:
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TMap<FString, ACPP_Satellite*> OverpassingSatellites;
+    TMap<FName, ACPP_Satellite*> OverpassingSatellites;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    TMap<FName, FSatelliteInfo> FriendlyTrackedSatellites;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    TMap<FName, class ACPP_OrbitSpline*> FriendlySatelliteOrbits;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    TMap<FName, FSatelliteInfo> EnemyTrackedSatellites;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    TMap<FName, class ACPP_OrbitSpline*> EnemySatelliteOrbits;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    TMap<FName, class ACPP_OrbitSpline*> AsteroidOrbits;
 
     UPROPERTY(BlueprintAssignable)
     FNewSatelliteDetected OnNewFriendlySatelliteDetected;
@@ -49,22 +64,22 @@ public:
     void UpdateSatelliteStatus();
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientNewAsteroidTracked(const FString& ObjectName, const FVector& Location, const FVector& Velocity);
+    void ClientNewAsteroidTracked(const FName& UniqueID, const FVector& Location, const FVector& Velocity);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientNewFriendlySatelliteTracked(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
+    void ClientNewFriendlySatelliteTracked(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientNewEnemySatelliteTracked(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
+    void ClientNewEnemySatelliteTracked(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientUpdateSatelliteStatus(const FString& SatelliteName, const FSatelliteStatus& SatelliteStatus);
+    void ClientUpdateSatelliteStatus(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientSatelliteDestroyed(const FString& SatelliteName);
+    void ClientSatelliteDestroyed(const FName& UniqueID);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientAsteroidDestroyed(const FString& ObjectName);
+    void ClientAsteroidDestroyed(const FName& UniqueID);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSatelliteTorqueCommand(const FTorqueCommand& TorqueCommand);
@@ -86,11 +101,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-    TMap<FString, FSatelliteStatus> FriendlyTrackedSatellites;
-    TMap<FString, class ACPP_OrbitSpline*> FriendlySatelliteOrbits;
-    TMap<FString, FSatelliteStatus> EnemyTrackedSatellites;
-    TMap<FString, class ACPP_OrbitSpline*> EnemySatelliteOrbits;
-    TMap<FString, class ACPP_OrbitSpline*> AsteroidOrbits;
     class ACPP_Planet* Planet;
     class ACPP_SimulationGameMode* SimulationGameMode;
     bool bInitialized;

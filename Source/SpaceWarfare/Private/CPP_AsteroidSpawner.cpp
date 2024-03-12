@@ -65,6 +65,6 @@ void ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit()
     for (AActor* Actor : GroundStationManagers)
     {
         ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
-        GroundStationManager->ClientNewAsteroidTracked(UKismetSystemLibrary::GetObjectName(Asteroid), Asteroid->GetActorLocation(), Asteroid->GetVelocity());
+        GroundStationManager->ClientNewAsteroidTracked(Asteroid->GetFName(), Asteroid->GetActorLocation(), Asteroid->GetVelocity());
     }
 }
