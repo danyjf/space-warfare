@@ -21,6 +21,10 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bWaitingForPlayers;
 
+    /** Number of players to be used when not starting the game from the main menu */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int DefaultNumberOfPlayers;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class ACPP_GravityManager* GravityManager;
 

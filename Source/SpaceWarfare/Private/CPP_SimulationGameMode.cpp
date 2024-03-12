@@ -24,6 +24,7 @@ ACPP_SimulationGameMode::ACPP_SimulationGameMode()
     //FString JsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/SimulationConfig.json");
     FString JsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSSimulationConfig.json");
     UJsonReadWrite::ReadStructFromJsonFile<FSimulationConfigStruct>(JsonPath, &SimulationConfig);
+    DefaultNumberOfPlayers = 2;
     CurrentPlayerNumber = 0;
     StartingCurrency = 300; // Millions
     bWaitingForPlayers = true;
@@ -37,6 +38,11 @@ void ACPP_SimulationGameMode::BeginPlay()
     GravityManager = Cast<ACPP_GravityManager>(GetWorld()->SpawnActor(GravityManagerBlueprint));
 
     InitializeSimulationVariables();
+
+    if (GameInstance->MaxNumberOfPlayersInSession == 0)
+    {
+        GameInstance->MaxNumberOfPlayersInSession = DefaultNumberOfPlayers;
+    }
 
     // Randomly assign player IDs to the satellites
     TArray<AActor*> Satellites;
