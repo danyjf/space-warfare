@@ -33,9 +33,22 @@ void ACPP_SimulationGameMode::BeginPlay()
 {
     Super::BeginPlay();
 
+    GameInstance = Cast<UCPP_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     GravityManager = Cast<ACPP_GravityManager>(GetWorld()->SpawnActor(GravityManagerBlueprint));
 
     InitializeSimulationVariables();
+
+    // Randomly assign player IDs to the satellites
+    TArray<AActor*> Satellites;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
+    ShuffleArray(Satellites);
+    int AssignedPlayerID = 0;
+    while (!Satellites.IsEmpty())
+    {
+        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Satellites.Pop());
+        Satellite->PlayerNumber = AssignedPlayerID;
+        AssignedPlayerID = (AssignedPlayerID + 1) % GameInstance->MaxNumberOfPlayersInSession;
+    }
 }
 
 // Called every frame
@@ -46,7 +59,6 @@ void ACPP_SimulationGameMode::Tick(float DeltaTime)
         TArray<AActor*> PlayerControllers;
         UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
 
-        UCPP_GameInstance* GameInstance = Cast<UCPP_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
         if (PlayerControllers.Num() < GameInstance->MaxNumberOfPlayersInSession)
         {
             return;
@@ -178,6 +190,20 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
             Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
             Satellite->GravityComponent->SetMass(SatelliteConfig.Mass);
             Satellite->GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * SatelliteConfig.Mass);
+        }
+    }
+}
+
+template <class T>
+void ACPP_SimulationGameMode::ShuffleArray(T& InArray)
+{
+    const int LastIndex = InArray.Num() - 1;
+    for (int i = 0; i < LastIndex; i++)
+    {
+        int Index = FMath::RandRange(0, LastIndex);
+        if (i != Index)
+        {
+            InArray.Swap(i, Index);
         }
     }
 }

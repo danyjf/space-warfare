@@ -70,4 +70,8 @@ private:
 	FDateTime InitialEpoch;
 	float ElapsedTime;
     int CurrentPlayerNumber;
+    class UCPP_GameInstance* GameInstance;
+
+    template <class T>
+    void ShuffleArray(T& InArray);
 };
