@@ -22,7 +22,7 @@ public:
     TArray<class ACPP_GroundStation*> GroundStations;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int PlayerNumber;
+    int OwnerPlayerID;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;

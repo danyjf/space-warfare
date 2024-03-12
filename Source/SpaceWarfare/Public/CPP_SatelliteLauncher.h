@@ -15,7 +15,7 @@ class SPACEWARFARE_API ACPP_SatelliteLauncher : public AActor
 	
 public:	
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int PlayerNumber;
+    int OwnerPlayerID;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int LaunchCost;

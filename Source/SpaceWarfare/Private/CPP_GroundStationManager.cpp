@@ -79,7 +79,7 @@ void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Sat
 {
     FSatelliteStatus SatelliteStatus = Satellite->GetSatelliteStatus();
 
-    if (Satellite->PlayerNumber == PlayerNumber)
+    if (Satellite->OwnerPlayerID == OwnerPlayerID)
     {
         OverpassingSatellites.Emplace(Satellite->Name, Satellite);
 
@@ -101,7 +101,7 @@ void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Sat
 
 void ACPP_GroundStationManager::SatelliteExitedOverpassArea(ACPP_Satellite* Satellite)
 {
-    if (Satellite->PlayerNumber == PlayerNumber)
+    if (Satellite->OwnerPlayerID == OwnerPlayerID)
     {
         OverpassingSatellites.Remove(Satellite->Name);
     }

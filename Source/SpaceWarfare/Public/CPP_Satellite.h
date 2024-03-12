@@ -20,7 +20,7 @@ public:
 	FString Name;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int PlayerNumber;
+    int OwnerPlayerID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACPP_Planet* OrbitingPlanet;

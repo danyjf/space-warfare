@@ -25,7 +25,7 @@ ACPP_SimulationGameMode::ACPP_SimulationGameMode()
     FString JsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSSimulationConfig.json");
     UJsonReadWrite::ReadStructFromJsonFile<FSimulationConfigStruct>(JsonPath, &SimulationConfig);
     DefaultNumberOfPlayers = 2;
-    CurrentPlayerNumber = 0;
+    CurrentPlayerID = 0;
     StartingCurrency = 300; // Millions
     bWaitingForPlayers = true;
 }
@@ -52,7 +52,7 @@ void ACPP_SimulationGameMode::BeginPlay()
     while (!Satellites.IsEmpty())
     {
         ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Satellites.Pop());
-        Satellite->PlayerNumber = AssignedPlayerID;
+        Satellite->OwnerPlayerID = AssignedPlayerID;
         AssignedPlayerID = (AssignedPlayerID + 1) % GameInstance->MaxNumberOfPlayersInSession;
     }
 }
@@ -117,13 +117,13 @@ void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
     Super::PostLogin(NewPlayer);
 
     ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(NewPlayer);
-    CameraOrbitController->PlayerNumber = CurrentPlayerNumber;
+    CameraOrbitController->PlayerID = CurrentPlayerID;
     CameraOrbitController->Currency = StartingCurrency;
 
     // Create a GroundStationManager for each player
     ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(GetWorld()->SpawnActor(GroundStationManagerBlueprint));
     GroundStationManager->SetOwner(CameraOrbitController);
-    GroundStationManager->PlayerNumber = CurrentPlayerNumber;
+    GroundStationManager->OwnerPlayerID = CurrentPlayerID;
 
     // Assign the owners of the ground stations
     TArray<AActor*> GroundStations;
@@ -131,7 +131,7 @@ void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
     for (AActor* Actor : GroundStations)
     {
         ACPP_GroundStation* GroundStation = Cast<ACPP_GroundStation>(Actor);
-        if (GroundStation->PlayerNumber == CurrentPlayerNumber)
+        if (GroundStation->OwnerPlayerID == CurrentPlayerID)
         {
             GroundStation->SetOwner(CameraOrbitController);
             GroundStationManager->AddGroundStation(GroundStation);
@@ -144,7 +144,7 @@ void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
     for (AActor* Actor : Satellites)
     {
         ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-        if (Satellite->PlayerNumber == CurrentPlayerNumber)
+        if (Satellite->OwnerPlayerID == CurrentPlayerID)
         {
             Satellite->SetOwner(CameraOrbitController);
         }
@@ -153,10 +153,10 @@ void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
     // Create a SatelliteLauncher for each player
     ACPP_SatelliteLauncher* SatelliteLauncher = Cast<ACPP_SatelliteLauncher>(GetWorld()->SpawnActor(SatelliteLauncherBlueprint));
     SatelliteLauncher->SetOwner(CameraOrbitController);
-    SatelliteLauncher->PlayerNumber = CurrentPlayerNumber;
+    SatelliteLauncher->OwnerPlayerID = CurrentPlayerID;
     SatelliteLauncher->Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
 
-    CurrentPlayerNumber++;
+    CurrentPlayerID++;
 }
 
 void ACPP_SimulationGameMode::InitializeSimulationVariables()
