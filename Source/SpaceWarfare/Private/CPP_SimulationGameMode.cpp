@@ -23,7 +23,10 @@ ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 {
     //FString JsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/SimulationConfig.json");
     FString JsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSSimulationConfig.json");
-    UJsonReadWrite::ReadStructFromJsonFile<FSimulationConfigStruct>(JsonPath, &SimulationConfig);
+    if (FPaths::FileExists(JsonPath))
+    {
+        UJsonReadWrite::ReadStructFromJsonFile<FSimulationConfigStruct>(JsonPath, &SimulationConfig);
+    }
     DefaultNumberOfPlayers = 2;
     CurrentPlayerID = 0;
     StartingCurrency = 300; // Millions
