@@ -8,6 +8,7 @@
 #include "CPP_GravityComponent.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_GravityManager.h"
+#include "Universe.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -26,6 +27,8 @@ ACPP_Satellite::ACPP_Satellite()
     RootComponent = StaticMeshComponent;
 
     GravityComponent = CreateDefaultSubobject<UCPP_GravityComponent>(TEXT("Gravity"));
+
+    SatelliteStatus = FSatelliteInfo();
 }
 
 // Called when the game starts or when spawned

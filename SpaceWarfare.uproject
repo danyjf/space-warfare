@@ -12,11 +12,11 @@
 				"Engine"
 			]
 		},
-        {
-            "Name": "FileReadWrite",
-            "Type": "Runtime",
-            "LoadingPhase": "Default"
-        }
+		{
+			"Name": "FileReadWrite",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
 	],
 	"Plugins": [
 		{
@@ -26,5 +26,11 @@
 				"Editor"
 			]
 		}
+	],
+	"TargetPlatforms": [
+		"Linux",
+		"LinuxArm64",
+		"Mac",
+		"Windows"
 	]
 }
