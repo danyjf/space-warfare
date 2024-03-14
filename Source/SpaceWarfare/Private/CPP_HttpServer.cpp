@@ -72,6 +72,7 @@ void ACPP_HttpServer::StopServer()
 bool ACPP_HttpServer::RequestGET(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
 {
     RequestPrint(Request);
+    // NOTE: Use application/json content type later
 	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(TEXT("HttpServerExample GET"), TEXT("text/html"));
 	OnComplete(MoveTemp(Response));
 	return true;
@@ -80,6 +81,7 @@ bool ACPP_HttpServer::RequestGET(const FHttpServerRequest& Request, const FHttpR
 bool ACPP_HttpServer::RequestPOST(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
 {
     RequestPrint(Request);
+    // NOTE: Use application/json content type later
 	TUniquePtr<FHttpServerResponse> response = FHttpServerResponse::Create(TEXT("HttpServerExample POST"), TEXT("text/html"));
 	OnComplete(MoveTemp(response));
 	return true;
@@ -88,6 +90,7 @@ bool ACPP_HttpServer::RequestPOST(const FHttpServerRequest& Request, const FHttp
 bool ACPP_HttpServer::RequestPUT(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
 {
     RequestPrint(Request);
+    // NOTE: Use application/json content type later
 	TUniquePtr<FHttpServerResponse> response = FHttpServerResponse::Create(TEXT("HttpServerExample PUT"), TEXT("text/html"));
 	OnComplete(MoveTemp(response));
 	return true;
