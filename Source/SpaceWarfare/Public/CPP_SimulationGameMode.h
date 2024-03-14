@@ -47,13 +47,13 @@ public:
 	int TimeScale;
 
     UPROPERTY(BlueprintReadOnly)
-	FSimulationConfigStruct SimulationConfig;
-
-    UPROPERTY(BlueprintReadOnly)
 	FDateTime CurrentEpoch;
 
 	UFUNCTION(BlueprintCallable)
-	void InitializeSimulationVariables();
+	void InitializeSimulation(const FSimulationConfig& SimulationConfig);
+
+	UFUNCTION(BlueprintCallable)
+	void InitializeSatellites(TArray<FSatelliteStruct>& SatellitesConfigs);
 
 	ACPP_SimulationGameMode();
 

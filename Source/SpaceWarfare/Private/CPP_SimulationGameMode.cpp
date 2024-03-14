@@ -20,12 +20,6 @@
 
 ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 {
-    //FString JsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/SimulationConfig.json");
-    FString JsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSSimulationConfig.json");
-    if (FPaths::FileExists(JsonPath))
-    {
-        UJsonReadWrite::ReadStructFromJsonFile<FSimulationConfigStruct>(JsonPath, &SimulationConfig);
-    }
     DefaultNumberOfPlayers = 2;
     CurrentPlayerID = 0;
     StartingCurrency = 300; // Millions
@@ -44,7 +38,21 @@ void ACPP_SimulationGameMode::BeginPlay()
         GameInstance->MaxNumberOfPlayersInSession = DefaultNumberOfPlayers;
     }
 
-    InitializeSimulationVariables();
+    FSimulationConfig SimulationConfig;
+    FString SimulationJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/EarthSimulationConfig.json");
+    if (FPaths::FileExists(SimulationJsonPath))
+    {
+        UJsonReadWrite::ReadStructFromJsonFile<FSimulationConfig>(SimulationJsonPath, &SimulationConfig);
+    }
+    InitializeSimulation(SimulationConfig);
+
+    FSatellitesConfig SatellitesConfig;
+    FString SatellitesJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSTestConfig.json");
+    if (FPaths::FileExists(SatellitesJsonPath))
+    {
+        UJsonReadWrite::ReadStructFromJsonFile<FSatellitesConfig>(SatellitesJsonPath, &SatellitesConfig);
+    }
+    InitializeSatellites(SatellitesConfig.Satellites);
 }
 
 // Called every frame
@@ -149,7 +157,7 @@ void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
     CurrentPlayerID++;
 }
 
-void ACPP_SimulationGameMode::InitializeSimulationVariables()
+void ACPP_SimulationGameMode::InitializeSimulation(const FSimulationConfig& SimulationConfig)
 {
 	TimeScale = SimulationConfig.TimeScale;
     GravityManager->TimeScale = TimeScale;
@@ -164,12 +172,17 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
     Planet->SetActorScale3D(FVector(SimulationConfig.Planet.Size));
     Planet->GravityComponent->SetMass(SimulationConfig.Planet.Mass);
     Planet->GravityComponent->SetGravitationalParameter(SimulationConfig.Planet.GM);
+}
 
-    ShuffleArray(SimulationConfig.Satellites);
+void ACPP_SimulationGameMode::InitializeSatellites(TArray<FSatelliteStruct>& SatellitesConfigs)
+{
+    ACPP_Planet* Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
+
+    ShuffleArray(SatellitesConfigs);
     int AssignedPlayerID = 0;
-    for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
+    for (const FSatelliteStruct& SatelliteConfig : SatellitesConfigs)
     {
-	    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
+	    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
 
         ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprint));
         Satellite->SetActorLocation(OrbitalState.Location);
