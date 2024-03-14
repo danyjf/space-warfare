@@ -38,7 +38,7 @@ public:
     TSubclassOf<class ACPP_SatelliteLauncher> SatelliteLauncherBlueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class ACPP_Satellite> SatelliteBlueprintClass;
+	TSubclassOf<class ACPP_Satellite> SatelliteBlueprint;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int StartingCurrency;

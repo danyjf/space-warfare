@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CPP_SimulationGameMode.h"
 #include "CPP_Planet.h"
 #include "CPP_Satellite.h"
@@ -40,24 +39,12 @@ void ACPP_SimulationGameMode::BeginPlay()
     GameInstance = Cast<UCPP_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     GravityManager = Cast<ACPP_GravityManager>(GetWorld()->SpawnActor(GravityManagerBlueprint));
 
-    InitializeSimulationVariables();
-
     if (GameInstance->MaxNumberOfPlayersInSession == 0)
     {
         GameInstance->MaxNumberOfPlayersInSession = DefaultNumberOfPlayers;
     }
 
-    // Randomly assign player IDs to the satellites
-    TArray<AActor*> Satellites;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-    ShuffleArray(Satellites);
-    int AssignedPlayerID = 0;
-    while (!Satellites.IsEmpty())
-    {
-        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Satellites.Pop());
-        Satellite->OwnerPlayerID = AssignedPlayerID;
-        AssignedPlayerID = (AssignedPlayerID + 1) % GameInstance->MaxNumberOfPlayersInSession;
-    }
+    InitializeSimulationVariables();
 }
 
 // Called every frame
@@ -178,28 +165,24 @@ void ACPP_SimulationGameMode::InitializeSimulationVariables()
     Planet->GravityComponent->SetMass(SimulationConfig.Planet.Mass);
     Planet->GravityComponent->SetGravitationalParameter(SimulationConfig.Planet.GM);
 
-    TArray<AActor*> Satellites;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-    for (AActor* Actor : Satellites)
+    ShuffleArray(SimulationConfig.Satellites);
+    int AssignedPlayerID = 0;
+    for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
     {
-        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-        Satellite->StaticMeshComponent->SetSimulatePhysics(false);
+	    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
 
-        for (FSatelliteStruct& SatelliteConfig : SimulationConfig.Satellites)
-        {
-            if (Satellite->Label != SatelliteConfig.Name)
-            {
-                continue;
-            }
+        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprint));
+        Satellite->SetActorLocation(OrbitalState.Location);
+        Satellite->SetActorScale3D(FVector(SatelliteConfig.Size));
+        Satellite->OrbitingPlanet = Planet;
+        Satellite->Label = SatelliteConfig.Name;
+        Satellite->OwnerPlayerID = AssignedPlayerID;
 
-			FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, SimulationConfig.Planet.GM);
+        Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
+        Satellite->GravityComponent->SetMass(SatelliteConfig.Mass);
+        Satellite->GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * SatelliteConfig.Mass);
 
-            Satellite->SetActorLocation(OrbitalState.Location);
-            Satellite->SetActorScale3D(FVector(SatelliteConfig.Size));
-            Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
-            Satellite->GravityComponent->SetMass(SatelliteConfig.Mass);
-            Satellite->GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * SatelliteConfig.Mass);
-        }
+        AssignedPlayerID = (AssignedPlayerID + 1) % GameInstance->MaxNumberOfPlayersInSession;
     }
 }
 
