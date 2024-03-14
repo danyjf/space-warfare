@@ -31,7 +31,7 @@ void ACPP_SimulationGameMode::BeginPlay()
     Super::BeginPlay();
 
     GameInstance = Cast<UCPP_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-    GravityManager = Cast<ACPP_GravityManager>(GetWorld()->SpawnActor(GravityManagerBlueprint));
+    GravityManager = Cast<ACPP_GravityManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GravityManager::StaticClass()));
 
     if (GameInstance->MaxNumberOfPlayersInSession == 0)
     {
