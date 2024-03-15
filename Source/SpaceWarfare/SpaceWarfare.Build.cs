@@ -23,6 +23,8 @@ public class SpaceWarfare : ModuleRules
             new string[] 
             { 
                 "Chaos",
+                "HTTP",
+                "HTTPServer",
                 "FileReadWrite",
 				"JsonUtilities"
             }

@@ -46,7 +46,7 @@ struct FSatelliteStruct
 };
 
 USTRUCT(BlueprintType)
-struct FSimulationConfigStruct
+struct FSimulationConfig
 {
 	GENERATED_BODY();
 
@@ -58,6 +58,12 @@ struct FSimulationConfigStruct
 
 	UPROPERTY()
 	FPlanetStruct Planet;
+};
+
+USTRUCT(BlueprintType)
+struct FSatellitesConfig
+{
+	GENERATED_BODY();
 
 	UPROPERTY()
 	TArray<FSatelliteStruct> Satellites;
