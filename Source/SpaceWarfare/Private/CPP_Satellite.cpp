@@ -28,7 +28,7 @@ ACPP_Satellite::ACPP_Satellite()
 
     GravityComponent = CreateDefaultSubobject<UCPP_GravityComponent>(TEXT("Gravity"));
 
-    SatelliteStatus = FSatelliteInfo();
+    SatelliteInfo = FSatelliteInfo();
 }
 
 // Called when the game starts or when spawned
@@ -94,15 +94,15 @@ const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const
 	return GeographicCoordinates;
 }
 
-const FSatelliteInfo& ACPP_Satellite::GetSatelliteStatus()
+const FSatelliteInfo& ACPP_Satellite::GetSatelliteInfo()
 {
-    SatelliteStatus.OwnerID = OwnerPlayerID;
-    SatelliteStatus.Label = Label;
-    SatelliteStatus.Position = GetActorLocation();
-    SatelliteStatus.Rotation = GetActorRotation();
-    SatelliteStatus.Velocity = GetVelocity();
+    SatelliteInfo.OwnerID = OwnerPlayerID;
+    SatelliteInfo.Label = Label;
+    SatelliteInfo.Position = GetActorLocation();
+    SatelliteInfo.Rotation = GetActorRotation();
+    SatelliteInfo.Velocity = GetVelocity();
 
-	return SatelliteStatus;
+	return SatelliteInfo;
 }
 
 void ACPP_Satellite::PrintGeographicCoordinates()

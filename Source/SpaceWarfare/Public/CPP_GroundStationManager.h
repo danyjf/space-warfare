@@ -40,16 +40,16 @@ public:
     void SatelliteExitedOverpassArea(class ACPP_Satellite* Satellite);
 
     UFUNCTION(BlueprintCallable)
-    void UpdateSatelliteStatus();
+    void UpdateSatelliteInfo();
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientNewAsteroidTracked(const FName& UniqueID, const FVector& Location, const FVector& Velocity);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientNewSatelliteTracked(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus);
+    void ClientNewSatelliteTracked(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientUpdateSatelliteStatus(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus);
+    void ClientUpdateSatelliteInfo(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientSatelliteDestroyed(const FName& UniqueID);

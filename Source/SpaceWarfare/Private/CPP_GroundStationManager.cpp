@@ -60,7 +60,7 @@ void ACPP_GroundStationManager::Tick(float DeltaTime)
             SatelliteEnteredOverpassArea(Satellite);
         }
 
-        GetWorld()->GetTimerManager().SetTimer(UpdateSatellitesTimerHandle, this, &ACPP_GroundStationManager::UpdateSatelliteStatus, 0.1f, true);
+        GetWorld()->GetTimerManager().SetTimer(UpdateSatellitesTimerHandle, this, &ACPP_GroundStationManager::UpdateSatelliteInfo, 0.1f, true);
     }
 }
 
@@ -71,20 +71,20 @@ void ACPP_GroundStationManager::GetLifetimeReplicatedProps(TArray<FLifetimePrope
     DOREPLIFETIME_CONDITION(ACPP_GroundStationManager, OwnerPlayerID, COND_InitialOnly);
 }
 
-void ACPP_GroundStationManager::UpdateSatelliteStatus()
+void ACPP_GroundStationManager::UpdateSatelliteInfo()
 {
     TArray<AActor*> Satellites;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
     for (AActor* Actor : Satellites)
     {
         ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-        ClientUpdateSatelliteStatus(Satellite->GetFName(), Satellite->GetSatelliteStatus());
+        ClientUpdateSatelliteInfo(Satellite->GetFName(), Satellite->GetSatelliteInfo());
     }
 }
 
 void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite)
 {
-    FSatelliteInfo SatelliteStatus = Satellite->GetSatelliteStatus();
+    FSatelliteInfo SatelliteInfo = Satellite->GetSatelliteInfo();
 
     if (Satellite->OwnerPlayerID == OwnerPlayerID)
     {
@@ -93,7 +93,7 @@ void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Sat
 
     if (!TrackedSatellites.Contains(Satellite->GetFName()))
     {
-        ClientNewSatelliteTracked(Satellite->GetFName(), SatelliteStatus);
+        ClientNewSatelliteTracked(Satellite->GetFName(), SatelliteInfo);
     }
 }
 
@@ -146,9 +146,9 @@ void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const F
     SatelliteOrbits.Emplace(UniqueID, OrbitSpline);
 }
 
-void ACPP_GroundStationManager::ClientUpdateSatelliteStatus_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus)
+void ACPP_GroundStationManager::ClientUpdateSatelliteInfo_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo)
 {
-    FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
+    FOrbitalState OrbitalState = FOrbitalState(SatelliteInfo.Position, SatelliteInfo.Velocity);
     FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
     if (SatelliteOrbits.Contains(UniqueID))
