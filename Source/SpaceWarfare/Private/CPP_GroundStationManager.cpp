@@ -246,3 +246,36 @@ void ACPP_GroundStationManager::AddGroundStation(ACPP_GroundStation* GroundStati
     GroundStations.Add(GroundStation);
     GroundStation->GroundStationManager = this;
 }
+
+void ACPP_GroundStationManager::EnableOrbitVisualization(const FName& SatelliteID)
+{
+    if (FriendlySatelliteOrbits.Contains(SatelliteID))
+    {
+        FriendlySatelliteOrbits[SatelliteID]->SetActorHiddenInGame(false);
+    }
+    else if (EnemySatelliteOrbits.Contains(SatelliteID))
+    {
+        EnemySatelliteOrbits[SatelliteID]->SetActorHiddenInGame(false);
+    }
+}
+
+void ACPP_GroundStationManager::DisableOrbitVisualization(const FName& SatelliteID)
+{
+    if (FriendlySatelliteOrbits.Contains(SatelliteID))
+    {
+        FriendlySatelliteOrbits[SatelliteID]->SetActorHiddenInGame(true);
+    }
+    else if (EnemySatelliteOrbits.Contains(SatelliteID))
+    {
+        EnemySatelliteOrbits[SatelliteID]->SetActorHiddenInGame(true);
+    }
+}
+
+const FSatelliteInfo& ACPP_GroundStationManager::GetTrackedSatelliteInfo(const FName& SatelliteID)
+{
+    if (FriendlyTrackedSatellites.Contains(SatelliteID))
+    {
+        return FriendlyTrackedSatellites[SatelliteID];
+    }
+    return EnemyTrackedSatellites[SatelliteID];
+}

@@ -90,6 +90,15 @@ public:
     UFUNCTION(BlueprintCallable)
     void AddGroundStation(class ACPP_GroundStation* GroundStation);
 
+    UFUNCTION(BlueprintCallable)
+    void EnableOrbitVisualization(const FName& SatelliteID);
+
+    UFUNCTION(BlueprintCallable)
+    void DisableOrbitVisualization(const FName& SatelliteID);
+
+    UFUNCTION(BlueprintCallable)
+    const FSatelliteInfo& GetTrackedSatelliteInfo(const FName& SatelliteID);
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
