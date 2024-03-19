@@ -70,6 +70,7 @@ void ACPP_CameraOrbitController::GetLifetimeReplicatedProps(TArray<FLifetimeProp
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME_CONDITION(ACPP_CameraOrbitController, Currency, COND_OwnerOnly);
+    DOREPLIFETIME_CONDITION(ACPP_CameraOrbitController, PlayerID, COND_InitialOnly);
 }
 
 void ACPP_CameraOrbitController::OnRep_Currency()

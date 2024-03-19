@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CPP_GroundStationManager.h"
 #include "CPP_GroundStation.h"
 #include "CPP_Satellite.h"
@@ -14,7 +13,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ACPP_GroundStationManager::ACPP_GroundStationManager()
@@ -64,6 +63,13 @@ void ACPP_GroundStationManager::Tick(float DeltaTime)
     }
 }
 
+void ACPP_GroundStationManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME_CONDITION(ACPP_GroundStationManager, OwnerPlayerID, COND_InitialOnly);
+}
+
 void ACPP_GroundStationManager::UpdateSatelliteStatus()
 {
     TArray<AActor*> Satellites;
@@ -82,20 +88,11 @@ void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Sat
     if (Satellite->OwnerPlayerID == OwnerPlayerID)
     {
         OverpassingSatellites.Emplace(Satellite->GetFName(), Satellite);
-
-        if (!FriendlyTrackedSatellites.Contains(Satellite->GetFName()))
-        {
-            FriendlyTrackedSatellites.Emplace(Satellite->GetFName(), SatelliteStatus);
-            ClientNewFriendlySatelliteTracked(Satellite->GetFName(), SatelliteStatus);
-        }
     }
-    else
+
+    if (!TrackedSatellites.Contains(Satellite->GetFName()))
     {
-        if (!EnemyTrackedSatellites.Contains(Satellite->GetFName()))
-        {
-            EnemyTrackedSatellites.Emplace(Satellite->GetFName(), SatelliteStatus);
-            ClientNewEnemySatelliteTracked(Satellite->GetFName(), SatelliteStatus);
-        }
+        ClientNewSatelliteTracked(Satellite->GetFName(), SatelliteStatus);
     }
 }
 
@@ -125,54 +122,34 @@ void ACPP_GroundStationManager::ClientAsteroidDestroyed_Implementation(const FNa
     AsteroidOrbits.Remove(UniqueID);
 }
 
-void ACPP_GroundStationManager::ClientNewFriendlySatelliteTracked_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus)
+void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo)
 {
-    FriendlyTrackedSatellites.Emplace(UniqueID, SatelliteStatus);
-    OnNewFriendlySatelliteDetected.Broadcast(UniqueID);
+    TrackedSatellites.Emplace(UniqueID, SatelliteInfo);
+    if (SatelliteInfo.OwnerID == OwnerPlayerID)
+    {
+        OnNewFriendlySatelliteDetected.Broadcast(UniqueID);
+    }
+    else
+    {
+        OnNewEnemySatelliteDetected.Broadcast(UniqueID);
+    }
 
     // Create the orbit spline of the satellite
-    if (!OrbitSplineBlueprint)
-    {
-        return;
-    }
-
     ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
 
-    if (Planet && Planet->GravityComponent)
+    FOrbitalState OrbitalState = FOrbitalState(SatelliteInfo.Position, SatelliteInfo.Velocity);
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
+
+    OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
+    if (SatelliteInfo.OwnerID == OwnerPlayerID)
     {
-        FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
-        FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
-
-        OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
+        OrbitSpline->SetColor(FLinearColor::Green);
     }
-
-    OrbitSpline->SetColor(FLinearColor::Green);
-    FriendlySatelliteOrbits.Emplace(UniqueID, OrbitSpline);
-}
-
-void ACPP_GroundStationManager::ClientNewEnemySatelliteTracked_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus)
-{
-    EnemyTrackedSatellites.Emplace(UniqueID, SatelliteStatus);
-    OnNewEnemySatelliteDetected.Broadcast(UniqueID);
-
-    // Create the orbit spline of the satellite
-    if (!OrbitSplineBlueprint)
+    else
     {
-        return;
+        OrbitSpline->SetColor(FLinearColor::Red);
     }
-
-    ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
-
-    if (Planet && Planet->GravityComponent)
-    {
-        FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
-        FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
-
-        OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
-    }
-
-    OrbitSpline->SetColor(FLinearColor::Red);
-    EnemySatelliteOrbits.Emplace(UniqueID, OrbitSpline);
+    SatelliteOrbits.Emplace(UniqueID, OrbitSpline);
 }
 
 void ACPP_GroundStationManager::ClientUpdateSatelliteStatus_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus)
@@ -180,13 +157,9 @@ void ACPP_GroundStationManager::ClientUpdateSatelliteStatus_Implementation(const
     FOrbitalState OrbitalState = FOrbitalState(SatelliteStatus.Position, SatelliteStatus.Velocity);
     FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
-    if (FriendlySatelliteOrbits.Contains(UniqueID))
+    if (SatelliteOrbits.Contains(UniqueID))
     {
-        FriendlySatelliteOrbits[UniqueID]->UpdateOrbit(OrbitalElements, Planet);
-    }
-    else if (EnemySatelliteOrbits.Contains(UniqueID))
-    {
-        EnemySatelliteOrbits[UniqueID]->UpdateOrbit(OrbitalElements, Planet);
+        SatelliteOrbits[UniqueID]->UpdateOrbit(OrbitalElements, Planet);
     }
 }
 
@@ -194,17 +167,11 @@ void ACPP_GroundStationManager::ClientSatelliteDestroyed_Implementation(const FN
 {
     OnSatelliteDestroyed.Broadcast(UniqueID);
 
-    if (FriendlyTrackedSatellites.Contains(UniqueID))
+    if (TrackedSatellites.Contains(UniqueID))
     {
-        FriendlyTrackedSatellites.Remove(UniqueID);
-        FriendlySatelliteOrbits[UniqueID]->Destroy();
-        FriendlySatelliteOrbits.Remove(UniqueID);
-    }
-    else if (EnemyTrackedSatellites.Contains(UniqueID))
-    {
-        EnemyTrackedSatellites.Remove(UniqueID);
-        EnemySatelliteOrbits[UniqueID]->Destroy();
-        EnemySatelliteOrbits.Remove(UniqueID);
+        TrackedSatellites.Remove(UniqueID);
+        SatelliteOrbits[UniqueID]->Destroy();
+        SatelliteOrbits.Remove(UniqueID);
     }
 }
 
@@ -249,33 +216,21 @@ void ACPP_GroundStationManager::AddGroundStation(ACPP_GroundStation* GroundStati
 
 void ACPP_GroundStationManager::EnableOrbitVisualization(const FName& SatelliteID)
 {
-    if (FriendlySatelliteOrbits.Contains(SatelliteID))
+    if (SatelliteOrbits.Contains(SatelliteID))
     {
-        FriendlySatelliteOrbits[SatelliteID]->SetActorHiddenInGame(false);
-    }
-    else if (EnemySatelliteOrbits.Contains(SatelliteID))
-    {
-        EnemySatelliteOrbits[SatelliteID]->SetActorHiddenInGame(false);
+        SatelliteOrbits[SatelliteID]->SetActorHiddenInGame(false);
     }
 }
 
 void ACPP_GroundStationManager::DisableOrbitVisualization(const FName& SatelliteID)
 {
-    if (FriendlySatelliteOrbits.Contains(SatelliteID))
+    if (SatelliteOrbits.Contains(SatelliteID))
     {
-        FriendlySatelliteOrbits[SatelliteID]->SetActorHiddenInGame(true);
-    }
-    else if (EnemySatelliteOrbits.Contains(SatelliteID))
-    {
-        EnemySatelliteOrbits[SatelliteID]->SetActorHiddenInGame(true);
+        SatelliteOrbits[SatelliteID]->SetActorHiddenInGame(true);
     }
 }
 
 const FSatelliteInfo& ACPP_GroundStationManager::GetTrackedSatelliteInfo(const FName& SatelliteID)
 {
-    if (FriendlyTrackedSatellites.Contains(SatelliteID))
-    {
-        return FriendlyTrackedSatellites[SatelliteID];
-    }
-    return EnemyTrackedSatellites[SatelliteID];
+    return TrackedSatellites[SatelliteID];
 }

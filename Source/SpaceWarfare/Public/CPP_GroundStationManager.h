@@ -21,29 +21,11 @@ public:
     UPROPERTY(BlueprintReadWrite)
     TArray<class ACPP_GroundStation*> GroundStations;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(Replicated, BlueprintReadWrite)
     int OwnerPlayerID;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TMap<FName, ACPP_Satellite*> OverpassingSatellites;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TMap<FName, FSatelliteInfo> FriendlyTrackedSatellites;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TMap<FName, class ACPP_OrbitSpline*> FriendlySatelliteOrbits;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TMap<FName, FSatelliteInfo> EnemyTrackedSatellites;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TMap<FName, class ACPP_OrbitSpline*> EnemySatelliteOrbits;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TMap<FName, class ACPP_OrbitSpline*> AsteroidOrbits;
 
     UPROPERTY(BlueprintAssignable)
     FNewSatelliteDetected OnNewFriendlySatelliteDetected;
@@ -60,17 +42,14 @@ public:
     UFUNCTION(BlueprintCallable)
     void SatelliteExitedOverpassArea(class ACPP_Satellite* Satellite);
 
-    UFUNCTION()
+    UFUNCTION(BlueprintCallable)
     void UpdateSatelliteStatus();
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientNewAsteroidTracked(const FName& UniqueID, const FVector& Location, const FVector& Velocity);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientNewFriendlySatelliteTracked(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus);
-
-    UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientNewEnemySatelliteTracked(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus);
+    void ClientNewSatelliteTracked(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientUpdateSatelliteStatus(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus);
@@ -114,4 +93,9 @@ private:
     class ACPP_SimulationGameMode* SimulationGameMode;
     bool bInitialized;
     FTimerHandle UpdateSatellitesTimerHandle;
+
+    TMap<FName, ACPP_Satellite*> OverpassingSatellites;
+    TMap<FName, FSatelliteInfo> TrackedSatellites;
+    TMap<FName, class ACPP_OrbitSpline*> SatelliteOrbits;
+    TMap<FName, class ACPP_OrbitSpline*> AsteroidOrbits;
 };

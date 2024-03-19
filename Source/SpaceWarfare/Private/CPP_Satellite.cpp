@@ -96,6 +96,7 @@ const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const
 
 const FSatelliteInfo& ACPP_Satellite::GetSatelliteStatus()
 {
+    SatelliteStatus.OwnerID = OwnerPlayerID;
     SatelliteStatus.Label = Label;
     SatelliteStatus.Position = GetActorLocation();
     SatelliteStatus.Rotation = GetActorRotation();
