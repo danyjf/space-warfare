@@ -74,6 +74,9 @@ struct FSatelliteInfo
 	GENERATED_BODY()
 
     UPROPERTY(BlueprintReadWrite)
+    int OwnerID;
+
+    UPROPERTY(BlueprintReadWrite)
     FString Label;
 
 	UPROPERTY(BlueprintReadWrite)

@@ -9,7 +9,7 @@
 #include "GameFramework/Actor.h"
 #include "CPP_GroundStationManager.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FName, UniqueID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FNewSatelliteDetected, FName, UniqueID, FSatelliteInfo, SatelliteInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSatelliteDestroyed, FName, UniqueID);
 
 UCLASS()
@@ -21,35 +21,14 @@ public:
     UPROPERTY(BlueprintReadWrite)
     TArray<class ACPP_GroundStation*> GroundStations;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(Replicated, BlueprintReadWrite)
     int OwnerPlayerID;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TMap<FName, ACPP_Satellite*> OverpassingSatellites;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TMap<FName, FSatelliteInfo> FriendlyTrackedSatellites;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TMap<FName, class ACPP_OrbitSpline*> FriendlySatelliteOrbits;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TMap<FName, FSatelliteInfo> EnemyTrackedSatellites;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TMap<FName, class ACPP_OrbitSpline*> EnemySatelliteOrbits;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TMap<FName, class ACPP_OrbitSpline*> AsteroidOrbits;
-
     UPROPERTY(BlueprintAssignable)
-    FNewSatelliteDetected OnNewFriendlySatelliteDetected;
-
-    UPROPERTY(BlueprintAssignable)
-    FNewSatelliteDetected OnNewEnemySatelliteDetected;
+    FNewSatelliteDetected OnNewSatelliteDetected;
 
     UPROPERTY(BlueprintAssignable)
     FSatelliteDestroyed OnSatelliteDestroyed;
@@ -60,20 +39,17 @@ public:
     UFUNCTION(BlueprintCallable)
     void SatelliteExitedOverpassArea(class ACPP_Satellite* Satellite);
 
-    UFUNCTION()
-    void UpdateSatelliteStatus();
+    UFUNCTION(BlueprintCallable)
+    void UpdateSatelliteInfo();
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientNewAsteroidTracked(const FName& UniqueID, const FVector& Location, const FVector& Velocity);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientNewFriendlySatelliteTracked(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus);
+    void ClientNewSatelliteTracked(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientNewEnemySatelliteTracked(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus);
-
-    UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientUpdateSatelliteStatus(const FName& UniqueID, const FSatelliteInfo& SatelliteStatus);
+    void ClientUpdateSatelliteInfo(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientSatelliteDestroyed(const FName& UniqueID);
@@ -90,6 +66,15 @@ public:
     UFUNCTION(BlueprintCallable)
     void AddGroundStation(class ACPP_GroundStation* GroundStation);
 
+    UFUNCTION(BlueprintCallable)
+    void EnableOrbitVisualization(const FName& SatelliteID);
+
+    UFUNCTION(BlueprintCallable)
+    void DisableOrbitVisualization(const FName& SatelliteID);
+
+    UFUNCTION(BlueprintCallable)
+    const FSatelliteInfo& GetTrackedSatelliteInfo(const FName& SatelliteID);
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -105,4 +90,9 @@ private:
     class ACPP_SimulationGameMode* SimulationGameMode;
     bool bInitialized;
     FTimerHandle UpdateSatellitesTimerHandle;
+
+    TMap<FName, ACPP_Satellite*> OverpassingSatellites;
+    TMap<FName, FSatelliteInfo> TrackedSatellites;
+    TMap<FName, class ACPP_OrbitSpline*> SatelliteOrbits;
+    TMap<FName, class ACPP_OrbitSpline*> AsteroidOrbits;
 };
