@@ -22,6 +22,7 @@ ACPP_GroundStationManager::ACPP_GroundStationManager()
 	PrimaryActorTick.bCanEverTick = true;
     
     bInitialized = false;
+    OwnerPlayerID = -1;
 }
 
 // Called when the game starts or when spawned
@@ -125,14 +126,7 @@ void ACPP_GroundStationManager::ClientAsteroidDestroyed_Implementation(const FNa
 void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo)
 {
     TrackedSatellites.Emplace(UniqueID, SatelliteInfo);
-    if (SatelliteInfo.OwnerID == OwnerPlayerID)
-    {
-        OnNewFriendlySatelliteDetected.Broadcast(UniqueID);
-    }
-    else
-    {
-        OnNewEnemySatelliteDetected.Broadcast(UniqueID);
-    }
+    OnNewSatelliteDetected.Broadcast(UniqueID, SatelliteInfo);
 
     // Create the orbit spline of the satellite
     ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));

@@ -18,6 +18,7 @@ ACPP_CameraOrbitController::ACPP_CameraOrbitController()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+    PlayerID = -1;
     InputMode = EInputMode::GROUNDSTATIONINPUT;
     ClickTimer = 0.0f;
     ClickThreshold = 0.1f;
@@ -44,7 +45,7 @@ void ACPP_CameraOrbitController::Tick(float DeltaTime)
     // Check if this player controller is on the client or (is on the server and is controlled by the server)
     if (!Ready && (!HasAuthority() || (HasAuthority() && IsLocalPlayerController())))
     {
-        if (UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass()))
+        if (PlayerID != -1 && UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass()))
         {
             ServerPlayerReady();
             Ready = true;
@@ -70,7 +71,7 @@ void ACPP_CameraOrbitController::GetLifetimeReplicatedProps(TArray<FLifetimeProp
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME_CONDITION(ACPP_CameraOrbitController, Currency, COND_OwnerOnly);
-    DOREPLIFETIME_CONDITION(ACPP_CameraOrbitController, PlayerID, COND_InitialOnly);
+    DOREPLIFETIME(ACPP_CameraOrbitController, PlayerID);
 }
 
 void ACPP_CameraOrbitController::OnRep_Currency()

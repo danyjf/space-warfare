@@ -24,7 +24,7 @@ class SPACEWARFARE_API ACPP_CameraOrbitController : public APlayerController
 	GENERATED_BODY()
 	
 public:
-    UPROPERTY(Replicated, BlueprintReadOnly)
+    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
     int PlayerID;
 
     UPROPERTY(ReplicatedUsing=OnRep_Currency, EditAnywhere, BlueprintReadWrite)

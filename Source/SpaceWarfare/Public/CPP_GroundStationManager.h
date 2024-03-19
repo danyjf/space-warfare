@@ -9,7 +9,7 @@
 #include "GameFramework/Actor.h"
 #include "CPP_GroundStationManager.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewSatelliteDetected, FName, UniqueID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FNewSatelliteDetected, FName, UniqueID, FSatelliteInfo, SatelliteInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSatelliteDestroyed, FName, UniqueID);
 
 UCLASS()
@@ -28,10 +28,7 @@ public:
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
 
     UPROPERTY(BlueprintAssignable)
-    FNewSatelliteDetected OnNewFriendlySatelliteDetected;
-
-    UPROPERTY(BlueprintAssignable)
-    FNewSatelliteDetected OnNewEnemySatelliteDetected;
+    FNewSatelliteDetected OnNewSatelliteDetected;
 
     UPROPERTY(BlueprintAssignable)
     FSatelliteDestroyed OnSatelliteDestroyed;
