@@ -19,7 +19,6 @@ ACPP_CameraOrbitController::ACPP_CameraOrbitController()
 	PrimaryActorTick.bCanEverTick = true;
 
     PlayerID = -1;
-    InputMode = EInputMode::GROUNDSTATIONINPUT;
     ClickTimer = 0.0f;
     ClickThreshold = 0.1f;
     Ready = false;
@@ -52,18 +51,8 @@ void ACPP_CameraOrbitController::Tick(float DeltaTime)
         }
     }
 
-    switch (InputMode)
-    {
-        case EInputMode::GODMODEINPUT:
-            ClickTimer += DeltaTime;
-
-        case EInputMode::GROUNDSTATIONINPUT:
-            PlayerPawn->SetActorLocation(OrbitingActor->GetActorLocation());
-            break;
-    
-        default:
-            break;
-    }
+    ClickTimer += DeltaTime;
+    PlayerPawn->SetActorLocation(OrbitingActor->GetActorLocation());
 }
 
 void ACPP_CameraOrbitController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -95,21 +84,11 @@ void ACPP_CameraOrbitController::SpendCurrency(int Amount)
 
 void ACPP_CameraOrbitController::HandleLeftMouseButtonPress()
 {
-    if (InputMode != EInputMode::GODMODEINPUT)
-    {
-        return;
-    }
-
     ClickTimer = 0.0f;
 }
 
 void ACPP_CameraOrbitController::HandleLeftMouseButtonRelease()
 {
-    if (InputMode != EInputMode::GODMODEINPUT)
-    {
-        return;
-    }
-
     if (ClickTimer > ClickThreshold)
     {
         return;

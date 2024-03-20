@@ -6,13 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "CPP_CameraOrbitController.generated.h"
 
-UENUM(BlueprintType)
-enum class EInputMode : uint8 
-{
-    GROUNDSTATIONINPUT = 0  UMETA(DisplayName = "GroundStationInput"),
-    GODMODEINPUT = 1        UMETA(DisplayName = "GodModeInput")
-};
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCurrencyUpdated, int, Currency);
 
 /**
@@ -44,9 +37,6 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class USpringArmComponent* SpringArmComponent;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    EInputMode InputMode;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float ClickTimer;
