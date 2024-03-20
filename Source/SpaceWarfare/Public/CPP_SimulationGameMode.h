@@ -76,6 +76,8 @@ private:
     int CurrentPlayerID;
     class UCPP_GameInstance* GameInstance;
 
+    // Called when all players have joined the session
+    void StartGameplay();
     template <class T>
     void ShuffleArray(T& InArray);
 };

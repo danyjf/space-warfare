@@ -37,7 +37,11 @@ void ACPP_SimulationGameMode::BeginPlay()
     {
         GameInstance->MaxNumberOfPlayersInSession = DefaultNumberOfPlayers;
     }
+}
 
+// Called when all players have joined the session
+void ACPP_SimulationGameMode::StartGameplay()
+{
     FSimulationConfig SimulationConfig;
     FString SimulationJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/EarthSimulationConfig.json");
     if (FPaths::FileExists(SimulationJsonPath))
@@ -53,6 +57,14 @@ void ACPP_SimulationGameMode::BeginPlay()
         UJsonReadWrite::ReadStructFromJsonFile<FSatellitesConfig>(SatellitesJsonPath, &SatellitesConfig);
     }
     InitializeSatellites(SatellitesConfig.Satellites);
+
+    TArray<AActor*> Satellites;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
+    for (AActor* Actor : Satellites)
+    {
+        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
+        Satellite->StaticMeshComponent->SetSimulatePhysics(true);
+    }
 }
 
 // Called every frame
@@ -77,13 +89,7 @@ void ACPP_SimulationGameMode::Tick(float DeltaTime)
             }
         }
 
-        TArray<AActor*> Satellites;
-        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-        for (AActor* Actor : Satellites)
-        {
-            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-            Satellite->StaticMeshComponent->SetSimulatePhysics(true);
-        }
+        StartGameplay();
 
         bWaitingForPlayers = false;
     }
