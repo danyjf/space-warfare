@@ -38,7 +38,7 @@ void ACPP_Satellite::BeginPlay()
 
     if (HasAuthority())
     {
-	    SimulationGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
         StaticMeshComponent->OnComponentHit.AddDynamic(this, &ACPP_Satellite::OnComponentHit);
     }
 }
@@ -57,7 +57,7 @@ void ACPP_Satellite::Destroyed()
 {
     Super::Destroyed();
 
-    if (!HasAuthority() || !SimulationGameMode)
+    if (!HasAuthority() || !MultiplayerGameMode)
     {
         return;
     }
@@ -111,7 +111,7 @@ void ACPP_Satellite::PrintGeographicCoordinates()
 		LogTemp,
 		Warning,
 		TEXT("Current Epoch: %s; Longitude: %f; Latitude: %f; Altitude: %f"),
-		*SimulationGameMode->CurrentEpoch.ToString(TEXT("%Y-%m-%d %H:%M:%S+0000")),
+		*MultiplayerGameMode->CurrentEpoch.ToString(TEXT("%Y-%m-%d %H:%M:%S+0000")),
 		GeographicCoordinates.Longitude,
 		GeographicCoordinates.Latitude,
 		GeographicCoordinates.Altitude

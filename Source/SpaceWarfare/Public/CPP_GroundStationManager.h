@@ -87,7 +87,7 @@ protected:
 
 private:
     class ACPP_Planet* Planet;
-    class ACPP_MultiplayerGameMode* SimulationGameMode;
+    class ACPP_MultiplayerGameMode* MultiplayerGameMode;
     bool bInitialized;
     FTimerHandle UpdateSatellitesTimerHandle;
 

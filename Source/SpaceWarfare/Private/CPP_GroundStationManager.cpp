@@ -34,7 +34,7 @@ void ACPP_GroundStationManager::BeginPlay()
 
     if (HasAuthority())
     {
-	    SimulationGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     }
 }
 
@@ -48,7 +48,7 @@ void ACPP_GroundStationManager::Tick(float DeltaTime)
         return;
     }
 
-    if (!SimulationGameMode->bWaitingForPlayers && !bInitialized)
+    if (!MultiplayerGameMode->bWaitingForPlayers && !bInitialized)
     {
         bInitialized = true;
 
@@ -151,7 +151,7 @@ void ACPP_GroundStationManager::ClientUpdateSatelliteInfo_Implementation(const F
     FOrbitalState OrbitalState = FOrbitalState(SatelliteInfo.Position, SatelliteInfo.Velocity);
     FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
-    if (SatelliteOrbits.Contains(UniqueID))
+    if (SatelliteOrbits.Contains(UniqueID) && !SatelliteOrbits[UniqueID]->IsHidden())
     {
         SatelliteOrbits[UniqueID]->UpdateOrbit(OrbitalElements, Planet);
     }

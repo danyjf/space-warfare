@@ -34,5 +34,5 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-    class ACPP_MultiplayerGameMode* SimulationGameMode;
+    class ACPP_MultiplayerGameMode* MultiplayerGameMode;
 };

@@ -33,7 +33,7 @@ void ACPP_Asteroid::BeginPlay()
 
     if (HasAuthority())
     {
-	    SimulationGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     }
 }
 
@@ -47,7 +47,7 @@ void ACPP_Asteroid::Destroyed()
 {
     Super::Destroyed();
 
-    if (!HasAuthority() || !SimulationGameMode)
+    if (!HasAuthority() || !MultiplayerGameMode)
     {
         return;
     }

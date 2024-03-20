@@ -22,7 +22,7 @@ void ACPP_GravityManager::BeginPlay()
 
     if (HasAuthority())
     {
-        SimulationGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+        MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     }
 }
 
@@ -36,7 +36,7 @@ void ACPP_GravityManager::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 
-    if (SimulationGameMode->bWaitingForPlayers)
+    if (MultiplayerGameMode->bWaitingForPlayers)
     {
         return;
     }
