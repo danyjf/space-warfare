@@ -70,14 +70,15 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+    // Called when all players have joined the session
+    virtual void StartGameplay();
+
 private:
 	FDateTime InitialEpoch;
 	float ElapsedTime;
     int CurrentPlayerID;
     class UCPP_GameInstance* GameInstance;
 
-    // Called when all players have joined the session
-    void StartGameplay();
     template <class T>
     void ShuffleArray(T& InArray);
 };
