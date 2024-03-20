@@ -5,7 +5,7 @@
 #include "Universe.h"
 #include "CPP_GravityComponent.h"
 #include "CPP_CameraOrbitableComponent.h"
-#include "CPP_SimulationGameMode.h"
+#include "CPP_MultiplayerGameMode.h"
 
 #include "Kismet/GameplayStatics.h"
 

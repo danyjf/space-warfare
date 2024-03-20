@@ -3,7 +3,7 @@
 
 #include "CPP_GravityManager.h"
 #include "CPP_GravityComponent.h"
-#include "CPP_SimulationGameMode.h"
+#include "CPP_MultiplayerGameMode.h"
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/GameplayStatics.h"

@@ -8,7 +8,7 @@
 #include "CPP_Planet.h"
 #include "Universe.h"
 #include "CPP_GravityComponent.h"
-#include "CPP_SimulationGameMode.h"
+#include "CPP_MultiplayerGameMode.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"

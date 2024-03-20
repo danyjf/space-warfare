@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "CPP_SimulationGameMode.h"
+#include "CPP_MultiplayerGameMode.h"
 #include "CPP_Planet.h"
 #include "CPP_Satellite.h"
 #include "CPP_GravityManager.h"

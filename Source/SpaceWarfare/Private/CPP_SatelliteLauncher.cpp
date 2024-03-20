@@ -6,7 +6,7 @@
 #include "CPP_Planet.h"
 #include "CPP_GravityComponent.h"
 #include "CPP_GravityManager.h"
-#include "CPP_SimulationGameMode.h"
+#include "CPP_MultiplayerGameMode.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_CameraOrbitController.h"
 

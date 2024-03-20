@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CPP_SimulationGameMode.h"
+#include "CPP_MultiplayerGameMode.h"
 #include "CPP_BotGameMode.generated.h"
 
 /**

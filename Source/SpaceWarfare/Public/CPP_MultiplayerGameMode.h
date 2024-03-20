@@ -7,7 +7,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "CPP_SimulationGameMode.generated.h"
+#include "CPP_MultiplayerGameMode.generated.h"
 
 /**
  * 
