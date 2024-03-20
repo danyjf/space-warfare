@@ -22,6 +22,7 @@ ACPP_CameraOrbitController::ACPP_CameraOrbitController()
     ClickTimer = 0.0f;
     ClickThreshold = 0.1f;
     Ready = false;
+    PlayerState = EPlayerState::WAITING;
 }
 
 // Called when the game starts or when spawned
@@ -61,6 +62,7 @@ void ACPP_CameraOrbitController::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 
     DOREPLIFETIME_CONDITION(ACPP_CameraOrbitController, Currency, COND_OwnerOnly);
     DOREPLIFETIME(ACPP_CameraOrbitController, PlayerID);
+    DOREPLIFETIME(ACPP_CameraOrbitController, PlayerState);
 }
 
 void ACPP_CameraOrbitController::OnRep_Currency()
