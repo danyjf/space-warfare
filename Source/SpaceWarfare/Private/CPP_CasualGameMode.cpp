@@ -30,12 +30,4 @@ void ACPP_CasualGameMode::StartGameplay()
         UJsonReadWrite::ReadStructFromJsonFile<FSatellitesConfig>(SatellitesJsonPath, &SatellitesConfig);
     }
     InitializeSatellites(SatellitesConfig.Satellites);
-
-    TArray<AActor*> Satellites;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-    for (AActor* Actor : Satellites)
-    {
-        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-        Satellite->StaticMeshComponent->SetSimulatePhysics(true);
-    }
 }
