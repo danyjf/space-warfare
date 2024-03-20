@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "CPP_SimulationGameMode.h"
-#include "CPP_BotGameMode.generated.h"
+#include "CPP_CasualGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SPACEWARFARE_API ACPP_BotGameMode : public ACPP_SimulationGameMode
+class SPACEWARFARE_API ACPP_CasualGameMode : public ACPP_SimulationGameMode
 {
 	GENERATED_BODY()
-
+	
 public:
-	ACPP_BotGameMode();
+	ACPP_CasualGameMode();
 
 protected:
     // Called when all players have joined the session

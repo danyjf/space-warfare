@@ -9,6 +9,7 @@ ACPP_BotGameMode::ACPP_BotGameMode()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+// Called when all players have joined the session
 void ACPP_BotGameMode::StartGameplay()
 {
 }

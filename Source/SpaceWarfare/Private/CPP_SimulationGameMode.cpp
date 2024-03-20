@@ -20,6 +20,8 @@
 
 ACPP_SimulationGameMode::ACPP_SimulationGameMode()
 {
+    bAsyncPhysicsTickEnabled = true;
+
     DefaultNumberOfPlayers = 2;
     CurrentPlayerID = 0;
     StartingCurrency = 300; // Millions
@@ -42,29 +44,6 @@ void ACPP_SimulationGameMode::BeginPlay()
 // Called when all players have joined the session
 void ACPP_SimulationGameMode::StartGameplay()
 {
-    FSimulationConfig SimulationConfig;
-    FString SimulationJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/EarthSimulationConfig.json");
-    if (FPaths::FileExists(SimulationJsonPath))
-    {
-        UJsonReadWrite::ReadStructFromJsonFile<FSimulationConfig>(SimulationJsonPath, &SimulationConfig);
-    }
-    InitializeSimulation(SimulationConfig);
-
-    FSatellitesConfig SatellitesConfig;
-    FString SatellitesJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSTestConfig.json");
-    if (FPaths::FileExists(SatellitesJsonPath))
-    {
-        UJsonReadWrite::ReadStructFromJsonFile<FSatellitesConfig>(SatellitesJsonPath, &SatellitesConfig);
-    }
-    InitializeSatellites(SatellitesConfig.Satellites);
-
-    TArray<AActor*> Satellites;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-    for (AActor* Actor : Satellites)
-    {
-        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-        Satellite->StaticMeshComponent->SetSimulatePhysics(true);
-    }
 }
 
 // Called every frame
