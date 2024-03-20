@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class SPACEWARFARE_API ACPP_CasualGameMode : public ACPP_SimulationGameMode
+class SPACEWARFARE_API ACPP_CasualGameMode : public ACPP_MultiplayerGameMode
 {
 	GENERATED_BODY()
 	

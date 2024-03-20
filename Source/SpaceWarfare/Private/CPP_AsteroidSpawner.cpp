@@ -24,7 +24,7 @@ void ACPP_AsteroidSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	SimulationGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     SpawnAtPlanet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
 }
 

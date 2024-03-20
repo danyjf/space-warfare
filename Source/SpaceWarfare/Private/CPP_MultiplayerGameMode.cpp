@@ -18,7 +18,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
-ACPP_SimulationGameMode::ACPP_SimulationGameMode()
+ACPP_MultiplayerGameMode::ACPP_MultiplayerGameMode()
 {
     bAsyncPhysicsTickEnabled = true;
 
@@ -28,7 +28,7 @@ ACPP_SimulationGameMode::ACPP_SimulationGameMode()
     bWaitingForPlayers = true;
 }
 
-void ACPP_SimulationGameMode::BeginPlay()
+void ACPP_MultiplayerGameMode::BeginPlay()
 {
     Super::BeginPlay();
 
@@ -42,12 +42,12 @@ void ACPP_SimulationGameMode::BeginPlay()
 }
 
 // Called when all players have joined the session
-void ACPP_SimulationGameMode::StartGameplay()
+void ACPP_MultiplayerGameMode::StartGameplay()
 {
 }
 
 // Called every frame
-void ACPP_SimulationGameMode::Tick(float DeltaTime)
+void ACPP_MultiplayerGameMode::Tick(float DeltaTime)
 {
     if (bWaitingForPlayers)
     {
@@ -75,7 +75,7 @@ void ACPP_SimulationGameMode::Tick(float DeltaTime)
 }
 
 // Called at a fixed DeltaTime to update physics
-void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
+void ACPP_MultiplayerGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 
@@ -95,7 +95,7 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 	CurrentEpoch += ElapsedEpoch;
 }
 
-void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
+void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
 {
     Super::PostLogin(NewPlayer);
 
@@ -142,7 +142,7 @@ void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
     CurrentPlayerID++;
 }
 
-void ACPP_SimulationGameMode::InitializeSimulation(const FSimulationConfig& SimulationConfig)
+void ACPP_MultiplayerGameMode::InitializeSimulation(const FSimulationConfig& SimulationConfig)
 {
 	TimeScale = SimulationConfig.TimeScale;
     GravityManager->TimeScale = TimeScale;
@@ -159,7 +159,7 @@ void ACPP_SimulationGameMode::InitializeSimulation(const FSimulationConfig& Simu
     Planet->GravityComponent->SetGravitationalParameter(SimulationConfig.Planet.GM);
 }
 
-void ACPP_SimulationGameMode::InitializeSatellites(TArray<FSatelliteStruct>& SatellitesConfigs)
+void ACPP_MultiplayerGameMode::InitializeSatellites(TArray<FSatelliteStruct>& SatellitesConfigs)
 {
     ACPP_Planet* Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
 
@@ -185,7 +185,7 @@ void ACPP_SimulationGameMode::InitializeSatellites(TArray<FSatelliteStruct>& Sat
 }
 
 template <class T>
-void ACPP_SimulationGameMode::ShuffleArray(T& InArray)
+void ACPP_MultiplayerGameMode::ShuffleArray(T& InArray)
 {
     const int LastIndex = InArray.Num() - 1;
     for (int i = 0; i < LastIndex; i++)

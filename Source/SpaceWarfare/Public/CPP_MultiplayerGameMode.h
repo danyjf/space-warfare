@@ -13,7 +13,7 @@
  * 
  */
 UCLASS()
-class SPACEWARFARE_API ACPP_SimulationGameMode : public AGameModeBase
+class SPACEWARFARE_API ACPP_MultiplayerGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
@@ -55,7 +55,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitializeSatellites(TArray<FSatelliteStruct>& SatellitesConfigs);
 
-	ACPP_SimulationGameMode();
+	ACPP_MultiplayerGameMode();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

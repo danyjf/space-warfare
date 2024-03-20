@@ -37,7 +37,7 @@ void ACPP_Planet::BeginPlay()
 
     if (HasAuthority())
     {
-        SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+        SimulationGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     }
 }
 

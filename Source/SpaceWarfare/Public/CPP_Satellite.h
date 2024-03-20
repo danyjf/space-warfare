@@ -56,5 +56,5 @@ protected:
 private:
 	FGeographicCoordinates GeographicCoordinates;
     FSatelliteInfo SatelliteInfo;
-    class ACPP_SimulationGameMode* SimulationGameMode;
+    class ACPP_MultiplayerGameMode* SimulationGameMode;
 };
