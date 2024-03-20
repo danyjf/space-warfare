@@ -148,6 +148,8 @@ void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const F
 
 void ACPP_GroundStationManager::ClientUpdateSatelliteInfo_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo)
 {
+    TrackedSatellites[UniqueID] = SatelliteInfo;
+
     FOrbitalState OrbitalState = FOrbitalState(SatelliteInfo.Position, SatelliteInfo.Velocity);
     FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
@@ -212,6 +214,10 @@ void ACPP_GroundStationManager::EnableOrbitVisualization(const FName& SatelliteI
 {
     if (SatelliteOrbits.Contains(SatelliteID))
     {
+        FOrbitalState OrbitalState = FOrbitalState(TrackedSatellites[SatelliteID].Position, TrackedSatellites[SatelliteID].Velocity);
+        FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
+        SatelliteOrbits[SatelliteID]->UpdateOrbit(OrbitalElements, Planet);
+
         SatelliteOrbits[SatelliteID]->SetActorHiddenInGame(false);
     }
 }
