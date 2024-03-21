@@ -15,7 +15,13 @@ class SPACEWARFARE_API ACPP_BotGameMode : public ACPP_MultiplayerGameMode
 	GENERATED_BODY()
 
 public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<class ACPP_GroundStationSpawner> GroundStationSpawnerBlueprint;
+
 	ACPP_BotGameMode();
+
+    // Called after each player logs in
+    virtual void PostLogin(APlayerController* NewPlayer) override;
 
 protected:
     // Called when all players have joined the session

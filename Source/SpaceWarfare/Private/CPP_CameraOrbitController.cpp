@@ -72,7 +72,7 @@ void ACPP_CameraOrbitController::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 
     DOREPLIFETIME_CONDITION(ACPP_CameraOrbitController, Currency, COND_OwnerOnly);
     DOREPLIFETIME(ACPP_CameraOrbitController, PlayerID);
-    DOREPLIFETIME(ACPP_CameraOrbitController, PlayerState);
+    DOREPLIFETIME(ACPP_CameraOrbitController, PlayerStatus);
 }
 
 void ACPP_CameraOrbitController::OnRep_Currency()
@@ -98,19 +98,39 @@ void ACPP_CameraOrbitController::MouseSelect(const FInputActionValue& Value)
 {
     FHitResult HitResult;
     GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, HitResult);
-
     AActor* HitActor = HitResult.GetActor();
-    if (!IsValid(HitActor) || HitActor == OrbitingActor)
-    {
-        return;
-    }
 
-    UCPP_CameraOrbitableComponent* HitCameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(HitActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
-    if (IsValid(HitCameraOrbitableComponent))
+    switch (PlayerStatus)
     {
-        CameraOrbitableComponent = HitCameraOrbitableComponent;
-        SpringArmComponent->TargetArmLength = CameraOrbitableComponent->StartOrbitDistance;
-        OrbitingActor = HitActor;
+    case EPlayerStatus::PLACING_GROUND_STATIONS:
+    {
+        ACPP_Planet* Planet = Cast<ACPP_Planet>(HitActor);
+        if (!IsValid(Planet))
+        {
+            return;
+        }
+
+        UKismetSystemLibrary::PrintString(GetWorld(), HitResult.Location.ToString());
+
+        break;
+    }
+    case EPlayerStatus::GROUND_STATION_CONTROL:
+    {
+        if (!IsValid(HitActor) || HitActor == OrbitingActor)
+        {
+            return;
+        }
+
+        UCPP_CameraOrbitableComponent* HitCameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(HitActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
+        if (IsValid(HitCameraOrbitableComponent))
+        {
+            CameraOrbitableComponent = HitCameraOrbitableComponent;
+            SpringArmComponent->TargetArmLength = CameraOrbitableComponent->StartOrbitDistance;
+            OrbitingActor = HitActor;
+        }
+
+        break;
+    }
     }
 }
 

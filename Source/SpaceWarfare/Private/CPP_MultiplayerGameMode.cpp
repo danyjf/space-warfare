@@ -99,14 +99,15 @@ void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
 {
     Super::PostLogin(NewPlayer);
 
-    ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(NewPlayer);
-    CameraOrbitController->PlayerID = CurrentPlayerID;
-    CameraOrbitController->Currency = StartingCurrency;
+    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(NewPlayer);
+    PlayerController->PlayerID = CurrentPlayerID;
+    CurrentPlayerID++;
+    PlayerController->Currency = StartingCurrency;
 
     // Create a GroundStationManager for each player
     ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(GetWorld()->SpawnActor(GroundStationManagerBlueprint));
-    GroundStationManager->SetOwner(CameraOrbitController);
-    GroundStationManager->OwnerPlayerID = CurrentPlayerID;
+    GroundStationManager->SetOwner(PlayerController);
+    GroundStationManager->OwnerPlayerID = PlayerController->PlayerID;
 
     // Assign the owners of the ground stations
     TArray<AActor*> GroundStations;
@@ -114,9 +115,9 @@ void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
     for (AActor* Actor : GroundStations)
     {
         ACPP_GroundStation* GroundStation = Cast<ACPP_GroundStation>(Actor);
-        if (GroundStation->OwnerPlayerID == CurrentPlayerID)
+        if (GroundStation->OwnerPlayerID == PlayerController->PlayerID)
         {
-            GroundStation->SetOwner(CameraOrbitController);
+            GroundStation->SetOwner(PlayerController);
             GroundStationManager->AddGroundStation(GroundStation);
         }
     }
@@ -127,19 +128,17 @@ void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
     for (AActor* Actor : Satellites)
     {
         ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-        if (Satellite->OwnerPlayerID == CurrentPlayerID)
+        if (Satellite->OwnerPlayerID == PlayerController->PlayerID)
         {
-            Satellite->SetOwner(CameraOrbitController);
+            Satellite->SetOwner(PlayerController);
         }
     }
 
     // Create a SatelliteLauncher for each player
     ACPP_SatelliteLauncher* SatelliteLauncher = Cast<ACPP_SatelliteLauncher>(GetWorld()->SpawnActor(SatelliteLauncherBlueprint));
-    SatelliteLauncher->SetOwner(CameraOrbitController);
-    SatelliteLauncher->OwnerPlayerID = CurrentPlayerID;
+    SatelliteLauncher->SetOwner(PlayerController);
+    SatelliteLauncher->OwnerPlayerID = PlayerController->PlayerID;
     SatelliteLauncher->Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
-
-    CurrentPlayerID++;
 }
 
 void ACPP_MultiplayerGameMode::InitializeSimulation(const FSimulationConfig& SimulationConfig)
