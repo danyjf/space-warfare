@@ -15,6 +15,7 @@ public class SpaceWarfare : ModuleRules
 				"CoreUObject", 
 				"Engine", 
 				"InputCore",
+                "EnhancedInput",
                 "UMG"
 			}
 		);

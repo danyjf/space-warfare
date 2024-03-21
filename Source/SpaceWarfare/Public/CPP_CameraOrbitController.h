@@ -43,17 +43,14 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     APawn* PlayerPawn;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    class UInputAction* SelectAction;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class UCPP_CameraOrbitableComponent* CameraOrbitableComponent;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class USpringArmComponent* SpringArmComponent;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float ClickTimer;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float ClickThreshold;
 
     UPROPERTY(BlueprintAssignable)
     FCurrencyUpdated OnCurrencyUpdated;
@@ -66,15 +63,14 @@ public:
 
     UFUNCTION(BlueprintCallable)
     void SpendCurrency(int Amount);
-
+    
     UFUNCTION(BlueprintCallable)
-    void HandleLeftMouseButtonPress();
-
-    UFUNCTION(BlueprintCallable)
-    void HandleLeftMouseButtonRelease();
+    void LeftMouseButtonClicked();
 
 	// Sets default values for this actor's properties
 	ACPP_CameraOrbitController();
+
+    virtual void SetupInputComponent() override;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

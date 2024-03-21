@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CPP_CameraOrbitController.h"
 #include "CPP_CameraOrbitableComponent.h"
 #include "CPP_Planet.h"
@@ -10,7 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
-
+#include "EnhancedInputComponent.h"
 
 // Sets default values
 ACPP_CameraOrbitController::ACPP_CameraOrbitController()
@@ -19,8 +18,6 @@ ACPP_CameraOrbitController::ACPP_CameraOrbitController()
 	PrimaryActorTick.bCanEverTick = true;
 
     PlayerID = -1;
-    ClickTimer = 0.0f;
-    ClickThreshold = 0.1f;
     Ready = false;
     PlayerStatus = EPlayerStatus::WAITING;
 }
@@ -35,6 +32,18 @@ void ACPP_CameraOrbitController::BeginPlay()
     OrbitingActor = UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass());
     CameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(OrbitingActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
     PlayerPawn->SetActorLocation(OrbitingActor->GetActorLocation());
+}
+
+void ACPP_CameraOrbitController::SetupInputComponent() 
+{
+    Super::SetupInputComponent();
+
+    UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(InputComponent);
+    Input->BindAction(SelectAction, ETriggerEvent::Triggered, this, &ACPP_CameraOrbitController::LeftMouseButtonClicked);
+	// You can bind to any of the trigger events here by changing the "ETriggerEvent" enum value
+	//Input->BindAction(IA_Select, ETriggerEvent::Triggered, this, &ACPP_CameraOrbitController::LeftMouseButtonClicked);
+    //InputComponent->BindAction("IA_Select", , this, &ACPP_CameraOrbitController::Jump);
+    //InputComponent->BindAxis("MoveLateral", this, &ACPP_CameraOrbitController::MoveLateral); 
 }
 
 // Called every frame
@@ -52,7 +61,6 @@ void ACPP_CameraOrbitController::Tick(float DeltaTime)
         }
     }
 
-    ClickTimer += DeltaTime;
     PlayerPawn->SetActorLocation(OrbitingActor->GetActorLocation());
 }
 
@@ -84,18 +92,8 @@ void ACPP_CameraOrbitController::SpendCurrency(int Amount)
     }
 }
 
-void ACPP_CameraOrbitController::HandleLeftMouseButtonPress()
+void ACPP_CameraOrbitController::LeftMouseButtonClicked()
 {
-    ClickTimer = 0.0f;
-}
-
-void ACPP_CameraOrbitController::HandleLeftMouseButtonRelease()
-{
-    if (ClickTimer > ClickThreshold)
-    {
-        return;
-    }
-    
     FHitResult HitResult;
     GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, HitResult);
 
