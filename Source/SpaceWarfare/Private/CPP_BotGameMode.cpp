@@ -42,7 +42,6 @@ void ACPP_BotGameMode::PostLogin(APlayerController* NewPlayer)
     ACPP_GroundStationSpawner* GroundStationSpawner = Cast<ACPP_GroundStationSpawner>(GetWorld()->SpawnActor(GroundStationSpawnerBlueprint));
     GroundStationSpawner->SetOwner(PlayerController);
     GroundStationSpawner->OwnerPlayerID = PlayerController->PlayerID;
-    GroundStationSpawner->Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
 
     Super::PostLogin(NewPlayer);
 }

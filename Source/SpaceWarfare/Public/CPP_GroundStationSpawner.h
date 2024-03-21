@@ -19,7 +19,19 @@ public:
     class ACPP_Planet* Planet;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bIsChoosingLocation;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ACPP_GroundStation> GroundStationBlueprint;
+
+    UFUNCTION(BlueprintCallable)
+    void SpawnGroundStationVisualization(FVector Location);
+
+    UFUNCTION(BlueprintCallable)
+    void UpdateGroundStationVisualizationLocation(FVector Location);
+
+    UFUNCTION(BlueprintCallable)
+    void SpawnGroundStationAtVisualizationLocation();
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSpawnGroundStation(FVector Location);
@@ -33,4 +45,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+private:
+    class ACPP_GroundStation* GroundStationVisualization;
 };
