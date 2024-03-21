@@ -38,6 +38,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float DetectionVisualizationHeight;
 
+    UFUNCTION(BlueprintCallable)
+    void SetGeographicCoordinates(const FGeographicCoordinates& Value);
+
     virtual void OnConstruction(const FTransform& Transform) override;
 
 	// Called every frame

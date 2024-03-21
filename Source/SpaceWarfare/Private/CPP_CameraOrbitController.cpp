@@ -4,6 +4,7 @@
 #include "CPP_CameraOrbitableComponent.h"
 #include "CPP_Planet.h"
 #include "CPP_GroundStationManager.h"
+#include "CPP_GroundStationSpawner.h"
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -105,12 +106,13 @@ void ACPP_CameraOrbitController::MouseSelect(const FInputActionValue& Value)
     case EPlayerStatus::PLACING_GROUND_STATIONS:
     {
         ACPP_Planet* Planet = Cast<ACPP_Planet>(HitActor);
-        if (!IsValid(Planet))
+        ACPP_GroundStationSpawner* GroundStationSpawner = Cast<ACPP_GroundStationSpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GroundStationSpawner::StaticClass()));
+        if (!IsValid(Planet) || !IsValid(GroundStationSpawner))
         {
             return;
         }
 
-        UKismetSystemLibrary::PrintString(GetWorld(), HitResult.Location.ToString());
+        GroundStationSpawner->ServerSpawnGroundStation(HitResult.Location);
 
         break;
     }

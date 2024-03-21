@@ -21,6 +21,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ACPP_GroundStation> GroundStationBlueprint;
 
+    UFUNCTION(BlueprintCallable, Server, Reliable)
+    void ServerSpawnGroundStation(FVector Location);
+
 	// Sets default values for this actor's properties
 	ACPP_GroundStationSpawner();
 

@@ -75,18 +75,31 @@ void ACPP_GroundStation::BeginPlay()
 	Super::BeginPlay();
 
     // Hide enemy ground stations on listen server
-    if (HasAuthority() && UGameplayStatics::GetPlayerController(GetWorld(), 0) != GetOwner())
-    {
-        SetActorHiddenInGame(true);
-    }
-    else if (!HasAuthority())
-    {
-        SetActorHiddenInGame(false);
-    }
+    //if (HasAuthority() && UGameplayStatics::GetPlayerController(GetWorld(), 0) != GetOwner())
+    //{
+    //    SetActorHiddenInGame(true);
+    //}
+    //else if (!HasAuthority())
+    //{
+    //    SetActorHiddenInGame(false);
+    //}
 }
 
 // Called every frame
 void ACPP_GroundStation::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ACPP_GroundStation::SetGeographicCoordinates(const FGeographicCoordinates& Value)
+{
+    GeographicCoordinates = Value;
+
+    // Set the location from the latitude and longitude
+    FVector ECILocation = UUniverse::ConvertGeographicCoordinatesToECILocation(Planet, GeographicCoordinates);
+    ECILocation.Y = -ECILocation.Y;     // convert coordinates to left handed system
+    SetActorLocation(ECILocation);
+
+    // Set the rotation to be orthogonal to earths surface
+    SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Planet->GetActorLocation(), GetActorLocation()));
 }
