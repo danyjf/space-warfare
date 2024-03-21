@@ -37,14 +37,20 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool Ready;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    class UInputMappingContext* InputMapping;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    class UInputAction* SelectAction;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    class UInputAction* DragAction;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     AActor* OrbitingActor;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     APawn* PlayerPawn;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-    class UInputAction* SelectAction;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class UCPP_CameraOrbitableComponent* CameraOrbitableComponent;
@@ -65,7 +71,10 @@ public:
     void SpendCurrency(int Amount);
     
     UFUNCTION(BlueprintCallable)
-    void LeftMouseButtonClicked();
+    void MouseSelect(const FInputActionValue& Value);
+
+    UFUNCTION(BlueprintCallable)
+    void MouseDrag(const FInputActionValue& Value);
 
 	// Sets default values for this actor's properties
 	ACPP_CameraOrbitController();

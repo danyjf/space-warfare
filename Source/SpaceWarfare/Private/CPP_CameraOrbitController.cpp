@@ -10,6 +10,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 
 // Sets default values
 ACPP_CameraOrbitController::ACPP_CameraOrbitController()
@@ -38,12 +39,13 @@ void ACPP_CameraOrbitController::SetupInputComponent()
 {
     Super::SetupInputComponent();
 
+    UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+    Subsystem->ClearAllMappings();
+    Subsystem->AddMappingContext(InputMapping, 0);
+
     UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(InputComponent);
-    Input->BindAction(SelectAction, ETriggerEvent::Triggered, this, &ACPP_CameraOrbitController::LeftMouseButtonClicked);
-	// You can bind to any of the trigger events here by changing the "ETriggerEvent" enum value
-	//Input->BindAction(IA_Select, ETriggerEvent::Triggered, this, &ACPP_CameraOrbitController::LeftMouseButtonClicked);
-    //InputComponent->BindAction("IA_Select", , this, &ACPP_CameraOrbitController::Jump);
-    //InputComponent->BindAxis("MoveLateral", this, &ACPP_CameraOrbitController::MoveLateral); 
+    Input->BindAction(SelectAction, ETriggerEvent::Triggered, this, &ACPP_CameraOrbitController::MouseSelect);
+    Input->BindAction(DragAction, ETriggerEvent::Triggered, this, &ACPP_CameraOrbitController::MouseDrag);
 }
 
 // Called every frame
@@ -92,7 +94,7 @@ void ACPP_CameraOrbitController::SpendCurrency(int Amount)
     }
 }
 
-void ACPP_CameraOrbitController::LeftMouseButtonClicked()
+void ACPP_CameraOrbitController::MouseSelect(const FInputActionValue& Value)
 {
     FHitResult HitResult;
     GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, HitResult);
@@ -110,4 +112,10 @@ void ACPP_CameraOrbitController::LeftMouseButtonClicked()
         SpringArmComponent->TargetArmLength = CameraOrbitableComponent->StartOrbitDistance;
         OrbitingActor = HitActor;
     }
+}
+
+void ACPP_CameraOrbitController::MouseDrag(const FInputActionValue& Value)
+{
+    PlayerPawn->AddControllerYawInput(Value.Get<FInputActionValue::Axis2D>().X);
+    PlayerPawn->AddControllerPitchInput(-Value.Get<FInputActionValue::Axis2D>().Y);
 }
