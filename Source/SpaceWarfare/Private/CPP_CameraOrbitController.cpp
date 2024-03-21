@@ -22,7 +22,7 @@ ACPP_CameraOrbitController::ACPP_CameraOrbitController()
     ClickTimer = 0.0f;
     ClickThreshold = 0.1f;
     Ready = false;
-    PlayerState = EPlayerState::WAITING;
+    PlayerStatus = EPlayerStatus::WAITING;
 }
 
 // Called when the game starts or when spawned

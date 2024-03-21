@@ -2,6 +2,7 @@
 
 #include "CPP_CasualGameMode.h"
 #include "CPP_Satellite.h"
+#include "CPP_CameraOrbitController.h"
 #include "JsonReadWrite.h"
 
 #include "Kismet/KismetSystemLibrary.h"
@@ -30,4 +31,12 @@ void ACPP_CasualGameMode::StartGameplay()
         UJsonReadWrite::ReadStructFromJsonFile<FSatellitesConfig>(SatellitesJsonPath, &SatellitesConfig);
     }
     InitializeSatellites(SatellitesConfig.Satellites);
+
+    TArray<AActor*> PlayerControllers;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
+    for (AActor* Actor : PlayerControllers)
+    {
+        ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
+        PlayerController->PlayerStatus = EPlayerStatus::GROUND_STATION_CONTROL;
+    }
 }

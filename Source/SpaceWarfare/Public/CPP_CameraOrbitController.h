@@ -7,11 +7,11 @@
 #include "CPP_CameraOrbitController.generated.h"
 
 UENUM(BlueprintType)
-enum class EPlayerState : uint8 
+enum class EPlayerStatus : uint8 
 {
     WAITING = 0                 UMETA(DisplayName = "Waiting"),
     PLACING_GROUND_STATIONS = 1 UMETA(DisplayName = "PlacingGroundStations"),
-    CONTROLLING_SATELLITES = 2  UMETA(DisplayName = "ControllingSatellites")
+    GROUND_STATION_CONTROL = 2  UMETA(DisplayName = "ControllingSatellites")
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCurrencyUpdated, int, Currency);
@@ -32,7 +32,7 @@ public:
     int Currency;
 
     UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
-    EPlayerState PlayerState;
+    EPlayerStatus PlayerStatus;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool Ready;
