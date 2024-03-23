@@ -24,14 +24,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ACPP_GroundStation> GroundStationBlueprint;
 
-    UFUNCTION(BlueprintCallable)
-    void SpawnGroundStationVisualization(FVector Location);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class ACPP_GroundStationRepresentation> GroundStationRepresentationBlueprint;
 
     UFUNCTION(BlueprintCallable)
-    void UpdateGroundStationVisualizationLocation(FVector Location);
+    void SpawnGroundStationRepresentation(FVector Location);
 
     UFUNCTION(BlueprintCallable)
-    void SpawnGroundStationAtVisualizationLocation();
+    void UpdateGroundStationRepresentationLocation(FVector Location);
+
+    UFUNCTION(BlueprintCallable)
+    void SpawnGroundStationAtRepresentationLocation();
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSpawnGroundStation(FVector Location);
@@ -47,5 +50,5 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-    class ACPP_GroundStation* GroundStationVisualization;
+    class ACPP_GroundStationRepresentation* GroundStationRepresentation;
 };

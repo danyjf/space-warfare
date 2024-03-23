@@ -114,11 +114,11 @@ void ACPP_CameraOrbitController::MouseSelect(const FInputActionValue& Value)
 
         if (GroundStationSpawner->bIsChoosingLocation)
         {
-            GroundStationSpawner->UpdateGroundStationVisualizationLocation(HitResult.Location);
+            GroundStationSpawner->UpdateGroundStationRepresentationLocation(HitResult.Location);
         }
         else
         {
-            GroundStationSpawner->SpawnGroundStationVisualization(HitResult.Location);
+            GroundStationSpawner->SpawnGroundStationRepresentation(HitResult.Location);
         }
 
         break;

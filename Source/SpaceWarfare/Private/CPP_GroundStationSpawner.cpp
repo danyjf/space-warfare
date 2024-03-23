@@ -2,12 +2,14 @@
 
 #include "CPP_GroundStationSpawner.h"
 #include "CPP_GroundStation.h"
+#include "CPP_GroundStationRepresentation.h"
 #include "CPP_CameraOrbitController.h"
 #include "CPP_Planet.h"
 #include "Universe.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
 
 // Sets default values
 ACPP_GroundStationSpawner::ACPP_GroundStationSpawner()
@@ -32,32 +34,35 @@ void ACPP_GroundStationSpawner::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ACPP_GroundStationSpawner::SpawnGroundStationAtVisualizationLocation()
+void ACPP_GroundStationSpawner::SpawnGroundStationAtRepresentationLocation()
 {
-    if (!GroundStationVisualization)
+    if (!GroundStationRepresentation)
     {
         return;
     }
 
-    GroundStationVisualization->Destroy();
-    bIsChoosingLocation = false;
+    ServerSpawnGroundStation(GroundStationRepresentation->GetActorLocation());
 
-    ServerSpawnGroundStation(GroundStationVisualization->GetActorLocation());
+    GroundStationRepresentation->Destroy();
+    GroundStationRepresentation = nullptr;
+    bIsChoosingLocation = false;
 }
 
 void ACPP_GroundStationSpawner::ServerSpawnGroundStation_Implementation(FVector Location)
 {
-    ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
+    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
 
-    if (CameraOrbitController->PlayerStatus != EPlayerStatus::PLACING_GROUND_STATIONS)
+    if (PlayerController->PlayerStatus != EPlayerStatus::PLACING_GROUND_STATIONS)
     {
         return;
     }
 
-    ACPP_GroundStation* GroundStation = Cast<ACPP_GroundStation>(GetWorld()->SpawnActor(GroundStationBlueprint));
+    FActorSpawnParameters SpawnParameters;
+    SpawnParameters.Owner = PlayerController;
+    FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
+    ACPP_GroundStation* GroundStation = Cast<ACPP_GroundStation>(GetWorld()->SpawnActor(GroundStationBlueprint, &SpawnLocation, SpawnParameters));
     GroundStation->Planet = Planet;
     GroundStation->OwnerPlayerID = OwnerPlayerID;
-    GroundStation->SetOwner(CameraOrbitController);
     GroundStation->AttachToActor(Planet, FAttachmentTransformRules::KeepWorldTransform);
 
     FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
@@ -65,28 +70,24 @@ void ACPP_GroundStationSpawner::ServerSpawnGroundStation_Implementation(FVector 
     GroundStation->SetGeographicCoordinates(GeographicCoordinates);
 }
 
-void ACPP_GroundStationSpawner::SpawnGroundStationVisualization(FVector Location)
+void ACPP_GroundStationSpawner::SpawnGroundStationRepresentation(FVector Location)
 {
     bIsChoosingLocation = true;
-    ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
 
-    ACPP_GroundStation* GroundStation = Cast<ACPP_GroundStation>(GetWorld()->SpawnActor(GroundStationBlueprint));
-    GroundStation->SetReplicates(false);
+    ACPP_GroundStationRepresentation* GroundStation = Cast<ACPP_GroundStationRepresentation>(GetWorld()->SpawnActor(GroundStationRepresentationBlueprint));
     GroundStation->Planet = Planet;
-    GroundStation->OwnerPlayerID = OwnerPlayerID;
-    GroundStation->SetOwner(CameraOrbitController);
     GroundStation->AttachToActor(Planet, FAttachmentTransformRules::KeepWorldTransform);
 
     FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
     GeographicCoordinates.Altitude = 0.0f;
     GroundStation->SetGeographicCoordinates(GeographicCoordinates);
 
-    GroundStationVisualization = GroundStation;
+    GroundStationRepresentation = GroundStation;
 }
 
-void ACPP_GroundStationSpawner::UpdateGroundStationVisualizationLocation(FVector Location)
+void ACPP_GroundStationSpawner::UpdateGroundStationRepresentationLocation(FVector Location)
 {
     FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
     GeographicCoordinates.Altitude = 0.0f;
-    GroundStationVisualization->SetGeographicCoordinates(GeographicCoordinates);
+    GroundStationRepresentation->SetGeographicCoordinates(GeographicCoordinates);
 }
