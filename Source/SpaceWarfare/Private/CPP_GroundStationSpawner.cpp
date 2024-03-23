@@ -49,6 +49,11 @@ void ACPP_GroundStationSpawner::ServerSpawnGroundStation_Implementation(FVector 
 {
     ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
 
+    if (CameraOrbitController->PlayerStatus != EPlayerStatus::PLACING_GROUND_STATIONS)
+    {
+        return;
+    }
+
     ACPP_GroundStation* GroundStation = Cast<ACPP_GroundStation>(GetWorld()->SpawnActor(GroundStationBlueprint));
     GroundStation->Planet = Planet;
     GroundStation->OwnerPlayerID = OwnerPlayerID;

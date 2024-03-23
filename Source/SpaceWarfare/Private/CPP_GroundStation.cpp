@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CPP_GroundStation.h"
 #include "CPP_Planet.h"
 #include "CPP_Satellite.h"
@@ -75,14 +74,14 @@ void ACPP_GroundStation::BeginPlay()
 	Super::BeginPlay();
 
     // Hide enemy ground stations on listen server
-    //if (HasAuthority() && UGameplayStatics::GetPlayerController(GetWorld(), 0) != GetOwner())
-    //{
-    //    SetActorHiddenInGame(true);
-    //}
-    //else if (!HasAuthority())
-    //{
-    //    SetActorHiddenInGame(false);
-    //}
+    if (HasAuthority() && UGameplayStatics::GetPlayerController(GetWorld(), 0) != GetOwner())
+    {
+        SetActorHiddenInGame(true);
+    }
+    else if (!HasAuthority())
+    {
+        SetActorHiddenInGame(false);
+    }
 }
 
 // Called every frame
