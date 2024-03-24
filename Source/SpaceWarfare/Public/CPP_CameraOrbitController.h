@@ -35,7 +35,10 @@ public:
     EPlayerStatus PlayerStatus;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    bool Ready;
+    bool bFinishedJoiningSession;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bFinishedPlacingGroundStations;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     class UInputMappingContext* InputMapping;
@@ -65,7 +68,10 @@ public:
     void OnRep_Currency();
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerPlayerReady();
+    void ServerPlayerFinishedJoiningSession();
+
+    UFUNCTION(BlueprintCallable, Server, Reliable)
+    void ServerPlayerFinishedPlacingGroundStations(bool bFinished);
 
     UFUNCTION(BlueprintCallable)
     void SpendCurrency(int Amount);

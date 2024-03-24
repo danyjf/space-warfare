@@ -8,6 +8,7 @@
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/GameStateBase.h"
 
 ACPP_BotGameMode::ACPP_BotGameMode()
 {
@@ -32,6 +33,8 @@ void ACPP_BotGameMode::StartGameplay()
         ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
         PlayerController->PlayerStatus = EPlayerStatus::PLACING_GROUND_STATIONS;
     }
+
+    GetWorld()->GetTimerManager().SetTimer(CheckPlayersReadyTimerHandle, this, &ACPP_BotGameMode::CheckAllPlayersFinishedPlacingGroundStations, 2.0f, true);
 }
 
 void ACPP_BotGameMode::PostLogin(APlayerController* NewPlayer)
@@ -44,4 +47,22 @@ void ACPP_BotGameMode::PostLogin(APlayerController* NewPlayer)
     GroundStationSpawner->OwnerPlayerID = PlayerController->PlayerID;
 
     Super::PostLogin(NewPlayer);
+}
+
+void ACPP_BotGameMode::CheckAllPlayersFinishedPlacingGroundStations()
+{
+    TArray<AActor*> PlayerControllers;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
+    for (AActor* Actor : PlayerControllers)
+    {
+        ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
+        if (!PlayerController->bFinishedPlacingGroundStations)
+        {
+            UKismetSystemLibrary::PrintString(GetWorld(), "Waiting for players");
+            return;
+        }
+    }
+
+    UKismetSystemLibrary::PrintString(GetWorld(), "All players ready");
+    GetWorld()->GetTimerManager().ClearTimer(CheckPlayersReadyTimerHandle);
 }

@@ -62,7 +62,7 @@ void ACPP_MultiplayerGameMode::Tick(float DeltaTime)
         for (AActor* Actor : PlayerControllers)
         {
             ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
-            if (!PlayerController->Ready)
+            if (!PlayerController->bFinishedJoiningSession)
             {
                 return;
             }

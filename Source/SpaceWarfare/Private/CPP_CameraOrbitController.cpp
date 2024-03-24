@@ -20,7 +20,7 @@ ACPP_CameraOrbitController::ACPP_CameraOrbitController()
 	PrimaryActorTick.bCanEverTick = true;
 
     PlayerID = -1;
-    Ready = false;
+    bFinishedJoiningSession = false;
     PlayerStatus = EPlayerStatus::WAITING;
 }
 
@@ -55,12 +55,12 @@ void ACPP_CameraOrbitController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
     // Check if this player controller is on the client or (is on the server and is controlled by the server)
-    if (!Ready && (!HasAuthority() || (HasAuthority() && IsLocalPlayerController())))
+    if (!bFinishedJoiningSession && (!HasAuthority() || (HasAuthority() && IsLocalPlayerController())))
     {
         if (PlayerID != -1 && UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass()))
         {
-            ServerPlayerReady();
-            Ready = true;
+            ServerPlayerFinishedJoiningSession();
+            bFinishedJoiningSession = true;
         }
     }
 
@@ -81,9 +81,14 @@ void ACPP_CameraOrbitController::OnRep_Currency()
     OnCurrencyUpdated.Broadcast(Currency);
 }
 
-void ACPP_CameraOrbitController::ServerPlayerReady_Implementation()
+void ACPP_CameraOrbitController::ServerPlayerFinishedJoiningSession_Implementation()
 {
-    Ready = true;
+    bFinishedJoiningSession = true;
+}
+
+void ACPP_CameraOrbitController::ServerPlayerFinishedPlacingGroundStations_Implementation(bool bFinished)
+{
+    bFinishedPlacingGroundStations = bFinished;
 }
 
 void ACPP_CameraOrbitController::SpendCurrency(int Amount)
