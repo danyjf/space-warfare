@@ -15,6 +15,7 @@ enum class EPlayerStatus : uint8
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCurrencyUpdated, int, Currency);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAllPlayersReady);
 
 /**
  * 
@@ -64,6 +65,9 @@ public:
     UPROPERTY(BlueprintAssignable)
     FCurrencyUpdated OnCurrencyUpdated;
 
+    UPROPERTY(BlueprintAssignable)
+    FAllPlayersReady OnAllPlayersFinishedPlacingGroundStations;
+
     UFUNCTION()
     void OnRep_Currency();
 
@@ -72,6 +76,9 @@ public:
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerPlayerFinishedPlacingGroundStations(bool bFinished);
+
+    UFUNCTION(BlueprintCallable, Client, Reliable)
+    void ClientAllPlayersFinishedPlacingGroundStations();
 
     UFUNCTION(BlueprintCallable)
     void SpendCurrency(int Amount);

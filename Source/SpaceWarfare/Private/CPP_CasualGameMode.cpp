@@ -38,5 +38,17 @@ void ACPP_CasualGameMode::StartGameplay()
     {
         ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
         PlayerController->PlayerStatus = EPlayerStatus::GROUND_STATION_CONTROL;
+
+        // Assign the owners of the satellites
+        TArray<AActor*> Satellites;
+        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
+        for (AActor* ActorSatellite : Satellites)
+        {
+            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(ActorSatellite);
+            if (Satellite->OwnerPlayerID == PlayerController->PlayerID)
+            {
+                Satellite->SetOwner(PlayerController);
+            }
+        }
     }
 }

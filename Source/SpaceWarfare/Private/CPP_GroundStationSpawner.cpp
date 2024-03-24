@@ -70,6 +70,14 @@ void ACPP_GroundStationSpawner::ServerSpawnGroundStation_Implementation(FVector 
     GroundStation->SetGeographicCoordinates(GeographicCoordinates);
 
     GroundStation->UpdateCost();
+
+    if (PlayerController->Currency < GroundStation->Cost)
+    {
+        UKismetSystemLibrary::PrintString(GetWorld(), "Not enough money to purchase ground station!!!");
+        GroundStation->Destroy();
+        return;
+    }
+
     PlayerController->SpendCurrency(GroundStation->Cost);
 }
 

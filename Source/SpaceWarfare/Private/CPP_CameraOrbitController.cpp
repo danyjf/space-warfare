@@ -91,6 +91,12 @@ void ACPP_CameraOrbitController::ServerPlayerFinishedPlacingGroundStations_Imple
     bFinishedPlacingGroundStations = bFinished;
 }
 
+void ACPP_CameraOrbitController::ClientAllPlayersFinishedPlacingGroundStations_Implementation()
+{
+    OnAllPlayersFinishedPlacingGroundStations.Broadcast();
+    // TODO: Destroy the GroundStationRepresentation from the GroundStationSpawner in case it exists
+}
+
 void ACPP_CameraOrbitController::SpendCurrency(int Amount)
 {
     Currency -= Amount;

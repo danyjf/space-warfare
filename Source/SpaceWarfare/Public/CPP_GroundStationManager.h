@@ -26,6 +26,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
+    
+    UPROPERTY(BlueprintReadOnly)
+    TMap<FName, FSatelliteInfo> TrackedSatellites;
 
     UPROPERTY(BlueprintAssignable)
     FNewSatelliteDetected OnNewSatelliteDetected;
@@ -92,7 +95,6 @@ private:
     FTimerHandle UpdateSatellitesTimerHandle;
 
     TMap<FName, ACPP_Satellite*> OverpassingSatellites;
-    TMap<FName, FSatelliteInfo> TrackedSatellites;
     TMap<FName, class ACPP_OrbitSpline*> SatelliteOrbits;
     TMap<FName, class ACPP_OrbitSpline*> AsteroidOrbits;
 };

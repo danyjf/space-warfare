@@ -52,6 +52,7 @@ void ACPP_GroundStationManager::Tick(float DeltaTime)
     {
         bInitialized = true;
 
+        // TODO: Change this, it is adding all satellites to the clients at the beginning
         TArray<AActor*> Satellites;
         UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
         for (AActor* Actor : Satellites)
@@ -125,6 +126,11 @@ void ACPP_GroundStationManager::ClientAsteroidDestroyed_Implementation(const FNa
 
 void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo)
 {
+    if (TrackedSatellites.Contains(UniqueID))
+    {
+        return;
+    }
+
     TrackedSatellites.Emplace(UniqueID, SatelliteInfo);
     OnNewSatelliteDetected.Broadcast(UniqueID, SatelliteInfo);
 
@@ -148,6 +154,11 @@ void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const F
 
 void ACPP_GroundStationManager::ClientUpdateSatelliteInfo_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo)
 {
+    if (!TrackedSatellites.Contains(UniqueID))
+    {
+        return;
+    }
+
     TrackedSatellites[UniqueID] = SatelliteInfo;
 
     FOrbitalState OrbitalState = FOrbitalState(SatelliteInfo.Position, SatelliteInfo.Velocity);

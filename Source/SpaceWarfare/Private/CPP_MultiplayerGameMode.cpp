@@ -109,30 +109,17 @@ void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
     GroundStationManager->SetOwner(PlayerController);
     GroundStationManager->OwnerPlayerID = PlayerController->PlayerID;
 
-    // Assign the owners of the ground stations
-    TArray<AActor*> GroundStations;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStation::StaticClass(), GroundStations);
-    for (AActor* Actor : GroundStations)
-    {
-        ACPP_GroundStation* GroundStation = Cast<ACPP_GroundStation>(Actor);
-        if (GroundStation->OwnerPlayerID == PlayerController->PlayerID)
-        {
-            GroundStation->SetOwner(PlayerController);
-            GroundStationManager->AddGroundStation(GroundStation);
-        }
-    }
-
     // Assign the owners of the satellites
-    TArray<AActor*> Satellites;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-    for (AActor* Actor : Satellites)
-    {
-        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-        if (Satellite->OwnerPlayerID == PlayerController->PlayerID)
-        {
-            Satellite->SetOwner(PlayerController);
-        }
-    }
+    //TArray<AActor*> Satellites;
+    //UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
+    //for (AActor* Actor : Satellites)
+    //{
+    //    ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
+    //    if (Satellite->OwnerPlayerID == PlayerController->PlayerID)
+    //    {
+    //        Satellite->SetOwner(PlayerController);
+    //    }
+    //}
 
     // Create a SatelliteLauncher for each player
     ACPP_SatelliteLauncher* SatelliteLauncher = Cast<ACPP_SatelliteLauncher>(GetWorld()->SpawnActor(SatelliteLauncherBlueprint));
