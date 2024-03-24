@@ -85,6 +85,8 @@ void ACPP_GroundStationSpawner::SpawnGroundStationRepresentation(FVector Locatio
     GeographicCoordinates.Altitude = 0.0f;
     GroundStation->SetGeographicCoordinates(GeographicCoordinates);
 
+    GroundStation->SetConeColor(FLinearColor::Blue);
+
     GroundStationRepresentation = GroundStation;
     GroundStationRepresentation->UpdateCost();
 
