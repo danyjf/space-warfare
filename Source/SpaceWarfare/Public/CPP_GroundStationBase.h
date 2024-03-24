@@ -29,6 +29,12 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float DetectionVisualizationHeight;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int Cost;
+
+    UFUNCTION(BlueprintCallable)
+    void UpdateCost();
+
     UFUNCTION(BlueprintCallable)
     void SetGeographicCoordinates(const FGeographicCoordinates& Value);
 

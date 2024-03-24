@@ -31,6 +31,7 @@ ACPP_GroundStationBase::ACPP_GroundStationBase()
     DetectionFieldOfView = 90.0f;
     DetectionHeight = 50000.0f;
     DetectionVisualizationHeight = 700.0f;
+    Cost = 20;
 }
 
 void ACPP_GroundStationBase::OnConstruction(const FTransform& Transform)
@@ -87,4 +88,9 @@ void ACPP_GroundStationBase::SetGeographicCoordinates(const FGeographicCoordinat
 
     // Set the rotation to be orthogonal to earths surface
     SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Planet->GetActorLocation(), GetActorLocation()));
+}
+
+void ACPP_GroundStationBase::UpdateCost()
+{
+    // TODO: Calculate cost based on texture color
 }

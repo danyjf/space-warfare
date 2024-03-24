@@ -68,6 +68,9 @@ void ACPP_GroundStationSpawner::ServerSpawnGroundStation_Implementation(FVector 
     FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
     GeographicCoordinates.Altitude = 0.0f;
     GroundStation->SetGeographicCoordinates(GeographicCoordinates);
+
+    GroundStation->UpdateCost();
+    PlayerController->SpendCurrency(GroundStation->Cost);
 }
 
 void ACPP_GroundStationSpawner::SpawnGroundStationRepresentation(FVector Location)
@@ -83,6 +86,7 @@ void ACPP_GroundStationSpawner::SpawnGroundStationRepresentation(FVector Locatio
     GroundStation->SetGeographicCoordinates(GeographicCoordinates);
 
     GroundStationRepresentation = GroundStation;
+    GroundStationRepresentation->UpdateCost();
 
     OnUpdateGroundStationRepresentation.Broadcast();
 }
@@ -92,6 +96,7 @@ void ACPP_GroundStationSpawner::UpdateGroundStationRepresentationLocation(FVecto
     FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
     GeographicCoordinates.Altitude = 0.0f;
     GroundStationRepresentation->SetGeographicCoordinates(GeographicCoordinates);
+    GroundStationRepresentation->UpdateCost();
 
     OnUpdateGroundStationRepresentation.Broadcast();
 }
