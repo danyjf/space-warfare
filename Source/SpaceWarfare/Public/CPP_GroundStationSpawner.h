@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "CPP_GroundStationSpawner.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGroundStationRepresentationUpdate);
+
 UCLASS()
 class SPACEWARFARE_API ACPP_GroundStationSpawner : public AActor
 {
@@ -26,6 +28,12 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ACPP_GroundStationRepresentation> GroundStationRepresentationBlueprint;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    class ACPP_GroundStationRepresentation* GroundStationRepresentation;
+
+    UPROPERTY(BlueprintAssignable)
+    FGroundStationRepresentationUpdate OnUpdateGroundStationRepresentation;
 
     UFUNCTION(BlueprintCallable)
     void SpawnGroundStationRepresentation(FVector Location);
@@ -48,7 +56,4 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-private:
-    class ACPP_GroundStationRepresentation* GroundStationRepresentation;
 };

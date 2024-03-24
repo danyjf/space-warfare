@@ -83,6 +83,8 @@ void ACPP_GroundStationSpawner::SpawnGroundStationRepresentation(FVector Locatio
     GroundStation->SetGeographicCoordinates(GeographicCoordinates);
 
     GroundStationRepresentation = GroundStation;
+
+    OnUpdateGroundStationRepresentation.Broadcast();
 }
 
 void ACPP_GroundStationSpawner::UpdateGroundStationRepresentationLocation(FVector Location)
@@ -90,4 +92,6 @@ void ACPP_GroundStationSpawner::UpdateGroundStationRepresentationLocation(FVecto
     FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
     GeographicCoordinates.Altitude = 0.0f;
     GroundStationRepresentation->SetGeographicCoordinates(GeographicCoordinates);
+
+    OnUpdateGroundStationRepresentation.Broadcast();
 }
