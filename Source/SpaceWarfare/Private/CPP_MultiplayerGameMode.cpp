@@ -109,18 +109,6 @@ void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
     GroundStationManager->SetOwner(PlayerController);
     GroundStationManager->OwnerPlayerID = PlayerController->PlayerID;
 
-    // Assign the owners of the satellites
-    //TArray<AActor*> Satellites;
-    //UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-    //for (AActor* Actor : Satellites)
-    //{
-    //    ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-    //    if (Satellite->OwnerPlayerID == PlayerController->PlayerID)
-    //    {
-    //        Satellite->SetOwner(PlayerController);
-    //    }
-    //}
-
     // Create a SatelliteLauncher for each player
     ACPP_SatelliteLauncher* SatelliteLauncher = Cast<ACPP_SatelliteLauncher>(GetWorld()->SpawnActor(SatelliteLauncherBlueprint));
     SatelliteLauncher->SetOwner(PlayerController);
@@ -167,6 +155,38 @@ void ACPP_MultiplayerGameMode::InitializeSatellites(TArray<FSatelliteStruct>& Sa
         Satellite->GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * SatelliteConfig.Mass);
 
         AssignedPlayerID = (AssignedPlayerID + 1) % GameInstance->MaxNumberOfPlayersInSession;
+    }
+
+    TArray<AActor*> Satellites;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
+    TArray<AActor*> PlayerControllers;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
+    for (AActor* Actor : PlayerControllers)
+    {
+        ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
+
+        // Assign the owners of the satellites
+        for (AActor* ActorSatellite : Satellites)
+        {
+            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(ActorSatellite);
+            if (Satellite->OwnerPlayerID == PlayerController->PlayerID)
+            {
+                Satellite->SetOwner(PlayerController);
+            }
+        }
+    }
+
+    // TODO: Maybe change this, it is adding all satellites to the clients at the beginning
+    TArray<AActor*> GroundStationManagers;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);
+    for (AActor* Actor : GroundStationManagers)
+    {
+        ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
+        for (AActor* SatelliteActor : Satellites)
+        {
+            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(SatelliteActor);
+            GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
+        }
     }
 }
 

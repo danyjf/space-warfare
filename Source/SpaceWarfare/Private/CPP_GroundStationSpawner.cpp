@@ -126,5 +126,9 @@ void ACPP_GroundStationSpawner::UpdateGroundStationRepresentationLocation(FVecto
 
 void ACPP_GroundStationSpawner::DestroyGroundStationRepresentation()
 {
-    GroundStationRepresentation->Destroy();
+    if (GroundStationRepresentation)
+    {
+        GroundStationRepresentation->Destroy();
+        GroundStationRepresentation = nullptr;
+    }
 }

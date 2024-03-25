@@ -52,15 +52,6 @@ void ACPP_GroundStationManager::Tick(float DeltaTime)
     {
         bInitialized = true;
 
-        // TODO: Change this, it is adding all satellites to the clients at the beginning
-        TArray<AActor*> Satellites;
-        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-        for (AActor* Actor : Satellites)
-        {
-            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-            SatelliteEnteredOverpassArea(Satellite);
-        }
-
         GetWorld()->GetTimerManager().SetTimer(UpdateSatellitesTimerHandle, this, &ACPP_GroundStationManager::UpdateSatelliteInfo, 0.1f, true);
     }
 }
@@ -156,6 +147,7 @@ void ACPP_GroundStationManager::ClientUpdateSatelliteInfo_Implementation(const F
 {
     if (!TrackedSatellites.Contains(UniqueID))
     {
+        ClientNewSatelliteTracked(UniqueID, SatelliteInfo);
         return;
     }
 

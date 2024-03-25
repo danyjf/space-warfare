@@ -74,39 +74,12 @@ void ACPP_BotGameMode::CheckAllPlayersFinishedPlacingGroundStations()
     }
     InitializeSatellites(SatellitesConfig.Satellites);
 
-    // TODO: Refactor everything after this point, maybe put some stuff inside the InitializeSatellites function
     for (AActor* Actor : PlayerControllers)
     {
         ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
         PlayerController->PlayerStatus = EPlayerStatus::GROUND_STATION_CONTROL;
 
-        // Assign the owners of the satellites
-        TArray<AActor*> Satellites;
-        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-        for (AActor* ActorSatellite : Satellites)
-        {
-            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(ActorSatellite);
-            if (Satellite->OwnerPlayerID == PlayerController->PlayerID)
-            {
-                Satellite->SetOwner(PlayerController);
-            }
-        }
-
         PlayerController->ClientAllPlayersFinishedPlacingGroundStations();
-    }
-
-    TArray<AActor*> GroundStationManagers;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);
-    TArray<AActor*> Satellites;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-    for (AActor* Actor : GroundStationManagers)
-    {
-        ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
-        for (AActor* ActorSatellite : Satellites)
-        {
-            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(ActorSatellite);
-            GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
-        }
     }
 
     GetWorld()->GetTimerManager().ClearTimer(CheckPlayersReadyTimerHandle);
