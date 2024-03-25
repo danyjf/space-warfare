@@ -108,6 +108,7 @@ void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
     ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(GetWorld()->SpawnActor(GroundStationManagerBlueprint));
     GroundStationManager->SetOwner(PlayerController);
     GroundStationManager->OwnerPlayerID = PlayerController->PlayerID;
+    GroundStationManagers.Add(GroundStationManager);
 
     // Create a SatelliteLauncher for each player
     ACPP_SatelliteLauncher* SatelliteLauncher = Cast<ACPP_SatelliteLauncher>(GetWorld()->SpawnActor(SatelliteLauncherBlueprint));
@@ -177,11 +178,8 @@ void ACPP_MultiplayerGameMode::InitializeSatellites(TArray<FSatelliteStruct>& Sa
     }
 
     // TODO: Maybe change this, it is adding all satellites to the clients at the beginning
-    TArray<AActor*> GroundStationManagers;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);
-    for (AActor* Actor : GroundStationManagers)
+    for (ACPP_GroundStationManager* GroundStationManager : GroundStationManagers)
     {
-        ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
         for (AActor* SatelliteActor : Satellites)
         {
             ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(SatelliteActor);

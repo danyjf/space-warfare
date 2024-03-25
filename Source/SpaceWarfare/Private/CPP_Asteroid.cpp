@@ -53,11 +53,8 @@ void ACPP_Asteroid::Destroyed()
     }
 
     // TODO: Change later, this is to remove the satellite on all players when it is destroyed
-    TArray<AActor*> GroundStationManagers;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);
-    for (AActor* Actor : GroundStationManagers)
+    for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
     {
-        ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
         GroundStationManager->ClientAsteroidDestroyed(GetFName());
     }
 }

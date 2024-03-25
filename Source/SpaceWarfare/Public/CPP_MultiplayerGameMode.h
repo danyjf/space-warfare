@@ -49,6 +49,9 @@ public:
     UPROPERTY(BlueprintReadOnly)
 	FDateTime CurrentEpoch;
 
+    UFUNCTION(BlueprintCallable)
+    const TArray<class ACPP_GroundStationManager*>& GetGroundStationManagers() {return GroundStationManagers;}
+
 	UFUNCTION(BlueprintCallable)
 	void InitializeSimulation(const FSimulationConfig& SimulationConfig);
 
@@ -78,6 +81,7 @@ private:
 	float ElapsedTime;
     int CurrentPlayerID;
     class UCPP_GameInstance* GameInstance;
+    TArray<class ACPP_GroundStationManager*> GroundStationManagers;
 
     template <class T>
     void ShuffleArray(T& InArray);

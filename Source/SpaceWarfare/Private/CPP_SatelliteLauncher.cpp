@@ -66,11 +66,8 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
     CameraOrbitController->SpendCurrency(LaunchCost);
 
     // TODO: Change later, this is just to show the satellite on all players when it is launched
-    TArray<AActor*> GroundStationManagers;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);
-    for (AActor* Actor : GroundStationManagers)
+    for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
     {
-        ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
         GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
     }
 }
