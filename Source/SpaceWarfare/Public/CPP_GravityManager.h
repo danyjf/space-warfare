@@ -35,7 +35,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-    class ACPP_SimulationGameMode* SimulationGameMode;
+    class ACPP_MultiplayerGameMode* MultiplayerGameMode;
     void CalculateGravityForces();
     void SemiImplicitEulerIntegrator(float DeltaTime);
     void LeapFrogIntegrator(float DeltaTime);

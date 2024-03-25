@@ -6,10 +6,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "CPP_GroundStationBase.h"
 #include "CPP_GroundStation.generated.h"
 
 UCLASS()
-class SPACEWARFARE_API ACPP_GroundStation : public AActor
+class SPACEWARFARE_API ACPP_GroundStation : public ACPP_GroundStationBase
 {
 	GENERATED_BODY()
 	
@@ -23,23 +24,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int OwnerPlayerID;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    class ACPP_Planet* Planet;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FGeographicCoordinates GeographicCoordinates;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float DetectionFieldOfView;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float DetectionHeight;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float DetectionVisualizationHeight;
-
-    virtual void OnConstruction(const FTransform& Transform) override;
-
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -47,15 +31,6 @@ public:
 	ACPP_GroundStation();
 
 protected:
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    USceneComponent* Root;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    UStaticMeshComponent* DetectionCone;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    UStaticMeshComponent* DetectionConeVisualization;
-
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 };

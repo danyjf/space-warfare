@@ -6,7 +6,7 @@
 #include "CPP_Planet.h"
 #include "CPP_GravityComponent.h"
 #include "CPP_GravityManager.h"
-#include "CPP_SimulationGameMode.h"
+#include "CPP_MultiplayerGameMode.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_CameraOrbitController.h"
 
@@ -30,7 +30,7 @@ void ACPP_SatelliteLauncher::BeginPlay()
 
     if (HasAuthority())
     {
-        SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+        MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     }
 }
 
@@ -61,16 +61,13 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
 
     Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
     Satellite->GravityComponent->SetMass(Mass);
-    Satellite->GravityComponent->SetGravitationalParameter(SimulationGameMode->GravityManager->GravitationalConstant * Mass);
+    Satellite->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * Mass);
 
     CameraOrbitController->SpendCurrency(LaunchCost);
 
     // TODO: Change later, this is just to show the satellite on all players when it is launched
-    TArray<AActor*> GroundStationManagers;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);
-    for (AActor* Actor : GroundStationManagers)
+    for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
     {
-        ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
         GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
     }
 }

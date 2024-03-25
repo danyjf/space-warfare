@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "CPP_SimulationGameMode.h"
+#include "CPP_MultiplayerGameMode.h"
 #include "CPP_Planet.h"
 #include "CPP_Satellite.h"
 #include "CPP_GravityManager.h"
@@ -18,15 +18,17 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
-ACPP_SimulationGameMode::ACPP_SimulationGameMode()
+ACPP_MultiplayerGameMode::ACPP_MultiplayerGameMode()
 {
+    bAsyncPhysicsTickEnabled = true;
+
     DefaultNumberOfPlayers = 2;
     CurrentPlayerID = 0;
     StartingCurrency = 300; // Millions
     bWaitingForPlayers = true;
 }
 
-void ACPP_SimulationGameMode::BeginPlay()
+void ACPP_MultiplayerGameMode::BeginPlay()
 {
     Super::BeginPlay();
 
@@ -37,60 +39,39 @@ void ACPP_SimulationGameMode::BeginPlay()
     {
         GameInstance->MaxNumberOfPlayersInSession = DefaultNumberOfPlayers;
     }
+}
 
-    FSimulationConfig SimulationConfig;
-    FString SimulationJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/EarthSimulationConfig.json");
-    if (FPaths::FileExists(SimulationJsonPath))
-    {
-        UJsonReadWrite::ReadStructFromJsonFile<FSimulationConfig>(SimulationJsonPath, &SimulationConfig);
-    }
-    InitializeSimulation(SimulationConfig);
-
-    FSatellitesConfig SatellitesConfig;
-    FString SatellitesJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSTestConfig.json");
-    if (FPaths::FileExists(SatellitesJsonPath))
-    {
-        UJsonReadWrite::ReadStructFromJsonFile<FSatellitesConfig>(SatellitesJsonPath, &SatellitesConfig);
-    }
-    InitializeSatellites(SatellitesConfig.Satellites);
+// Called when all players have joined the session
+void ACPP_MultiplayerGameMode::StartGameplay()
+{
 }
 
 // Called every frame
-void ACPP_SimulationGameMode::Tick(float DeltaTime)
+void ACPP_MultiplayerGameMode::Tick(float DeltaTime)
 {
     if (bWaitingForPlayers)
     {
-        TArray<AActor*> PlayerControllers;
-        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
-
-        if (PlayerControllers.Num() < GameInstance->MaxNumberOfPlayersInSession)
+        if (CameraOrbitControllers.Num() < GameInstance->MaxNumberOfPlayersInSession)
         {
             return;
         }
 
-        for (AActor* Actor : PlayerControllers)
+        for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
         {
-            ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
-            if (!PlayerController->Ready)
+            if (!PlayerController->bHasNecessaryReplicatedVariables)
             {
                 return;
             }
         }
 
-        TArray<AActor*> Satellites;
-        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-        for (AActor* Actor : Satellites)
-        {
-            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-            Satellite->StaticMeshComponent->SetSimulatePhysics(true);
-        }
+        StartGameplay();
 
         bWaitingForPlayers = false;
     }
 }
 
 // Called at a fixed DeltaTime to update physics
-void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
+void ACPP_MultiplayerGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 
@@ -110,54 +91,30 @@ void ACPP_SimulationGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTi
 	CurrentEpoch += ElapsedEpoch;
 }
 
-void ACPP_SimulationGameMode::PostLogin(APlayerController* NewPlayer)
+void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
 {
     Super::PostLogin(NewPlayer);
 
-    ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(NewPlayer);
-    CameraOrbitController->PlayerID = CurrentPlayerID;
-    CameraOrbitController->Currency = StartingCurrency;
+    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(NewPlayer);
+    PlayerController->PlayerID = CurrentPlayerID;
+    CurrentPlayerID++;
+    PlayerController->Currency = StartingCurrency;
+    CameraOrbitControllers.Add(PlayerController);
 
     // Create a GroundStationManager for each player
     ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(GetWorld()->SpawnActor(GroundStationManagerBlueprint));
-    GroundStationManager->SetOwner(CameraOrbitController);
-    GroundStationManager->OwnerPlayerID = CurrentPlayerID;
-
-    // Assign the owners of the ground stations
-    TArray<AActor*> GroundStations;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStation::StaticClass(), GroundStations);
-    for (AActor* Actor : GroundStations)
-    {
-        ACPP_GroundStation* GroundStation = Cast<ACPP_GroundStation>(Actor);
-        if (GroundStation->OwnerPlayerID == CurrentPlayerID)
-        {
-            GroundStation->SetOwner(CameraOrbitController);
-            GroundStationManager->AddGroundStation(GroundStation);
-        }
-    }
-
-    // Assign the owners of the satellites
-    TArray<AActor*> Satellites;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-    for (AActor* Actor : Satellites)
-    {
-        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-        if (Satellite->OwnerPlayerID == CurrentPlayerID)
-        {
-            Satellite->SetOwner(CameraOrbitController);
-        }
-    }
+    GroundStationManager->SetOwner(PlayerController);
+    GroundStationManager->OwnerPlayerID = PlayerController->PlayerID;
+    GroundStationManagers.Add(GroundStationManager);
 
     // Create a SatelliteLauncher for each player
     ACPP_SatelliteLauncher* SatelliteLauncher = Cast<ACPP_SatelliteLauncher>(GetWorld()->SpawnActor(SatelliteLauncherBlueprint));
-    SatelliteLauncher->SetOwner(CameraOrbitController);
-    SatelliteLauncher->OwnerPlayerID = CurrentPlayerID;
+    SatelliteLauncher->SetOwner(PlayerController);
+    SatelliteLauncher->OwnerPlayerID = PlayerController->PlayerID;
     SatelliteLauncher->Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
-
-    CurrentPlayerID++;
 }
 
-void ACPP_SimulationGameMode::InitializeSimulation(const FSimulationConfig& SimulationConfig)
+void ACPP_MultiplayerGameMode::InitializeSimulation(const FSimulationConfig& SimulationConfig)
 {
 	TimeScale = SimulationConfig.TimeScale;
     GravityManager->TimeScale = TimeScale;
@@ -174,7 +131,7 @@ void ACPP_SimulationGameMode::InitializeSimulation(const FSimulationConfig& Simu
     Planet->GravityComponent->SetGravitationalParameter(SimulationConfig.Planet.GM);
 }
 
-void ACPP_SimulationGameMode::InitializeSatellites(TArray<FSatelliteStruct>& SatellitesConfigs)
+void ACPP_MultiplayerGameMode::InitializeSatellites(TArray<FSatelliteStruct>& SatellitesConfigs)
 {
     ACPP_Planet* Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
 
@@ -197,10 +154,39 @@ void ACPP_SimulationGameMode::InitializeSatellites(TArray<FSatelliteStruct>& Sat
 
         AssignedPlayerID = (AssignedPlayerID + 1) % GameInstance->MaxNumberOfPlayersInSession;
     }
+
+    TArray<AActor*> Satellites;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
+    TArray<AActor*> PlayerControllers;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
+    for (AActor* Actor : PlayerControllers)
+    {
+        ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
+
+        // Assign the owners of the satellites
+        for (AActor* ActorSatellite : Satellites)
+        {
+            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(ActorSatellite);
+            if (Satellite->OwnerPlayerID == PlayerController->PlayerID)
+            {
+                Satellite->SetOwner(PlayerController);
+            }
+        }
+    }
+
+    // TODO: Maybe change this, it is adding all satellites to the clients at the beginning
+    for (ACPP_GroundStationManager* GroundStationManager : GroundStationManagers)
+    {
+        for (AActor* SatelliteActor : Satellites)
+        {
+            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(SatelliteActor);
+            GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
+        }
+    }
 }
 
 template <class T>
-void ACPP_SimulationGameMode::ShuffleArray(T& InArray)
+void ACPP_MultiplayerGameMode::ShuffleArray(T& InArray)
 {
     const int LastIndex = InArray.Num() - 1;
     for (int i = 0; i < LastIndex; i++)

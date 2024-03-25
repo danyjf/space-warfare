@@ -2,7 +2,7 @@
 
 #include "CPP_Asteroid.h"
 #include "CPP_GravityComponent.h"
-#include "CPP_SimulationGameMode.h"
+#include "CPP_MultiplayerGameMode.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_GravityManager.h"
 
@@ -33,7 +33,7 @@ void ACPP_Asteroid::BeginPlay()
 
     if (HasAuthority())
     {
-	    SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     }
 }
 
@@ -47,17 +47,14 @@ void ACPP_Asteroid::Destroyed()
 {
     Super::Destroyed();
 
-    if (!HasAuthority() || !SimulationGameMode)
+    if (!HasAuthority() || !MultiplayerGameMode)
     {
         return;
     }
 
     // TODO: Change later, this is to remove the satellite on all players when it is destroyed
-    TArray<AActor*> GroundStationManagers;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass(), GroundStationManagers);
-    for (AActor* Actor : GroundStationManagers)
+    for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
     {
-        ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(Actor);
         GroundStationManager->ClientAsteroidDestroyed(GetFName());
     }
 }

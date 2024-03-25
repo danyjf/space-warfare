@@ -7,13 +7,15 @@
 #include "CPP_CameraOrbitController.generated.h"
 
 UENUM(BlueprintType)
-enum class EInputMode : uint8 
+enum class EPlayerStatus : uint8 
 {
-    GROUNDSTATIONINPUT = 0  UMETA(DisplayName = "GroundStationInput"),
-    GODMODEINPUT = 1        UMETA(DisplayName = "GodModeInput")
+    WAITING = 0                 UMETA(DisplayName = "Waiting"),
+    PLACING_GROUND_STATIONS = 1 UMETA(DisplayName = "PlacingGroundStations"),
+    GROUND_STATION_CONTROL = 2  UMETA(DisplayName = "ControllingSatellites")
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCurrencyUpdated, int, Currency);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAllPlayersReady);
 
 /**
  * 
@@ -30,8 +32,23 @@ public:
     UPROPERTY(ReplicatedUsing=OnRep_Currency, EditAnywhere, BlueprintReadWrite)
     int Currency;
 
+    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
+    EPlayerStatus PlayerStatus;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    bool Ready;
+    bool bHasNecessaryReplicatedVariables;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bFinishedPlacingGroundStations;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    class UInputMappingContext* InputMapping;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    class UInputAction* SelectAction;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    class UInputAction* DragAction;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     AActor* OrbitingActor;
@@ -45,35 +62,37 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class USpringArmComponent* SpringArmComponent;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    EInputMode InputMode;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float ClickTimer;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float ClickThreshold;
-
     UPROPERTY(BlueprintAssignable)
     FCurrencyUpdated OnCurrencyUpdated;
+
+    UPROPERTY(BlueprintAssignable)
+    FAllPlayersReady OnAllPlayersFinishedPlacingGroundStations;
 
     UFUNCTION()
     void OnRep_Currency();
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerPlayerReady();
+    void ServerPlayerFinishedJoiningSession();
+
+    UFUNCTION(BlueprintCallable, Server, Reliable)
+    void ServerPlayerFinishedPlacingGroundStations(bool bFinished);
+
+    UFUNCTION(BlueprintCallable, Client, Reliable)
+    void ClientAllPlayersFinishedPlacingGroundStations();
 
     UFUNCTION(BlueprintCallable)
     void SpendCurrency(int Amount);
+    
+    UFUNCTION(BlueprintCallable)
+    void MouseSelect(const FInputActionValue& Value);
 
     UFUNCTION(BlueprintCallable)
-    void HandleLeftMouseButtonPress();
-
-    UFUNCTION(BlueprintCallable)
-    void HandleLeftMouseButtonRelease();
+    void MouseDrag(const FInputActionValue& Value);
 
 	// Sets default values for this actor's properties
 	ACPP_CameraOrbitController();
+
+    virtual void SetupInputComponent() override;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CPP_OrbitSpline.h"
 #include "CPP_Planet.h"
 #include "CPP_GravityComponent.h"
@@ -79,7 +78,6 @@ void ACPP_OrbitSpline::OnConstruction(const FTransform& Transform)
 void ACPP_OrbitSpline::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 // Called every frame

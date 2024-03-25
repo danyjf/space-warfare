@@ -3,7 +3,7 @@
 
 #include "CPP_GravityManager.h"
 #include "CPP_GravityComponent.h"
-#include "CPP_SimulationGameMode.h"
+#include "CPP_MultiplayerGameMode.h"
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/GameplayStatics.h"
@@ -22,7 +22,7 @@ void ACPP_GravityManager::BeginPlay()
 
     if (HasAuthority())
     {
-        SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+        MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     }
 }
 
@@ -36,7 +36,7 @@ void ACPP_GravityManager::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 
-    if (SimulationGameMode->bWaitingForPlayers)
+    if (MultiplayerGameMode->bWaitingForPlayers)
     {
         return;
     }

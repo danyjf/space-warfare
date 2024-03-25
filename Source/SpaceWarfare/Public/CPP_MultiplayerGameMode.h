@@ -7,13 +7,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "CPP_SimulationGameMode.generated.h"
+#include "CPP_MultiplayerGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SPACEWARFARE_API ACPP_SimulationGameMode : public AGameModeBase
+class SPACEWARFARE_API ACPP_MultiplayerGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
@@ -49,13 +49,16 @@ public:
     UPROPERTY(BlueprintReadOnly)
 	FDateTime CurrentEpoch;
 
+    UFUNCTION(BlueprintCallable)
+    const TArray<class ACPP_GroundStationManager*>& GetGroundStationManagers() {return GroundStationManagers;}
+
 	UFUNCTION(BlueprintCallable)
 	void InitializeSimulation(const FSimulationConfig& SimulationConfig);
 
 	UFUNCTION(BlueprintCallable)
 	void InitializeSatellites(TArray<FSatelliteStruct>& SatellitesConfigs);
 
-	ACPP_SimulationGameMode();
+	ACPP_MultiplayerGameMode();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -67,8 +70,14 @@ public:
     virtual void PostLogin(APlayerController* NewPlayer) override;
 
 protected:
+    TArray<class ACPP_GroundStationManager*> GroundStationManagers;
+    TArray<class ACPP_CameraOrbitController*> CameraOrbitControllers;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+    // Called when all players have joined the session
+    virtual void StartGameplay();
 
 private:
 	FDateTime InitialEpoch;

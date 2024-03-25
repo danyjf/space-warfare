@@ -5,7 +5,7 @@
 #include "Universe.h"
 #include "CPP_GravityComponent.h"
 #include "CPP_CameraOrbitableComponent.h"
-#include "CPP_SimulationGameMode.h"
+#include "CPP_MultiplayerGameMode.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -37,7 +37,7 @@ void ACPP_Planet::BeginPlay()
 
     if (HasAuthority())
     {
-        SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+        MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     }
 }
 
@@ -46,7 +46,7 @@ void ACPP_Planet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    if (HasAuthority() && SimulationGameMode->bWaitingForPlayers)
+    if (HasAuthority() && MultiplayerGameMode->bWaitingForPlayers)
     {
         return;
     }

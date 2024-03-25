@@ -8,7 +8,7 @@
 #include "CPP_Planet.h"
 #include "Universe.h"
 #include "CPP_GravityComponent.h"
-#include "CPP_SimulationGameMode.h"
+#include "CPP_MultiplayerGameMode.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -34,7 +34,7 @@ void ACPP_GroundStationManager::BeginPlay()
 
     if (HasAuthority())
     {
-	    SimulationGameMode = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     }
 }
 
@@ -48,17 +48,9 @@ void ACPP_GroundStationManager::Tick(float DeltaTime)
         return;
     }
 
-    if (!SimulationGameMode->bWaitingForPlayers && !bInitialized)
+    if (!MultiplayerGameMode->bWaitingForPlayers && !bInitialized)
     {
         bInitialized = true;
-
-        TArray<AActor*> Satellites;
-        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-        for (AActor* Actor : Satellites)
-        {
-            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-            SatelliteEnteredOverpassArea(Satellite);
-        }
 
         GetWorld()->GetTimerManager().SetTimer(UpdateSatellitesTimerHandle, this, &ACPP_GroundStationManager::UpdateSatelliteInfo, 0.1f, true);
     }
@@ -125,6 +117,11 @@ void ACPP_GroundStationManager::ClientAsteroidDestroyed_Implementation(const FNa
 
 void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo)
 {
+    if (TrackedSatellites.Contains(UniqueID))
+    {
+        return;
+    }
+
     TrackedSatellites.Emplace(UniqueID, SatelliteInfo);
     OnNewSatelliteDetected.Broadcast(UniqueID, SatelliteInfo);
 
@@ -148,10 +145,18 @@ void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const F
 
 void ACPP_GroundStationManager::ClientUpdateSatelliteInfo_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo)
 {
+    if (!TrackedSatellites.Contains(UniqueID))
+    {
+        ClientNewSatelliteTracked(UniqueID, SatelliteInfo);
+        return;
+    }
+
+    TrackedSatellites[UniqueID] = SatelliteInfo;
+
     FOrbitalState OrbitalState = FOrbitalState(SatelliteInfo.Position, SatelliteInfo.Velocity);
     FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
-    if (SatelliteOrbits.Contains(UniqueID))
+    if (SatelliteOrbits.Contains(UniqueID) && !SatelliteOrbits[UniqueID]->IsHidden())
     {
         SatelliteOrbits[UniqueID]->UpdateOrbit(OrbitalElements, Planet);
     }
@@ -212,6 +217,10 @@ void ACPP_GroundStationManager::EnableOrbitVisualization(const FName& SatelliteI
 {
     if (SatelliteOrbits.Contains(SatelliteID))
     {
+        FOrbitalState OrbitalState = FOrbitalState(TrackedSatellites[SatelliteID].Position, TrackedSatellites[SatelliteID].Velocity);
+        FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
+        SatelliteOrbits[SatelliteID]->UpdateOrbit(OrbitalElements, Planet);
+
         SatelliteOrbits[SatelliteID]->SetActorHiddenInGame(false);
     }
 }
