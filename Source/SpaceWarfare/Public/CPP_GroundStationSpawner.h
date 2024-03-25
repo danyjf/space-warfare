@@ -35,6 +35,9 @@ public:
     UPROPERTY(BlueprintAssignable)
     FGroundStationRepresentationUpdate OnUpdateGroundStationRepresentation;
 
+    UFUNCTION()
+    void DestroyGroundStationRepresentation();
+
     UFUNCTION(BlueprintCallable)
     void SpawnGroundStationRepresentation(FVector Location);
 
@@ -56,4 +59,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+private:
+    class ACPP_CameraOrbitController* CameraOrbitController;
 };

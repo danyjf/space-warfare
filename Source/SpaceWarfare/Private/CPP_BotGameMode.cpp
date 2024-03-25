@@ -44,8 +44,10 @@ void ACPP_BotGameMode::PostLogin(APlayerController* NewPlayer)
     ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(NewPlayer);
 
     // Create a GroundStationSpawner for each player
-    ACPP_GroundStationSpawner* GroundStationSpawner = Cast<ACPP_GroundStationSpawner>(GetWorld()->SpawnActor(GroundStationSpawnerBlueprint));
-    GroundStationSpawner->SetOwner(PlayerController);
+    FActorSpawnParameters SpawnParameters;
+    SpawnParameters.Owner = PlayerController;
+    FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
+    ACPP_GroundStationSpawner* GroundStationSpawner = Cast<ACPP_GroundStationSpawner>(GetWorld()->SpawnActor(GroundStationSpawnerBlueprint, &SpawnLocation, SpawnParameters));
     GroundStationSpawner->OwnerPlayerID = PlayerController->PlayerID;
 
     Super::PostLogin(NewPlayer);

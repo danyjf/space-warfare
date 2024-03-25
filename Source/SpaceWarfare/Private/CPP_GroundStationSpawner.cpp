@@ -26,6 +26,19 @@ void ACPP_GroundStationSpawner::BeginPlay()
 	Super::BeginPlay();
 
     Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
+    if (!HasAuthority())
+    {
+        CameraOrbitController = Cast<ACPP_CameraOrbitController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+    }
+    else
+    {
+        CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
+    }
+
+    if (CameraOrbitController->IsLocalPlayerController())
+    {
+        CameraOrbitController->OnAllPlayersFinishedPlacingGroundStations.AddDynamic(this, &ACPP_GroundStationSpawner::DestroyGroundStationRepresentation);
+    }
 }
 
 // Called every frame
@@ -109,4 +122,9 @@ void ACPP_GroundStationSpawner::UpdateGroundStationRepresentationLocation(FVecto
     GroundStationRepresentation->UpdateCost();
 
     OnUpdateGroundStationRepresentation.Broadcast();
+}
+
+void ACPP_GroundStationSpawner::DestroyGroundStationRepresentation()
+{
+    GroundStationRepresentation->Destroy();
 }
