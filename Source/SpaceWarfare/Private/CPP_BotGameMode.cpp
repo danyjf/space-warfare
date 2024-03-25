@@ -28,11 +28,8 @@ void ACPP_BotGameMode::StartGameplay()
     }
     InitializeSimulation(SimulationConfig);
 
-    TArray<AActor*> PlayerControllers;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
-    for (AActor* Actor : PlayerControllers)
+    for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
     {
-        ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
         PlayerController->PlayerStatus = EPlayerStatus::PLACING_GROUND_STATIONS;
     }
 
@@ -55,11 +52,8 @@ void ACPP_BotGameMode::PostLogin(APlayerController* NewPlayer)
 
 void ACPP_BotGameMode::CheckAllPlayersFinishedPlacingGroundStations()
 {
-    TArray<AActor*> PlayerControllers;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
-    for (AActor* Actor : PlayerControllers)
+    for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
     {
-        ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
         if (!PlayerController->bFinishedPlacingGroundStations)
         {
             return;
@@ -74,11 +68,9 @@ void ACPP_BotGameMode::CheckAllPlayersFinishedPlacingGroundStations()
     }
     InitializeSatellites(SatellitesConfig.Satellites);
 
-    for (AActor* Actor : PlayerControllers)
+    for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
     {
-        ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
         PlayerController->PlayerStatus = EPlayerStatus::GROUND_STATION_CONTROL;
-
         PlayerController->ClientAllPlayersFinishedPlacingGroundStations();
     }
 

@@ -32,11 +32,8 @@ void ACPP_CasualGameMode::StartGameplay()
     }
     InitializeSatellites(SatellitesConfig.Satellites);
 
-    TArray<AActor*> PlayerControllers;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
-    for (AActor* Actor : PlayerControllers)
+    for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
     {
-        ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
         PlayerController->PlayerStatus = EPlayerStatus::GROUND_STATION_CONTROL;
     }
 }

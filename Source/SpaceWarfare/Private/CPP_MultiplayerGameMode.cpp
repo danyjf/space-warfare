@@ -51,18 +51,14 @@ void ACPP_MultiplayerGameMode::Tick(float DeltaTime)
 {
     if (bWaitingForPlayers)
     {
-        TArray<AActor*> PlayerControllers;
-        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
-
-        if (PlayerControllers.Num() < GameInstance->MaxNumberOfPlayersInSession)
+        if (CameraOrbitControllers.Num() < GameInstance->MaxNumberOfPlayersInSession)
         {
             return;
         }
 
-        for (AActor* Actor : PlayerControllers)
+        for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
         {
-            ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
-            if (!PlayerController->bFinishedJoiningSession)
+            if (!PlayerController->bHasNecessaryReplicatedVariables)
             {
                 return;
             }
@@ -103,6 +99,7 @@ void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
     PlayerController->PlayerID = CurrentPlayerID;
     CurrentPlayerID++;
     PlayerController->Currency = StartingCurrency;
+    CameraOrbitControllers.Add(PlayerController);
 
     // Create a GroundStationManager for each player
     ACPP_GroundStationManager* GroundStationManager = Cast<ACPP_GroundStationManager>(GetWorld()->SpawnActor(GroundStationManagerBlueprint));

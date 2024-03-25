@@ -70,6 +70,9 @@ public:
     virtual void PostLogin(APlayerController* NewPlayer) override;
 
 protected:
+    TArray<class ACPP_GroundStationManager*> GroundStationManagers;
+    TArray<class ACPP_CameraOrbitController*> CameraOrbitControllers;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -81,7 +84,6 @@ private:
 	float ElapsedTime;
     int CurrentPlayerID;
     class UCPP_GameInstance* GameInstance;
-    TArray<class ACPP_GroundStationManager*> GroundStationManagers;
 
     template <class T>
     void ShuffleArray(T& InArray);

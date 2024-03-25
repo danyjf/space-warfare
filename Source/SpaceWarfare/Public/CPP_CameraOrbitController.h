@@ -36,7 +36,7 @@ public:
     EPlayerStatus PlayerStatus;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    bool bFinishedJoiningSession;
+    bool bHasNecessaryReplicatedVariables;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bFinishedPlacingGroundStations;
