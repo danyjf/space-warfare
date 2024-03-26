@@ -72,9 +72,6 @@ void ACPP_GroundStationBase::OnConstruction(const FTransform& Transform)
 void ACPP_GroundStationBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-    CostMaterialRenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 1024, 1024, ETextureRenderTargetFormat::RTF_RGBA8_SRGB);
-    UKismetRenderingLibrary::DrawMaterialToRenderTarget(GetWorld(), CostMaterialRenderTarget, Planet->GroundStationCostMaterial);
 }
 
 // Called every frame
@@ -119,7 +116,8 @@ void ACPP_GroundStationBase::UpdateCost()
     UGameplayStatics::FindCollisionUV(Hit, 0, HitUV);
 
     // Get color on UV
-    FLinearColor Color = UKismetRenderingLibrary::ReadRenderTargetRawUV(GetWorld(), CostMaterialRenderTarget, HitUV.X, HitUV.Y, false);
+    UKismetRenderingLibrary::DrawMaterialToRenderTarget(GetWorld(), CostMaterialRenderTarget, Planet->GroundStationCostMaterial);
+    FLinearColor Color = UKismetRenderingLibrary::ReadRenderTargetRawUV(GetWorld(), CostMaterialRenderTarget, HitUV.X, HitUV.Y, true);
 
     UE_LOG(LogTemp, Log, TEXT("Hit Color: %s"), *Color.ToString());
 }

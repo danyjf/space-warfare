@@ -32,6 +32,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int Cost;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UTextureRenderTarget2D* CostMaterialRenderTarget;
+
     UFUNCTION(BlueprintCallable)
     void UpdateCost();
 
@@ -60,5 +63,5 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-    UTextureRenderTarget2D* CostMaterialRenderTarget;
+    //UTextureRenderTarget2D* CostMaterialRenderTarget;
 };
