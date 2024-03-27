@@ -31,9 +31,18 @@ struct FSatelliteResponse
 };
 
 USTRUCT(BlueprintType)
-struct FSatellitesResponse
+struct FSatelliteListResponse
 {
 	GENERATED_BODY();
+
+    UPROPERTY()
+    int ClientID;
+
+    UPROPERTY()
+    FDateTime Epoch;
+
+    UPROPERTY()
+    int Count;
 
 	UPROPERTY()
 	TArray<FSatelliteResponse> Satellites;
@@ -67,6 +76,9 @@ protected:
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
+    class ACPP_MultiplayerGameMode* MultiplayerGameMode;
+    class ACPP_GroundStationManager* GroundStationManager;
+
     void StartServer();
 	void StopServer();
 

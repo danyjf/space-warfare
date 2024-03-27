@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CPP_HttpServer.h"
+#include "CPP_GroundStationManager.h"
+#include "CPP_MultiplayerGameMode.h"
 
 #include "HttpPath.h"
 #include "IHttpRouter.h"
@@ -9,6 +11,7 @@
 #include "HttpServerResponse.h"
 #include "JsonUtilities.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACPP_HttpServer::ACPP_HttpServer()
@@ -21,12 +24,15 @@ ACPP_HttpServer::ACPP_HttpServer()
 void ACPP_HttpServer::BeginPlay()
 {
     StartServer();
+	MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
 	Super::BeginPlay();
 }
 
 void ACPP_HttpServer::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     Super::EndPlay(EndPlayReason);
+
     StopServer();
 }
 
@@ -73,35 +79,33 @@ bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const 
 {
     RequestPrint(Request);
 
-    FSatellitesResponse Satellites;
-    for (int i = 0; i < 5; i++)
+    if (!GroundStationManager)
     {
-        FSatelliteResponse Satellite;
-        Satellite.OwnerID = UKismetMathLibrary::RandomIntegerInRange(0, 3);
-        Satellite.Label = "ISS Test Satellite Name";
-        Satellite.Position = FVector(
-            UKismetMathLibrary::RandomFloatInRange(6500.0f, 20000.0f), 
-            UKismetMathLibrary::RandomFloatInRange(6500.0f, 20000.0f), 
-            UKismetMathLibrary::RandomFloatInRange(6500.0f, 20000.0f)
-        );
-        Satellite.Rotation = FRotator(
-            UKismetMathLibrary::RandomFloatInRange(0.0f, 360.0f), 
-            UKismetMathLibrary::RandomFloatInRange(0.0f, 360.0f), 
-            UKismetMathLibrary::RandomFloatInRange(0.0f, 360.0f)
-        );
-        Satellite.Velocity = FVector(
-            UKismetMathLibrary::RandomFloatInRange(0.0f, 200.0f), 
-            UKismetMathLibrary::RandomFloatInRange(0.0f, 200.0f), 
-            UKismetMathLibrary::RandomFloatInRange(0.0f, 200.0f)
-        );
-
-        Satellites.Satellites.Add(Satellite);
+        GroundStationManager = Cast<ACPP_GroundStationManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass()));
     }
 
-    FString JsonSatellites;
-    FJsonObjectConverter::UStructToJsonObjectString<FSatellitesResponse>(Satellites, JsonSatellites);
+    FSatelliteListResponse SatelliteListResponse;
+    SatelliteListResponse.ClientID = GroundStationManager->OwnerPlayerID;
+    SatelliteListResponse.Count = GroundStationManager->TrackedSatellites.Num();
+    SatelliteListResponse.Epoch = MultiplayerGameMode->CurrentEpoch;
+    for (const TPair<FName, FSatelliteInfo>& Elem : GroundStationManager->TrackedSatellites)
+    {
+        const FSatelliteInfo& SatelliteInfo = Elem.Value;
 
-	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonSatellites, TEXT("application/json"));
+        FSatelliteResponse SatelliteResponse;
+        SatelliteResponse.OwnerID = SatelliteInfo.OwnerID;
+        SatelliteResponse.Label = SatelliteInfo.Label;
+        SatelliteResponse.Position = SatelliteInfo.Position;
+        SatelliteResponse.Rotation = SatelliteInfo.Rotation;
+        SatelliteResponse.Velocity = SatelliteInfo.Velocity;
+
+        SatelliteListResponse.Satellites.Add(SatelliteResponse);
+    }
+
+    FString JsonSatelliteList;
+    FJsonObjectConverter::UStructToJsonObjectString<FSatelliteListResponse>(SatelliteListResponse, JsonSatelliteList);
+
+	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonSatelliteList, TEXT("application/json"));
     
 	OnComplete(MoveTemp(Response));
 	return true;
