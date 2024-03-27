@@ -69,14 +69,13 @@ void ACPP_GroundStationSpawner::ServerSpawnGroundStation_Implementation(FVector 
     {
         return;
     }
-
-    FActorSpawnParameters SpawnParameters;
-    SpawnParameters.Owner = PlayerController;
+    
     FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
-    ACPP_GroundStation* GroundStation = Cast<ACPP_GroundStation>(GetWorld()->SpawnActor(GroundStationBlueprint, &SpawnLocation, SpawnParameters));
+    ACPP_GroundStation* GroundStation = GetWorld()->SpawnActorDeferred<ACPP_GroundStation>(GroundStationBlueprint, SpawnLocation, PlayerController);
     GroundStation->Planet = Planet;
     GroundStation->OwnerPlayerID = OwnerPlayerID;
     GroundStation->AttachToActor(Planet, FAttachmentTransformRules::KeepWorldTransform);
+    GroundStation->FinishSpawning(SpawnLocation);
 
     FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
     GeographicCoordinates.Altitude = 0.0f;
@@ -98,9 +97,11 @@ void ACPP_GroundStationSpawner::SpawnGroundStationRepresentation(FVector Locatio
 {
     bIsChoosingLocation = true;
 
-    ACPP_GroundStationRepresentation* GroundStation = Cast<ACPP_GroundStationRepresentation>(GetWorld()->SpawnActor(GroundStationRepresentationBlueprint));
+    FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
+    ACPP_GroundStationRepresentation* GroundStation = GetWorld()->SpawnActorDeferred<ACPP_GroundStationRepresentation>(GroundStationRepresentationBlueprint, SpawnLocation);
     GroundStation->Planet = Planet;
     GroundStation->AttachToActor(Planet, FAttachmentTransformRules::KeepWorldTransform);
+    GroundStation->FinishSpawning(SpawnLocation);
 
     FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
     GeographicCoordinates.Altitude = 0.0f;

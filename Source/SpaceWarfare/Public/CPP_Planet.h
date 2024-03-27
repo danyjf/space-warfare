@@ -20,6 +20,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRotator RotationSpeed;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UMaterialInterface* GroundStationCostMaterial;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     class UStaticMeshComponent* StaticMeshComponent;
 

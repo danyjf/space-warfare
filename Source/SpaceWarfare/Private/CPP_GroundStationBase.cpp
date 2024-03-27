@@ -4,6 +4,9 @@
 #include "CPP_Planet.h"
 
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetRenderingLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACPP_GroundStationBase::ACPP_GroundStationBase()
@@ -32,6 +35,8 @@ ACPP_GroundStationBase::ACPP_GroundStationBase()
     DetectionHeight = 50000.0f;
     DetectionVisualizationHeight = 700.0f;
     Cost = 20;
+    CostTable.Add(FLinearColor(0.0f, 1.0f, 0.0f), 20);
+    CostTable.Add(FLinearColor(0.0f, 0.0f, 1.0f), 40);
 }
 
 void ACPP_GroundStationBase::OnConstruction(const FTransform& Transform)
@@ -69,6 +74,16 @@ void ACPP_GroundStationBase::OnConstruction(const FTransform& Transform)
 void ACPP_GroundStationBase::BeginPlay()
 {
 	Super::BeginPlay();
+    
+    /** 
+     * I have no idea why but if I don't do this then the first 
+     * time I read the render target the color is slightly off 
+     */
+    //if (Planet)
+    //{
+    //    UKismetRenderingLibrary::DrawMaterialToRenderTarget(GetWorld(), CostMaterialRenderTarget, Planet->GroundStationCostMaterial);
+    //    FLinearColor Color = UKismetRenderingLibrary::ReadRenderTargetUV(GetWorld(), CostMaterialRenderTarget, 0.5f, 0.5f);
+    //}
 }
 
 // Called every frame
@@ -92,5 +107,52 @@ void ACPP_GroundStationBase::SetGeographicCoordinates(const FGeographicCoordinat
 
 void ACPP_GroundStationBase::UpdateCost()
 {
-    // TODO: Calculate cost based on texture color
+    // Get UVs from trace hit
+    FHitResult Hit;
+    FVector2D HitUV;
+    FVector TraceStart = GetActorLocation() + GetActorForwardVector() * 10.0f;
+    FVector TraceEnd = TraceStart + GetActorForwardVector() * -1000.0f;
+
+    FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	QueryParams.bTraceComplex = true;       // Needs to be true to get the UV
+    QueryParams.bReturnFaceIndex = true;    // Needs to be true to get the UV
+
+    GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, QueryParams);
+
+    if (!Hit.bBlockingHit)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Ground station line trace didn't hit Earth!"));
+        return;
+    }
+    UGameplayStatics::FindCollisionUV(Hit, 0, HitUV);
+
+    // Get color on UV
+    UKismetRenderingLibrary::DrawMaterialToRenderTarget(GetWorld(), CostMaterialRenderTarget, Planet->GroundStationCostMaterial);
+    FLinearColor Color = UKismetRenderingLibrary::ReadRenderTargetUV(GetWorld(), CostMaterialRenderTarget, HitUV.X, HitUV.Y);
+
+    UE_LOG(LogTemp, Log, TEXT("Hit Color: %s"), *Color.ToString());
+
+    for (const TPair<FLinearColor, int>& Elem : CostTable)
+    {
+        if (AreSimilarColors(Elem.Key, Color, 0.1f))
+        {
+            Cost = Elem.Value;
+            break;
+        }
+    }
+}
+
+bool ACPP_GroundStationBase::AreSimilarColors(FLinearColor ColorA, FLinearColor ColorB, float MaxDiffPercentage)
+{
+    float DiffR = UKismetMathLibrary::Abs(ColorA.R - ColorB.R);
+    float DiffG = UKismetMathLibrary::Abs(ColorA.G - ColorB.G);
+    float DiffB = UKismetMathLibrary::Abs(ColorA.B - ColorB.B);
+
+    if (DiffR > MaxDiffPercentage || DiffG > MaxDiffPercentage || DiffB > MaxDiffPercentage)
+    {
+        return false;
+    }
+
+    return true;
 }

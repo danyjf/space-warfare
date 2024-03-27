@@ -32,6 +32,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int Cost;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UTextureRenderTarget2D* CostMaterialRenderTarget;
+
     UFUNCTION(BlueprintCallable)
     void UpdateCost();
 
@@ -58,4 +61,9 @@ protected:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+private:
+    TMap<FLinearColor, int> CostTable;
+
+    bool AreSimilarColors(FLinearColor ColorA, FLinearColor ColorB, float MaxDiffPercentage);
 };
