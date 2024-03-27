@@ -63,5 +63,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-    //UTextureRenderTarget2D* CostMaterialRenderTarget;
+    TMap<FLinearColor, int> CostTable;
+
+    bool AreSimilarColors(FLinearColor ColorA, FLinearColor ColorB, float MaxDiffPercentage);
 };
