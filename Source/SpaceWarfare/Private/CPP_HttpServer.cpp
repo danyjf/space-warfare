@@ -45,7 +45,11 @@ void ACPP_HttpServer::Tick(float DeltaTime)
 void ACPP_HttpServer::StartServer()
 {
 	FHttpServerModule& HttpServerModule = FHttpServerModule::Get();
-	TSharedPtr<IHttpRouter> HttpRouter = HttpServerModule.GetHttpRouter(ServerPort);
+
+    // This looks pretty dumb but if I don't do it then I can't check if the 
+    // port is open, it sets bHttpListenersEnabled to true in the server module
+	HttpServerModule.StartAllListeners();
+	TSharedPtr<IHttpRouter> HttpRouter = HttpServerModule.GetHttpRouter(ServerPort, true);
 
 	// If port already binded by another process, then this check must be failed
 	// !!! BUT !!!
@@ -71,8 +75,8 @@ void ACPP_HttpServer::StartServer()
 
 void ACPP_HttpServer::StopServer()
 {
-    FHttpServerModule& httpServerModule = FHttpServerModule::Get();
-	httpServerModule.StopAllListeners();
+    FHttpServerModule& HttpServerModule = FHttpServerModule::Get();
+	HttpServerModule.StopAllListeners();
 }
 
 bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
@@ -90,10 +94,12 @@ bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const 
     SatelliteListResponse.Epoch = MultiplayerGameMode->CurrentEpoch;
     for (const TPair<FName, FSatelliteInfo>& Elem : GroundStationManager->TrackedSatellites)
     {
+        const FName& SatelliteID = Elem.Key;
         const FSatelliteInfo& SatelliteInfo = Elem.Value;
 
         FSatelliteResponse SatelliteResponse;
         SatelliteResponse.OwnerID = SatelliteInfo.OwnerID;
+        SatelliteResponse.SatelliteID = SatelliteID;
         SatelliteResponse.Label = SatelliteInfo.Label;
         SatelliteResponse.Position = SatelliteInfo.Position;
         SatelliteResponse.Rotation = SatelliteInfo.Rotation;

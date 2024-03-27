@@ -14,19 +14,22 @@ struct FSatelliteResponse
 {
 	GENERATED_BODY();
 
-    UPROPERTY(BlueprintReadWrite)
+    UPROPERTY()
+    FName SatelliteID;
+
+    UPROPERTY()
     int OwnerID;
 
-    UPROPERTY(BlueprintReadWrite)
+    UPROPERTY()
     FString Label;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY()
 	FVector Position;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY()
 	FRotator Rotation;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY()
 	FVector Velocity;
 };
 
