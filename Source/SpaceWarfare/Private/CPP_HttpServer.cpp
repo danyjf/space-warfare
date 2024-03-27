@@ -8,6 +8,7 @@
 #include "HttpServerModule.h"
 #include "HttpServerResponse.h"
 #include "JsonUtilities.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ACPP_HttpServer::ACPP_HttpServer()
@@ -72,18 +73,35 @@ bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const 
 {
     RequestPrint(Request);
 
-    FSatelliteResponse Satellite;
-    Satellite.OwnerID = 0;
-    Satellite.Label = "ISS Test Satellite Name";
-    Satellite.Position = FVector(0, 1, 0);
-    Satellite.Rotation = FRotator(10, 20, 30);
-    Satellite.Velocity = FVector(30, 20, 10);
+    FSatellitesResponse Satellites;
+    for (int i = 0; i < 5; i++)
+    {
+        FSatelliteResponse Satellite;
+        Satellite.OwnerID = UKismetMathLibrary::RandomIntegerInRange(0, 3);
+        Satellite.Label = "ISS Test Satellite Name";
+        Satellite.Position = FVector(
+            UKismetMathLibrary::RandomFloatInRange(6500.0f, 20000.0f), 
+            UKismetMathLibrary::RandomFloatInRange(6500.0f, 20000.0f), 
+            UKismetMathLibrary::RandomFloatInRange(6500.0f, 20000.0f)
+        );
+        Satellite.Rotation = FRotator(
+            UKismetMathLibrary::RandomFloatInRange(0.0f, 360.0f), 
+            UKismetMathLibrary::RandomFloatInRange(0.0f, 360.0f), 
+            UKismetMathLibrary::RandomFloatInRange(0.0f, 360.0f)
+        );
+        Satellite.Velocity = FVector(
+            UKismetMathLibrary::RandomFloatInRange(0.0f, 200.0f), 
+            UKismetMathLibrary::RandomFloatInRange(0.0f, 200.0f), 
+            UKismetMathLibrary::RandomFloatInRange(0.0f, 200.0f)
+        );
 
-    FString JsonSatellite;
-    FJsonObjectConverter::UStructToJsonObjectString<FSatelliteResponse>(Satellite, JsonSatellite);
+        Satellites.Satellites.Add(Satellite);
+    }
 
-	//TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(TEXT("{\"satellite\": \"test json\"}"), TEXT("application/json"));
-	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonSatellite, TEXT("application/json"));
+    FString JsonSatellites;
+    FJsonObjectConverter::UStructToJsonObjectString<FSatellitesResponse>(Satellites, JsonSatellites);
+
+	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonSatellites, TEXT("application/json"));
     
 	OnComplete(MoveTemp(Response));
 	return true;
