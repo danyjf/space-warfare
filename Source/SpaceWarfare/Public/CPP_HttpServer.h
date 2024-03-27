@@ -61,7 +61,7 @@ public:
 	FString SatelliteListPath = TEXT("/satellites");
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Http")
-	FString HttpPathPOST = TEXT("/post-test");
+	FString ThrustCommandPath = TEXT("/satellites/:id/thrust");
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Http")
 	int32 ServerPort = 8080;
@@ -87,7 +87,7 @@ private:
 
 	// Callbacks for HttpRequests
 	bool GetSatelliteList(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
-	bool RequestPOST(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
+	bool SendThrustCommand(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
 
 	// Just print request for example
 	void RequestPrint(const FHttpServerRequest& Request, bool PrintBody = true);

@@ -47,21 +47,16 @@ void ACPP_HttpServer::StartServer()
 	FHttpServerModule& HttpServerModule = FHttpServerModule::Get();
 
     // This looks pretty dumb but if I don't do it then I can't check if the 
-    // port is open, it sets bHttpListenersEnabled to true in the server module
+    // port is open, it sets bHttpListenersEnabled to true in the http server module
 	HttpServerModule.StartAllListeners();
 	TSharedPtr<IHttpRouter> HttpRouter = HttpServerModule.GetHttpRouter(ServerPort, true);
 
-	// If port already binded by another process, then this check must be failed
-	// !!! BUT !!!
-	// This check is always true
-	// I don't no why...
 	if (HttpRouter.IsValid())
 	{
-		// Bind as many routes as you need
 		HttpRouter->BindRoute(FHttpPath(SatelliteListPath), EHttpServerRequestVerbs::VERB_GET,
 			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return GetSatelliteList(Request, OnComplete); });
-		HttpRouter->BindRoute(FHttpPath(HttpPathPOST), EHttpServerRequestVerbs::VERB_POST,
-			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return RequestPOST(Request, OnComplete); });
+		HttpRouter->BindRoute(FHttpPath(ThrustCommandPath), EHttpServerRequestVerbs::VERB_POST,
+			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return SendThrustCommand(Request, OnComplete); });
 
 		HttpServerModule.StartAllListeners();
 
@@ -117,9 +112,12 @@ bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const 
 	return true;
 }
 
-bool ACPP_HttpServer::RequestPOST(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
+bool ACPP_HttpServer::SendThrustCommand(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
 {
     RequestPrint(Request);
+
+    //FString Foo = Request.PathParams.FindRef("foo");
+
     // NOTE: Use application/json content type later
 	TUniquePtr<FHttpServerResponse> response = FHttpServerResponse::Create(TEXT("HttpServerExample POST"), TEXT("text/html"));
 	OnComplete(MoveTemp(response));
