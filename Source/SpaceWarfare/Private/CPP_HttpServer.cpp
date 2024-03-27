@@ -7,6 +7,7 @@
 #include "HttpServerHttpVersion.h"
 #include "HttpServerModule.h"
 #include "HttpServerResponse.h"
+#include "JsonUtilities.h"
 
 // Sets default values
 ACPP_HttpServer::ACPP_HttpServer()
@@ -41,17 +42,15 @@ void ACPP_HttpServer::StartServer()
 
 	// If port already binded by another process, then this check must be failed
 	// !!! BUT !!!
-	// This check always true
+	// This check is always true
 	// I don't no why...
 	if (HttpRouter.IsValid())
 	{
 		// Bind as many routes as you need
-		HttpRouter->BindRoute(FHttpPath(HttpPathGET), EHttpServerRequestVerbs::VERB_GET,
-			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return RequestGET(Request, OnComplete); });
+		HttpRouter->BindRoute(FHttpPath(SatelliteListPath), EHttpServerRequestVerbs::VERB_GET,
+			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return GetSatelliteList(Request, OnComplete); });
 		HttpRouter->BindRoute(FHttpPath(HttpPathPOST), EHttpServerRequestVerbs::VERB_POST,
 			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return RequestPOST(Request, OnComplete); });
-		HttpRouter->BindRoute(FHttpPath(HttpPathPUT), EHttpServerRequestVerbs::VERB_PUT,
-			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return RequestPUT(Request, OnComplete); });
 
 		HttpServerModule.StartAllListeners();
 
@@ -69,11 +68,23 @@ void ACPP_HttpServer::StopServer()
 	httpServerModule.StopAllListeners();
 }
 
-bool ACPP_HttpServer::RequestGET(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
+bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
 {
     RequestPrint(Request);
-    // NOTE: Use application/json content type later
-	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(TEXT("HttpServerExample GET"), TEXT("text/html"));
+
+    FSatelliteResponse Satellite;
+    Satellite.OwnerID = 0;
+    Satellite.Label = "ISS Test Satellite Name";
+    Satellite.Position = FVector(0, 1, 0);
+    Satellite.Rotation = FRotator(10, 20, 30);
+    Satellite.Velocity = FVector(30, 20, 10);
+
+    FString JsonSatellite;
+    FJsonObjectConverter::UStructToJsonObjectString<FSatelliteResponse>(Satellite, JsonSatellite);
+
+	//TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(TEXT("{\"satellite\": \"test json\"}"), TEXT("application/json"));
+	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonSatellite, TEXT("application/json"));
+    
 	OnComplete(MoveTemp(Response));
 	return true;
 }
@@ -83,15 +94,6 @@ bool ACPP_HttpServer::RequestPOST(const FHttpServerRequest& Request, const FHttp
     RequestPrint(Request);
     // NOTE: Use application/json content type later
 	TUniquePtr<FHttpServerResponse> response = FHttpServerResponse::Create(TEXT("HttpServerExample POST"), TEXT("text/html"));
-	OnComplete(MoveTemp(response));
-	return true;
-}
-
-bool ACPP_HttpServer::RequestPUT(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
-{
-    RequestPrint(Request);
-    // NOTE: Use application/json content type later
-	TUniquePtr<FHttpServerResponse> response = FHttpServerResponse::Create(TEXT("HttpServerExample PUT"), TEXT("text/html"));
 	OnComplete(MoveTemp(response));
 	return true;
 }
@@ -106,9 +108,6 @@ void ACPP_HttpServer::RequestPrint(const FHttpServerRequest& Request, bool Print
 		break;
 	case EHttpServerRequestVerbs::VERB_POST:
 		StrRequestType = TEXT("POST");
-		break;
-	case EHttpServerRequestVerbs::VERB_PUT:
-		StrRequestType = TEXT("PUT");
 		break;
 	default:
 		StrRequestType = TEXT("Invalid");

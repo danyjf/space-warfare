@@ -9,6 +9,36 @@
 #include "GameFramework/Actor.h"
 #include "CPP_HttpServer.generated.h"
 
+USTRUCT(BlueprintType)
+struct FSatelliteResponse
+{
+	GENERATED_BODY();
+
+    UPROPERTY(BlueprintReadWrite)
+    int OwnerID;
+
+    UPROPERTY(BlueprintReadWrite)
+    FString Label;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector Position;
+
+	UPROPERTY(BlueprintReadWrite)
+	FRotator Rotation;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector Velocity;
+};
+
+USTRUCT(BlueprintType)
+struct FSatellitesResponse
+{
+	GENERATED_BODY();
+
+	UPROPERTY()
+	TArray<FSatelliteResponse> Satellites;
+};
+
 UCLASS()
 class SPACEWARFARE_API ACPP_HttpServer : public AActor
 {
@@ -16,13 +46,10 @@ class SPACEWARFARE_API ACPP_HttpServer : public AActor
 	
 public:	
     UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Http")
-	FString HttpPathGET = TEXT("/get-test");
+	FString SatelliteListPath = TEXT("/satellites");
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Http")
 	FString HttpPathPOST = TEXT("/post-test");
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Http")
-	FString HttpPathPUT = TEXT("/put-test");
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Http")
 	int32 ServerPort = 8080;
@@ -44,9 +71,8 @@ private:
 	void StopServer();
 
 	// Callbacks for HttpRequests
-	bool RequestGET(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
+	bool GetSatelliteList(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
 	bool RequestPOST(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
-	bool RequestPUT(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
 
 	// Just print request for example
 	void RequestPrint(const FHttpServerRequest& Request, bool PrintBody = true);
