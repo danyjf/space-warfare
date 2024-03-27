@@ -116,11 +116,13 @@ bool ACPP_HttpServer::SendThrustCommand(const FHttpServerRequest& Request, const
 {
     RequestPrint(Request);
 
-    //FString Foo = Request.PathParams.FindRef("foo");
+    FString SatelliteID = Request.PathParams.FindRef("id");
 
-    // NOTE: Use application/json content type later
-	TUniquePtr<FHttpServerResponse> response = FHttpServerResponse::Create(TEXT("HttpServerExample POST"), TEXT("text/html"));
-	OnComplete(MoveTemp(response));
+    FString JsonResponse;
+
+	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));
+    Response->Code = EHttpServerResponseCodes::Created;
+	OnComplete(MoveTemp(Response));
 	return true;
 }
 
