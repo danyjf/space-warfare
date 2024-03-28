@@ -23,6 +23,9 @@ struct FSatelliteResponse
     UPROPERTY()
     FString Label;
 
+    UPROPERTY()
+    float Mass;
+
 	UPROPERTY()
 	FVector Position;
 
@@ -31,6 +34,9 @@ struct FSatelliteResponse
 
 	UPROPERTY()
 	FVector Velocity;
+
+    UPROPERTY()
+    FDateTime Epoch;
 };
 
 USTRUCT(BlueprintType)
@@ -40,9 +46,6 @@ struct FSatelliteListResponse
 
     UPROPERTY()
     int ClientID;
-
-    UPROPERTY()
-    FDateTime Epoch;
 
     UPROPERTY()
     int Count;
@@ -87,7 +90,7 @@ private:
 
 	// Callbacks for HttpRequests
 	bool GetSatelliteList(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
-	bool SendThrustCommand(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
+	bool CreateThrustCommand(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
 
 	// Just print request for example
 	void RequestPrint(const FHttpServerRequest& Request, bool PrintBody = true);

@@ -3,6 +3,7 @@
 #include "CPP_HttpServer.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_MultiplayerGameMode.h"
+#include "SatelliteCommands.h"
 
 #include "HttpPath.h"
 #include "IHttpRouter.h"
@@ -56,7 +57,7 @@ void ACPP_HttpServer::StartServer()
 		HttpRouter->BindRoute(FHttpPath(SatelliteListPath), EHttpServerRequestVerbs::VERB_GET,
 			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return GetSatelliteList(Request, OnComplete); });
 		HttpRouter->BindRoute(FHttpPath(ThrustCommandPath), EHttpServerRequestVerbs::VERB_POST,
-			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return SendThrustCommand(Request, OnComplete); });
+			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return CreateThrustCommand(Request, OnComplete); });
 
 		HttpServerModule.StartAllListeners();
 
@@ -86,7 +87,6 @@ bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const 
     FSatelliteListResponse SatelliteListResponse;
     SatelliteListResponse.ClientID = GroundStationManager->OwnerPlayerID;
     SatelliteListResponse.Count = GroundStationManager->TrackedSatellites.Num();
-    SatelliteListResponse.Epoch = MultiplayerGameMode->CurrentEpoch;
     for (const TPair<FName, FSatelliteInfo>& Elem : GroundStationManager->TrackedSatellites)
     {
         const FName& SatelliteID = Elem.Key;
@@ -96,9 +96,11 @@ bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const 
         SatelliteResponse.OwnerID = SatelliteInfo.OwnerID;
         SatelliteResponse.SatelliteID = SatelliteID;
         SatelliteResponse.Label = SatelliteInfo.Label;
+        SatelliteResponse.Mass = SatelliteInfo.Mass;
         SatelliteResponse.Position = SatelliteInfo.Position;
         SatelliteResponse.Rotation = SatelliteInfo.Rotation;
         SatelliteResponse.Velocity = SatelliteInfo.Velocity;
+        SatelliteResponse.Epoch = SatelliteInfo.Epoch;
 
         SatelliteListResponse.Satellites.Add(SatelliteResponse);
     }
@@ -112,16 +114,25 @@ bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const 
 	return true;
 }
 
-bool ACPP_HttpServer::SendThrustCommand(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
+bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
 {
     RequestPrint(Request);
 
     FString SatelliteID = Request.PathParams.FindRef("id");
 
-    FString JsonResponse;
+	FUTF8ToTCHAR BodyTCHARData(reinterpret_cast<const ANSICHAR*>(Request.Body.GetData()), Request.Body.Num());
+	FString BodyStrData {BodyTCHARData.Length(), BodyTCHARData.Get()};
 
+    FThrustForDurationCommand ThrustCommand;
+    FJsonObjectConverter::JsonObjectStringToUStruct<FThrustForDurationCommand>(BodyStrData, &ThrustCommand);
+
+
+
+    FString JsonResponse;
+    FJsonObjectConverter::UStructToJsonObjectString<FThrustForDurationCommand>(ThrustCommand, JsonResponse);
 	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));
     Response->Code = EHttpServerResponseCodes::Created;
+
 	OnComplete(MoveTemp(Response));
 	return true;
 }

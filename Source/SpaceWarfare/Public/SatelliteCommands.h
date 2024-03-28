@@ -29,3 +29,19 @@ struct FThrustCommand : public FSatelliteCommand
     UPROPERTY(BlueprintReadWrite)
     bool IsActive;
 };
+
+// Command received from the API calls
+USTRUCT(BlueprintType)
+struct FThrustForDurationCommand
+{
+    GENERATED_BODY();
+
+    // Apply the thrust in any direction
+    // and the magnitude is the strength
+    UPROPERTY()
+    FVector ThrustDirection;
+    
+    // How long to apply the thrust for
+    UPROPERTY()
+    float Duration;
+};

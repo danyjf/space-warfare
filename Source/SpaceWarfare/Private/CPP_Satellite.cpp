@@ -98,6 +98,8 @@ const FSatelliteInfo& ACPP_Satellite::GetSatelliteInfo()
     SatelliteInfo.Position = GetActorLocation();
     SatelliteInfo.Rotation = GetActorRotation();
     SatelliteInfo.Velocity = GetVelocity();
+    SatelliteInfo.Mass = StaticMeshComponent->GetMass();
+    SatelliteInfo.Epoch = MultiplayerGameMode->CurrentEpoch;
 
 	return SatelliteInfo;
 }

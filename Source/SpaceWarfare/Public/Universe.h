@@ -79,6 +79,9 @@ struct FSatelliteInfo
     UPROPERTY(BlueprintReadWrite)
     FString Label;
 
+    UPROPERTY(BlueprintReadWrite)
+    float Mass;
+
 	UPROPERTY(BlueprintReadWrite)
 	FVector Position;
 
@@ -87,6 +90,9 @@ struct FSatelliteInfo
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector Velocity;
+
+    UPROPERTY(BlueprintReadWrite)
+    FDateTime Epoch;
 };
 
 /**

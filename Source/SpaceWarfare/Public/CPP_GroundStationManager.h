@@ -51,7 +51,7 @@ public:
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientNewSatelliteTracked(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo);
 
-    UFUNCTION(BlueprintCallable, Client, Reliable)
+    UFUNCTION(BlueprintCallable, Client, Unreliable)
     void ClientUpdateSatelliteInfo(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
