@@ -41,6 +41,11 @@ void ACPP_HttpServer::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void ACPP_HttpServer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+    if (!GroundStationManager)
+    {
+        GroundStationManager = Cast<ACPP_GroundStationManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass()));
+    }
 }
 
 void ACPP_HttpServer::StartServer()
@@ -78,11 +83,6 @@ void ACPP_HttpServer::StopServer()
 bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
 {
     RequestPrint(Request);
-
-    if (!GroundStationManager)
-    {
-        GroundStationManager = Cast<ACPP_GroundStationManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass()));
-    }
 
     FSatelliteListResponse SatelliteListResponse;
     SatelliteListResponse.ClientID = GroundStationManager->OwnerPlayerID;
