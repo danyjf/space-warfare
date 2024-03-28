@@ -66,6 +66,9 @@ public:
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSatelliteThrustCommand(const FThrustCommand& ThrustCommand);
 
+    UFUNCTION(BlueprintCallable, Server, Reliable)
+    void ServerSatelliteThrustForDurationCommand(const FName& SatelliteID, const FThrustForDurationCommand& ThrustCommand);
+
     UFUNCTION(BlueprintCallable)
     void AddGroundStation(class ACPP_GroundStation* GroundStation);
 

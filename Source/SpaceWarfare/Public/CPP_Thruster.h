@@ -13,13 +13,18 @@ class SPACEWARFARE_API UCPP_Thruster : public UActorComponent
 
 public:	
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float ThrusterStrength;
+    float MaxThrusterStrength;
+
+    void SetThrusterDirectionInECICoordinates(FVector Direction);
 
     UFUNCTION(BlueprintCallable)
-    void ActivateThruster() { bThrusterIsActive = true; }
+    void ActivateThruster(float Strength);
 
     UFUNCTION(BlueprintCallable)
-    void DeactivateThruster() { bThrusterIsActive = false; }
+    void DeactivateThruster();
+
+    UFUNCTION(BlueprintCallable)
+    void ActivateThrusterForDuration(float Duration, float Strength);
 
 	// Sets default values for this component's properties
 	UCPP_Thruster();
@@ -33,5 +38,9 @@ protected:
 
 private:
     bool bThrusterIsActive;
-    class UCPP_GravityComponent* GravityComponent;
+    FVector ThrusterDirection;  // Thruster direction in local space
+    float ThrusterDuration;
+    float ThrusterTimer;
+    float ThrusterStrength;
+    class UStaticMeshComponent* StaticMeshComponent;
 };

@@ -39,7 +39,7 @@ struct FThrustForDurationCommand
     // Apply the thrust in any direction
     // and the magnitude is the strength
     UPROPERTY()
-    FVector ThrustDirection;
+    FVector Direction;
     
     // How long to apply the thrust for
     UPROPERTY()

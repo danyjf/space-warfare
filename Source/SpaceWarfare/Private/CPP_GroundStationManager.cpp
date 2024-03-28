@@ -199,12 +199,26 @@ void ACPP_GroundStationManager::ServerSatelliteThrustCommand_Implementation(cons
     UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
     if (ThrustCommand.IsActive)
     {
-        Thruster->ActivateThruster();
+        Thruster->ActivateThruster(100);
     }
     else
     {
         Thruster->DeactivateThruster();
     }
+}
+
+void ACPP_GroundStationManager::ServerSatelliteThrustForDurationCommand_Implementation(const FName& SatelliteID, const FThrustForDurationCommand& ThrustCommand)
+{
+    if (!OverpassingSatellites.Contains(SatelliteID))
+    {
+        return;
+    }
+
+    ACPP_Satellite* Satellite = OverpassingSatellites[SatelliteID];
+
+    UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
+    Thruster->SetThrusterDirectionInECICoordinates(ThrustCommand.Direction);
+    Thruster->ActivateThrusterForDuration(ThrustCommand.Duration, ThrustCommand.Direction.Size());
 }
 
 void ACPP_GroundStationManager::AddGroundStation(ACPP_GroundStation* GroundStation)

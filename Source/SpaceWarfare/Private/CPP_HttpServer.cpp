@@ -118,7 +118,7 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
 {
     RequestPrint(Request);
 
-    FString SatelliteID = Request.PathParams.FindRef("id");
+    FName SatelliteID = FName(*Request.PathParams.FindRef("id"));
 
 	FUTF8ToTCHAR BodyTCHARData(reinterpret_cast<const ANSICHAR*>(Request.Body.GetData()), Request.Body.Num());
 	FString BodyStrData {BodyTCHARData.Length(), BodyTCHARData.Get()};
@@ -126,7 +126,7 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
     FThrustForDurationCommand ThrustCommand;
     FJsonObjectConverter::JsonObjectStringToUStruct<FThrustForDurationCommand>(BodyStrData, &ThrustCommand);
 
-
+    GroundStationManager->ServerSatelliteThrustForDurationCommand(SatelliteID, ThrustCommand);
 
     FString JsonResponse;
     FJsonObjectConverter::UStructToJsonObjectString<FThrustForDurationCommand>(ThrustCommand, JsonResponse);
