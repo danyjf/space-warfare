@@ -3,6 +3,7 @@
 #include "CPP_HttpServer.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_MultiplayerGameMode.h"
+#include "CPP_SatelliteCommandManager.h"
 #include "SatelliteCommands.h"
 
 #include "HttpPath.h"
@@ -126,7 +127,7 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
     FThrustForDurationCommand ThrustCommand;
     FJsonObjectConverter::JsonObjectStringToUStruct<FThrustForDurationCommand>(BodyStrData, &ThrustCommand);
 
-    GroundStationManager->ServerSatelliteThrustForDurationCommand(SatelliteID, ThrustCommand);
+    GroundStationManager->SatelliteCommandManager->ServerSatelliteThrustForDurationCommand(SatelliteID, ThrustCommand);
 
     FString JsonResponse;
     FJsonObjectConverter::UStructToJsonObjectString<FThrustForDurationCommand>(ThrustCommand, JsonResponse);

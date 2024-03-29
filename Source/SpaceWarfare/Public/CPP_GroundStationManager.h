@@ -21,12 +21,21 @@ public:
     UPROPERTY(BlueprintReadWrite)
     TArray<class ACPP_GroundStation*> GroundStations;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    USceneComponent* Root;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    class UCPP_SatelliteCommandManager* SatelliteCommandManager;
+
     UPROPERTY(Replicated, BlueprintReadWrite)
     int OwnerPlayerID;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
     
+    UPROPERTY(BlueprintReadOnly)
+    TMap<FName, ACPP_Satellite*> OverpassingSatellites;
+
     UPROPERTY(BlueprintReadOnly)
     TMap<FName, FSatelliteInfo> TrackedSatellites;
 
@@ -60,15 +69,6 @@ public:
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientAsteroidDestroyed(const FName& UniqueID);
 
-    UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteTorqueCommand(const FTorqueCommand& TorqueCommand);
-
-    UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteThrustCommand(const FThrustCommand& ThrustCommand);
-
-    UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteThrustForDurationCommand(const FName& SatelliteID, const FThrustForDurationCommand& ThrustCommand);
-
     UFUNCTION(BlueprintCallable)
     void AddGroundStation(class ACPP_GroundStation* GroundStation);
 
@@ -97,7 +97,6 @@ private:
     bool bInitialized;
     FTimerHandle UpdateSatellitesTimerHandle;
 
-    TMap<FName, ACPP_Satellite*> OverpassingSatellites;
     TMap<FName, class ACPP_OrbitSpline*> SatelliteOrbits;
     TMap<FName, class ACPP_OrbitSpline*> AsteroidOrbits;
 };

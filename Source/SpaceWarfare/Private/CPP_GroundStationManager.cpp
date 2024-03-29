@@ -9,6 +9,7 @@
 #include "Universe.h"
 #include "CPP_GravityComponent.h"
 #include "CPP_MultiplayerGameMode.h"
+#include "CPP_SatelliteCommandManager.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -20,7 +21,13 @@ ACPP_GroundStationManager::ACPP_GroundStationManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+    Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+    RootComponent = Root;
+
+    SatelliteCommandManager = CreateDefaultSubobject<UCPP_SatelliteCommandManager>(TEXT("SatelliteCommandManager"));
     
+    bReplicates = true;
     bInitialized = false;
     OwnerPlayerID = -1;
 }
@@ -172,54 +179,6 @@ void ACPP_GroundStationManager::ClientSatelliteDestroyed_Implementation(const FN
         SatelliteOrbits[UniqueID]->Destroy();
         SatelliteOrbits.Remove(UniqueID);
     }
-}
-
-void ACPP_GroundStationManager::ServerSatelliteTorqueCommand_Implementation(const FTorqueCommand& TorqueCommand)
-{
-    if (!OverpassingSatellites.Contains(TorqueCommand.UniqueID))
-    {
-        return;
-    }
-
-    ACPP_Satellite* Satellite = OverpassingSatellites[TorqueCommand.UniqueID];
-    FVector LocalTorque = UKismetMathLibrary::TransformDirection(Satellite->GetActorTransform(), TorqueCommand.Torque);
-
-    Satellite->StaticMeshComponent->AddTorqueInDegrees(LocalTorque, NAME_None, true);
-}
-
-void ACPP_GroundStationManager::ServerSatelliteThrustCommand_Implementation(const FThrustCommand& ThrustCommand)
-{
-    if (!OverpassingSatellites.Contains(ThrustCommand.UniqueID))
-    {
-        return;
-    }
-
-    ACPP_Satellite* Satellite = OverpassingSatellites[ThrustCommand.UniqueID];
-
-    UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
-    if (ThrustCommand.IsActive)
-    {
-        Thruster->SetThrusterDirectionInLocalCoordinates(FVector::ForwardVector);
-        Thruster->ActivateThruster(100);
-    }
-    else
-    {
-        Thruster->DeactivateThruster();
-    }
-}
-
-void ACPP_GroundStationManager::ServerSatelliteThrustForDurationCommand_Implementation(const FName& SatelliteID, const FThrustForDurationCommand& ThrustCommand)
-{
-    if (!OverpassingSatellites.Contains(SatelliteID))
-    {
-        return;
-    }
-
-    ACPP_Satellite* Satellite = OverpassingSatellites[SatelliteID];
-
-    UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
-    Thruster->SetThrusterDirectionInECICoordinates(ThrustCommand.Direction);
-    Thruster->ActivateThruster(ThrustCommand.Direction.Size(), ThrustCommand.Duration);
 }
 
 void ACPP_GroundStationManager::AddGroundStation(ACPP_GroundStation* GroundStation)

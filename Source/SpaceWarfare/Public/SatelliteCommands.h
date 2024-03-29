@@ -36,6 +36,10 @@ struct FThrustForDurationCommand
 {
     GENERATED_BODY();
 
+    // Time at which to execute this command
+    //UPROPERTY()
+    //FDateTime ExecutionTime;
+
     // Apply the thrust in any direction
     // and the magnitude is the strength
     UPROPERTY()
