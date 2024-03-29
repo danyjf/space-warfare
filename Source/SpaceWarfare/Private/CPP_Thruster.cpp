@@ -33,22 +33,34 @@ void UCPP_Thruster::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
     }
 }
 
+void UCPP_Thruster::SetThrusterDirectionInLocalCoordinates(FVector Direction)
+{
+    ThrusterDirection = Direction;
+}
+
 void UCPP_Thruster::SetThrusterDirectionInECICoordinates(FVector Direction)
 {
     ThrusterDirection = UKismetMathLibrary::InverseTransformDirection(GetOwner()->GetTransform(), Direction);
     ThrusterDirection.Normalize();
 }
 
-void UCPP_Thruster::ActivateThruster(float Strength)
+/**
+ * When duration is 0 it stays active until told to deactivate
+*/
+void UCPP_Thruster::ActivateThruster(float Strength, float Duration)
 {
     if (ThrusterStrength > MaxThrusterStrength)
     {
         return;
     }
+
+    ThrusterDuration = Duration;
+    if (UKismetMathLibrary::NearlyEqual_FloatFloat(ThrusterDuration, 0.0f))
+    {
+        ThrusterDuration = TNumericLimits<int32>::Max();
+    }
     ThrusterStrength = Strength;
-    ThrusterDirection = FVector(1, 0, 0);
     bThrusterIsActive = true;
-    ThrusterDuration = TNumericLimits<int32>::Max();
     ThrusterTimer = 0.0f;
 }
 
@@ -56,17 +68,5 @@ void UCPP_Thruster::DeactivateThruster()
 {
     bThrusterIsActive = false;
     ThrusterDuration = 0.0f;
-    ThrusterTimer = 0.0f;
-}
-
-void UCPP_Thruster::ActivateThrusterForDuration(float Duration, float Strength)
-{
-    if (ThrusterStrength > MaxThrusterStrength)
-    {
-        return;
-    }
-    ThrusterStrength = Strength;
-    bThrusterIsActive = true;
-    ThrusterDuration = Duration;
     ThrusterTimer = 0.0f;
 }

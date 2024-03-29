@@ -199,6 +199,7 @@ void ACPP_GroundStationManager::ServerSatelliteThrustCommand_Implementation(cons
     UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
     if (ThrustCommand.IsActive)
     {
+        Thruster->SetThrusterDirectionInLocalCoordinates(FVector::ForwardVector);
         Thruster->ActivateThruster(100);
     }
     else
@@ -218,7 +219,7 @@ void ACPP_GroundStationManager::ServerSatelliteThrustForDurationCommand_Implemen
 
     UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
     Thruster->SetThrusterDirectionInECICoordinates(ThrustCommand.Direction);
-    Thruster->ActivateThrusterForDuration(ThrustCommand.Duration, ThrustCommand.Direction.Size());
+    Thruster->ActivateThruster(ThrustCommand.Direction.Size(), ThrustCommand.Duration);
 }
 
 void ACPP_GroundStationManager::AddGroundStation(ACPP_GroundStation* GroundStation)

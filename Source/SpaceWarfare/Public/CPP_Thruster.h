@@ -15,16 +15,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float MaxThrusterStrength;
 
+    UFUNCTION(BlueprintCallable)
     void SetThrusterDirectionInECICoordinates(FVector Direction);
 
     UFUNCTION(BlueprintCallable)
-    void ActivateThruster(float Strength);
+    void SetThrusterDirectionInLocalCoordinates(FVector Direction);
+
+    UFUNCTION(BlueprintCallable)
+    void ActivateThruster(float Strength, float Duration = 0.0f);
 
     UFUNCTION(BlueprintCallable)
     void DeactivateThruster();
-
-    UFUNCTION(BlueprintCallable)
-    void ActivateThrusterForDuration(float Duration, float Strength);
 
 	// Sets default values for this component's properties
 	UCPP_Thruster();
