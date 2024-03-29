@@ -7,9 +7,6 @@ USTRUCT(BlueprintType)
 struct FSatelliteCommand
 {
     GENERATED_BODY();
-
-    UPROPERTY(BlueprintReadWrite)
-    FName UniqueID;
 };
 
 USTRUCT(BlueprintType)
@@ -22,17 +19,7 @@ struct FTorqueCommand : public FSatelliteCommand
 };
 
 USTRUCT(BlueprintType)
-struct FThrustCommand : public FSatelliteCommand
-{
-    GENERATED_BODY();
-
-    UPROPERTY(BlueprintReadWrite)
-    bool IsActive;
-};
-
-// Command received from the API calls
-USTRUCT(BlueprintType)
-struct FThrustForDurationCommand
+struct FThrustForDurationCommand : public FSatelliteCommand
 {
     GENERATED_BODY();
 
@@ -40,12 +27,13 @@ struct FThrustForDurationCommand
     //UPROPERTY()
     //FDateTime ExecutionTime;
 
-    // Apply the thrust in any direction
-    // and the magnitude is the strength
-    UPROPERTY()
-    FVector Direction;
+    // Apply the thrust in any direction, world coordinates,
+    // the magnitude is the strength
+    UPROPERTY(BlueprintReadWrite)
+    FVector Force;
     
-    // How long to apply the thrust for
-    UPROPERTY()
+    // How long to apply the thrust for;
+    // 0 means apply until told to deactivate
+    UPROPERTY(BlueprintReadWrite)
     float Duration;
 };

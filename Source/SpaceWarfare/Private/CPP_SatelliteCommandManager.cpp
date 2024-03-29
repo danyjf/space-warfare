@@ -19,41 +19,7 @@ UCPP_SatelliteCommandManager::UCPP_SatelliteCommandManager()
     GroundStationManager = Cast<ACPP_GroundStationManager>(GetOwner());
 }
 
-void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const FTorqueCommand& TorqueCommand)
-{
-    if (!GroundStationManager->OverpassingSatellites.Contains(TorqueCommand.UniqueID))
-    {
-        return;
-    }
-
-    ACPP_Satellite* Satellite = GroundStationManager->OverpassingSatellites[TorqueCommand.UniqueID];
-    FVector LocalTorque = UKismetMathLibrary::TransformDirection(Satellite->GetActorTransform(), TorqueCommand.Torque);
-
-    Satellite->StaticMeshComponent->AddTorqueInDegrees(LocalTorque, NAME_None, true);
-}
-
-void UCPP_SatelliteCommandManager::ServerSatelliteThrustCommand_Implementation(const FThrustCommand& ThrustCommand)
-{
-    if (!GroundStationManager->OverpassingSatellites.Contains(ThrustCommand.UniqueID))
-    {
-        return;
-    }
-
-    ACPP_Satellite* Satellite = GroundStationManager->OverpassingSatellites[ThrustCommand.UniqueID];
-
-    UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
-    if (ThrustCommand.IsActive)
-    {
-        Thruster->SetThrusterDirectionInLocalCoordinates(FVector::ForwardVector);
-        Thruster->ActivateThruster(100);
-    }
-    else
-    {
-        Thruster->DeactivateThruster();
-    }
-}
-
-void UCPP_SatelliteCommandManager::ServerSatelliteThrustForDurationCommand_Implementation(const FName& SatelliteID, const FThrustForDurationCommand& ThrustCommand)
+void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const FName& SatelliteID, const FTorqueCommand& TorqueCommand)
 {
     if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
     {
@@ -61,8 +27,35 @@ void UCPP_SatelliteCommandManager::ServerSatelliteThrustForDurationCommand_Imple
     }
 
     ACPP_Satellite* Satellite = GroundStationManager->OverpassingSatellites[SatelliteID];
+    FVector LocalTorque = UKismetMathLibrary::TransformDirection(Satellite->GetActorTransform(), TorqueCommand.Torque);
 
+    Satellite->StaticMeshComponent->AddTorqueInDegrees(LocalTorque, NAME_None, true);
+}
+
+void UCPP_SatelliteCommandManager::ServerSatelliteThrustForDurationCommand_Implementation(const FName& SatelliteID, const FThrustForDurationCommand& ThrustCommand, bool bUseLocalCoordinates)
+{
+    if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
+    {
+        return;
+    }
+
+    ACPP_Satellite* Satellite = GroundStationManager->OverpassingSatellites[SatelliteID];
     UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
-    Thruster->SetThrusterDirectionInECICoordinates(ThrustCommand.Direction);
-    Thruster->ActivateThruster(ThrustCommand.Direction.Size(), ThrustCommand.Duration);
+    if (bUseLocalCoordinates)
+    {
+        Thruster->SetThrusterDirectionInLocalCoordinates(FVector::ForwardVector);
+    }
+    else
+    {
+        Thruster->SetThrusterDirectionInECICoordinates(ThrustCommand.Force);
+    }
+    Thruster->ActivateThruster(ThrustCommand.Force.Size(), ThrustCommand.Duration);
+}
+
+void UCPP_SatelliteCommandManager::ServerSatelliteThrustDeactivate_Implementation(const FName& SatelliteID)
+{
+    ACPP_Satellite* Satellite = GroundStationManager->OverpassingSatellites[SatelliteID];
+    UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
+
+    Thruster->DeactivateThruster();
 }

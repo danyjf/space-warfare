@@ -18,13 +18,13 @@ public:
     TArray<FSatelliteCommand> SatelliteCommands;
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteTorqueCommand(const FTorqueCommand& TorqueCommand);
+    void ServerSatelliteTorqueCommand(const FName& SatelliteID, const FTorqueCommand& TorqueCommand);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteThrustCommand(const FThrustCommand& ThrustCommand);
+    void ServerSatelliteThrustForDurationCommand(const FName& SatelliteID, const FThrustForDurationCommand& ThrustCommand, bool bUseLocalCoordinates = false);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteThrustForDurationCommand(const FName& SatelliteID, const FThrustForDurationCommand& ThrustCommand);
+    void ServerSatelliteThrustDeactivate(const FName& SatelliteID);
 
 	// Sets default values for this component's properties
 	UCPP_SatelliteCommandManager();
