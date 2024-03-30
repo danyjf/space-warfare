@@ -19,12 +19,12 @@ UCPP_SatelliteCommandManager::UCPP_SatelliteCommandManager()
     GroundStationManager = Cast<ACPP_GroundStationManager>(GetOwner());
 }
 
-void UCPP_SatelliteCommandManager::SendCommandToSatellite(const FName& SatelliteID, const FSatelliteCommand& SatelliteCommand)
+void UCPP_SatelliteCommandManager::SendCommandToSatellite(const FName& SatelliteID, const FSatelliteCommandData& SatelliteCommand)
 {
     GroundStationManager->OverpassingSatellites[SatelliteID]->AddCommand(SatelliteCommand);
 }
 
-void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const FName& SatelliteID, const FTorqueCommand& TorqueCommand)
+void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const FName& SatelliteID, const FTorqueCommandData& TorqueCommand)
 {
     if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
     {
@@ -40,7 +40,7 @@ void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(c
     Satellite->StaticMeshComponent->AddTorqueInDegrees(LocalTorque, NAME_None, true);
 }
 
-void UCPP_SatelliteCommandManager::ServerSatelliteThrustForDurationCommand_Implementation(const FName& SatelliteID, const FThrustForDurationCommand& ThrustCommand, bool bUseLocalCoordinates)
+void UCPP_SatelliteCommandManager::ServerSatelliteThrustForDurationCommand_Implementation(const FName& SatelliteID, const FThrustCommandData& ThrustCommand, bool bUseLocalCoordinates)
 {
     if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
     {

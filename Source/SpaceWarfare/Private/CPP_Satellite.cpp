@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CPP_Satellite.h"
 #include "CPP_Planet.h"
 #include "CPP_Asteroid.h"
@@ -52,7 +51,7 @@ void ACPP_Satellite::Tick(float DeltaTime)
 	    GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
 
         // TODO: Check if it's time to execute the command
-        if (MultiplayerGameMode->CurrentEpoch <= Commands[0])
+        if (Commands.Num() > 0 && MultiplayerGameMode->CurrentEpoch <= Commands[0].ExecutionTime)
         {
             //Command->Execute();
         }
@@ -110,11 +109,11 @@ const FSatelliteInfo& ACPP_Satellite::GetSatelliteInfo()
 	return SatelliteInfo;
 }
 
-void ACPP_Satellite::AddCommand(const FSatelliteCommand& Command)
+void ACPP_Satellite::AddCommand(const FSatelliteCommandData& Command)
 {
     Commands.Add(Command);
 
-    Commands.Sort([](const FSatelliteCommand& CommandA, const FSatelliteCommand& CommandB) {
+    Commands.Sort([](const FSatelliteCommandData& CommandA, const FSatelliteCommandData& CommandB) {
         return CommandA.ExecutionTime < CommandB.ExecutionTime;
     });
 }
@@ -131,3 +130,24 @@ void ACPP_Satellite::PrintGeographicCoordinates()
 		GeographicCoordinates.Altitude
 	);
 }
+
+
+//UClass(Abstract)
+//class SPACEWARFARE_API UCPP_SatelliteCommand : public UObject
+//{
+//    GENERATED_BODY();
+//
+//public:
+//    virtual void Execute() PURE_VIRTUAL(USatelliteCommand::Execute,);
+//};
+//
+//UClass()
+//class UCPP_TorqueCommand : public USatelliteCommand
+//{
+//    GENERATED_BODY();
+//
+//public:
+//    FTorqueCommandData TorqueData;
+//
+//    virtual void Execute() override;
+//};

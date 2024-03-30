@@ -1,10 +1,10 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "SatelliteCommands.generated.h"
+#include "SatelliteCommandDataStructs.generated.h"
 
 USTRUCT(BlueprintType)
-struct FSatelliteCommand
+struct FSatelliteCommandData
 {
     GENERATED_BODY();
 
@@ -14,7 +14,7 @@ struct FSatelliteCommand
 };
 
 USTRUCT(BlueprintType)
-struct FTorqueCommand : public FSatelliteCommand
+struct FTorqueCommandData : public FSatelliteCommandData
 {
     GENERATED_BODY();
 
@@ -23,7 +23,7 @@ struct FTorqueCommand : public FSatelliteCommand
 };
 
 USTRUCT(BlueprintType)
-struct FThrustForDurationCommand : public FSatelliteCommand
+struct FThrustCommandData : public FSatelliteCommandData
 {
     GENERATED_BODY();
 

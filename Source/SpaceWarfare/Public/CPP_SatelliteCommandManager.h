@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "SatelliteCommands.h"
+#include "SatelliteCommandDataStructs.h"
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
@@ -15,16 +15,16 @@ class SPACEWARFARE_API UCPP_SatelliteCommandManager : public UActorComponent
 
 public:
     UPROPERTY(BlueprintReadOnly)
-    TMap<FName, FSatelliteCommand> SatelliteCommands;
+    TMap<FName, FSatelliteCommandData> SatelliteCommands;
 
     UFUNCTION(BlueprintCallable)
-    void SendCommandToSatellite(const FName& SatelliteID, const FSatelliteCommand& SatelliteCommand);
+    void SendCommandToSatellite(const FName& SatelliteID, const FSatelliteCommandData& SatelliteCommand);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteTorqueCommand(const FName& SatelliteID, const FTorqueCommand& TorqueCommand);
+    void ServerSatelliteTorqueCommand(const FName& SatelliteID, const FTorqueCommandData& TorqueCommand);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteThrustForDurationCommand(const FName& SatelliteID, const FThrustForDurationCommand& ThrustCommand, bool bUseLocalCoordinates = false);
+    void ServerSatelliteThrustForDurationCommand(const FName& SatelliteID, const FThrustCommandData& ThrustCommand, bool bUseLocalCoordinates = false);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSatelliteThrustDeactivate(const FName& SatelliteID);

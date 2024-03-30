@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Universe.h"
-#include "SatelliteCommands.h"
+#include "SatelliteCommandDataStructs.h"
 
 #include "CoreMinimal.h"
 #include "CPP_Satellite.generated.h"
@@ -27,7 +27,7 @@ public:
 	class ACPP_Planet* OrbitingPlanet;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TArray<FSatelliteCommand> Commands;
+    TArray<FSatelliteCommandData> Commands;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     class UCPP_GravityComponent* GravityComponent;
@@ -42,7 +42,7 @@ public:
     const FSatelliteInfo& GetSatelliteInfo();
 
     UFUNCTION(BlueprintCallable)
-    void AddCommand(const FSatelliteCommand& Command);
+    void AddCommand(const FSatelliteCommandData& Command);
 
     UFUNCTION(BlueprintCallable)
     void PrintGeographicCoordinates();

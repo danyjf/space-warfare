@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Universe.h"
-#include "SatelliteCommands.h"
+#include "SatelliteCommandDataStructs.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"

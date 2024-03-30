@@ -4,7 +4,7 @@
 #include "CPP_GroundStationManager.h"
 #include "CPP_MultiplayerGameMode.h"
 #include "CPP_SatelliteCommandManager.h"
-#include "SatelliteCommands.h"
+#include "SatelliteCommandDataStructs.h"
 
 #include "HttpPath.h"
 #include "IHttpRouter.h"
@@ -124,13 +124,13 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
 	FUTF8ToTCHAR BodyTCHARData(reinterpret_cast<const ANSICHAR*>(Request.Body.GetData()), Request.Body.Num());
 	FString BodyStrData {BodyTCHARData.Length(), BodyTCHARData.Get()};
 
-    FThrustForDurationCommand ThrustCommand;
-    FJsonObjectConverter::JsonObjectStringToUStruct<FThrustForDurationCommand>(BodyStrData, &ThrustCommand);
+    FThrustCommandData ThrustCommand;
+    FJsonObjectConverter::JsonObjectStringToUStruct<FThrustCommandData>(BodyStrData, &ThrustCommand);
 
     GroundStationManager->SatelliteCommandManager->ServerSatelliteThrustForDurationCommand(SatelliteID, ThrustCommand);
 
     FString JsonResponse;
-    FJsonObjectConverter::UStructToJsonObjectString<FThrustForDurationCommand>(ThrustCommand, JsonResponse);
+    FJsonObjectConverter::UStructToJsonObjectString<FThrustCommandData>(ThrustCommand, JsonResponse);
 	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));
     Response->Code = EHttpServerResponseCodes::Created;
 
