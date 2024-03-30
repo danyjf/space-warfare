@@ -24,7 +24,7 @@ public:
     void ServerSatelliteTorqueCommand(const FName& SatelliteID, const FTorqueCommandData& TorqueCommandData);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteThrustForDurationCommand(const FName& SatelliteID, const FThrustCommandData& ThrustCommandData, bool bUseLocalCoordinates = false);
+    void ServerSatelliteThrustForDurationCommand(const FName& SatelliteID, const FThrustCommandData& ThrustCommandData);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSatelliteThrustDeactivate(const FName& SatelliteID);

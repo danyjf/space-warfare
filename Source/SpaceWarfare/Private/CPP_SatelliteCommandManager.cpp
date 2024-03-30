@@ -40,7 +40,7 @@ void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(c
     SendCommandToSatellite(SatelliteID, TorqueCommand);
 }
 
-void UCPP_SatelliteCommandManager::ServerSatelliteThrustForDurationCommand_Implementation(const FName& SatelliteID, const FThrustCommandData& ThrustCommandData, bool bUseLocalCoordinates)
+void UCPP_SatelliteCommandManager::ServerSatelliteThrustForDurationCommand_Implementation(const FName& SatelliteID, const FThrustCommandData& ThrustCommandData)
 {
     UCPP_ThrustCommand* ThrustCommand = NewObject<UCPP_ThrustCommand>();
     ThrustCommand->ExecutionTime = ThrustCommandData.ExecutionTime;
@@ -54,18 +54,6 @@ void UCPP_SatelliteCommandManager::ServerSatelliteThrustForDurationCommand_Imple
     }
 
     SendCommandToSatellite(SatelliteID, ThrustCommand);
-
-    ACPP_Satellite* Satellite = GroundStationManager->OverpassingSatellites[SatelliteID];
-    UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
-    if (bUseLocalCoordinates)
-    {
-        Thruster->SetThrusterDirectionInLocalCoordinates(FVector::ForwardVector);
-    }
-    else
-    {
-        Thruster->SetThrusterDirectionInECICoordinates(ThrustCommandData.Force);
-    }
-    Thruster->ActivateThruster(ThrustCommandData.Force.Size(), ThrustCommandData.Duration);
 }
 
 void UCPP_SatelliteCommandManager::ServerSatelliteThrustDeactivate_Implementation(const FName& SatelliteID)
