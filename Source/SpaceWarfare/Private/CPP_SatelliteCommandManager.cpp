@@ -19,12 +19,20 @@ UCPP_SatelliteCommandManager::UCPP_SatelliteCommandManager()
     GroundStationManager = Cast<ACPP_GroundStationManager>(GetOwner());
 }
 
+void UCPP_SatelliteCommandManager::SendCommandToSatellite(const FName& SatelliteID, const FSatelliteCommand& SatelliteCommand)
+{
+    GroundStationManager->OverpassingSatellites[SatelliteID]->AddCommand(SatelliteCommand);
+}
+
 void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const FName& SatelliteID, const FTorqueCommand& TorqueCommand)
 {
     if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
     {
+        SatelliteCommands.Emplace(SatelliteID, TorqueCommand);
         return;
     }
+
+    SendCommandToSatellite(SatelliteID, TorqueCommand);
 
     ACPP_Satellite* Satellite = GroundStationManager->OverpassingSatellites[SatelliteID];
     FVector LocalTorque = UKismetMathLibrary::TransformDirection(Satellite->GetActorTransform(), TorqueCommand.Torque);
@@ -36,8 +44,11 @@ void UCPP_SatelliteCommandManager::ServerSatelliteThrustForDurationCommand_Imple
 {
     if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
     {
+        SatelliteCommands.Emplace(SatelliteID, ThrustCommand);
         return;
     }
+
+    SendCommandToSatellite(SatelliteID, ThrustCommand);
 
     ACPP_Satellite* Satellite = GroundStationManager->OverpassingSatellites[SatelliteID];
     UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));

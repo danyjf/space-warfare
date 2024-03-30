@@ -50,6 +50,12 @@ void ACPP_Satellite::Tick(float DeltaTime)
     if (HasAuthority())
     {
 	    GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
+
+        // TODO: Check if it's time to execute the command
+        if (MultiplayerGameMode->CurrentEpoch <= Commands[0])
+        {
+            //Command->Execute();
+        }
     }
 }
 
@@ -102,6 +108,15 @@ const FSatelliteInfo& ACPP_Satellite::GetSatelliteInfo()
     SatelliteInfo.Epoch = MultiplayerGameMode->CurrentEpoch;
 
 	return SatelliteInfo;
+}
+
+void ACPP_Satellite::AddCommand(const FSatelliteCommand& Command)
+{
+    Commands.Add(Command);
+
+    Commands.Sort([](const FSatelliteCommand& CommandA, const FSatelliteCommand& CommandB) {
+        return CommandA.ExecutionTime < CommandB.ExecutionTime;
+    });
 }
 
 void ACPP_Satellite::PrintGeographicCoordinates()

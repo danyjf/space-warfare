@@ -15,7 +15,10 @@ class SPACEWARFARE_API UCPP_SatelliteCommandManager : public UActorComponent
 
 public:
     UPROPERTY(BlueprintReadOnly)
-    TArray<FSatelliteCommand> SatelliteCommands;
+    TMap<FName, FSatelliteCommand> SatelliteCommands;
+
+    UFUNCTION(BlueprintCallable)
+    void SendCommandToSatellite(const FName& SatelliteID, const FSatelliteCommand& SatelliteCommand);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSatelliteTorqueCommand(const FName& SatelliteID, const FTorqueCommand& TorqueCommand);
