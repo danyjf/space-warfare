@@ -127,7 +127,7 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
     FThrustCommandData ThrustCommand;
     FJsonObjectConverter::JsonObjectStringToUStruct<FThrustCommandData>(BodyStrData, &ThrustCommand);
 
-    GroundStationManager->SatelliteCommandManager->ServerSatelliteThrustForDurationCommand(SatelliteID, ThrustCommand);
+    GroundStationManager->SatelliteCommandManager->ServerSatelliteThrustCommand(SatelliteID, ThrustCommand);
 
     FString JsonResponse;
     FJsonObjectConverter::UStructToJsonObjectString<FThrustCommandData>(ThrustCommand, JsonResponse);

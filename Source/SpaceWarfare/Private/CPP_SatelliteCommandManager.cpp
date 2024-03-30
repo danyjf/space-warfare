@@ -40,7 +40,7 @@ void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(c
     SendCommandToSatellite(SatelliteID, TorqueCommand);
 }
 
-void UCPP_SatelliteCommandManager::ServerSatelliteThrustForDurationCommand_Implementation(const FName& SatelliteID, const FThrustCommandData& ThrustCommandData)
+void UCPP_SatelliteCommandManager::ServerSatelliteThrustCommand_Implementation(const FName& SatelliteID, const FThrustCommandData& ThrustCommandData)
 {
     UCPP_ThrustCommand* ThrustCommand = NewObject<UCPP_ThrustCommand>();
 	FDateTime::ParseIso8601(*ThrustCommandData.ExecutionTime, ThrustCommand->ExecutionTime);
