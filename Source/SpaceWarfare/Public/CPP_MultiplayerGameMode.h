@@ -18,8 +18,10 @@ class SPACEWARFARE_API ACPP_MultiplayerGameMode : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    bool bWaitingForPlayers;
+    //UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    //bool bWaitingForPlayers;
+
+    class ACPP_GameState* GameState;
 
     /** Number of players to be used when not starting the game from the main menu */
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -43,11 +45,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int StartingCurrency;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int TimeScale;
+    //UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//int TimeScale;
 
-    UPROPERTY(BlueprintReadOnly)
-	FDateTime CurrentEpoch;
+    //UPROPERTY(BlueprintReadOnly)
+	//FDateTime CurrentEpoch;
 
     UFUNCTION(BlueprintCallable)
     const TArray<class ACPP_GroundStationManager*>& GetGroundStationManagers() {return GroundStationManagers;}
@@ -64,7 +66,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// Called at a fixed DeltaTime to update physics
-	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
+	//virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
 
     // Called after each player logs in
     virtual void PostLogin(APlayerController* NewPlayer) override;
@@ -80,8 +82,8 @@ protected:
     virtual void StartGameplay();
 
 private:
-	FDateTime InitialEpoch;
-	float ElapsedTime;
+	//FDateTime InitialEpoch;
+	//float ElapsedTime;
     int CurrentPlayerID;
     class UCPP_GameInstance* GameInstance;
 

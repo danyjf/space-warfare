@@ -7,6 +7,7 @@
 #include "CPP_MultiplayerGameMode.h"
 #include "CPP_GravityManager.h"
 #include "CPP_GroundStationManager.h"
+#include "CPP_GameState.h"
 
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -36,7 +37,7 @@ void ACPP_AsteroidSpawner::Tick(float DeltaTime)
 
 void ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit()
 {
-    if (MultiplayerGameMode->bWaitingForPlayers)
+    if (MultiplayerGameMode->GameState->bWaitingForPlayers)
     {
         return;
     }

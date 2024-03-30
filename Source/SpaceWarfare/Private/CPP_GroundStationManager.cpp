@@ -10,6 +10,7 @@
 #include "CPP_GravityComponent.h"
 #include "CPP_MultiplayerGameMode.h"
 #include "CPP_SatelliteCommandManager.h"
+#include "CPP_GameState.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -55,7 +56,7 @@ void ACPP_GroundStationManager::Tick(float DeltaTime)
         return;
     }
 
-    if (!MultiplayerGameMode->bWaitingForPlayers && !bInitialized)
+    if (!MultiplayerGameMode->GameState->bWaitingForPlayers && !bInitialized)
     {
         bInitialized = true;
 

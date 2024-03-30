@@ -8,6 +8,7 @@
 #include "CPP_GroundStationManager.h"
 #include "CPP_GravityManager.h"
 #include "CPP_SatelliteCommands.h"
+#include "CPP_GameState.h"
 #include "Universe.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -52,7 +53,7 @@ void ACPP_Satellite::Tick(float DeltaTime)
 	    GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
 
         // Check if it's time to execute the command, the first on the list is always next
-        if (!Commands.IsEmpty() && MultiplayerGameMode->CurrentEpoch >= Commands[0]->ExecutionTime)
+        if (!Commands.IsEmpty() && MultiplayerGameMode->GetGameState<ACPP_GameState>()->CurrentEpoch >= Commands[0]->ExecutionTime)
         {
             Commands[0]->Execute(this);
             Commands.RemoveAt(0);
@@ -106,7 +107,7 @@ const FSatelliteInfo& ACPP_Satellite::GetSatelliteInfo()
     SatelliteInfo.Rotation = GetActorRotation();
     SatelliteInfo.Velocity = GetVelocity();
     SatelliteInfo.Mass = StaticMeshComponent->GetMass();
-    SatelliteInfo.Epoch = MultiplayerGameMode->CurrentEpoch;
+    SatelliteInfo.Epoch = MultiplayerGameMode->GetGameState<ACPP_GameState>()->CurrentEpoch;
 
 	return SatelliteInfo;
 }
@@ -126,7 +127,7 @@ void ACPP_Satellite::PrintGeographicCoordinates()
 		LogTemp,
 		Warning,
 		TEXT("Current Epoch: %s; Longitude: %f; Latitude: %f; Altitude: %f"),
-		*MultiplayerGameMode->CurrentEpoch.ToString(TEXT("%Y-%m-%d %H:%M:%S+0000")),
+		*MultiplayerGameMode->GetGameState<ACPP_GameState>()->CurrentEpoch.ToString(TEXT("%Y-%m-%d %H:%M:%S+0000")),
 		GeographicCoordinates.Longitude,
 		GeographicCoordinates.Latitude,
 		GeographicCoordinates.Altitude

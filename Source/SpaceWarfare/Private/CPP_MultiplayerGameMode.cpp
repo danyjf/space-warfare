@@ -10,6 +10,7 @@
 #include "CPP_GroundStation.h"
 #include "CPP_SatelliteLauncher.h"
 #include "CPP_GameInstance.h"
+#include "CPP_GameState.h"
 #include "JsonReadWrite.h"
 #include "Universe.h"
 
@@ -20,12 +21,12 @@
 
 ACPP_MultiplayerGameMode::ACPP_MultiplayerGameMode()
 {
-    bAsyncPhysicsTickEnabled = true;
+    //bAsyncPhysicsTickEnabled = true;
 
     DefaultNumberOfPlayers = 2;
     CurrentPlayerID = 0;
     StartingCurrency = 300; // Millions
-    bWaitingForPlayers = true;
+    //bWaitingForPlayers = true;
 }
 
 void ACPP_MultiplayerGameMode::BeginPlay()
@@ -33,6 +34,7 @@ void ACPP_MultiplayerGameMode::BeginPlay()
     Super::BeginPlay();
 
     GameInstance = Cast<UCPP_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    GameState = GetGameState<ACPP_GameState>();
     GravityManager = Cast<ACPP_GravityManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GravityManager::StaticClass()));
 
     if (GameInstance->MaxNumberOfPlayersInSession == 0)
@@ -49,7 +51,7 @@ void ACPP_MultiplayerGameMode::StartGameplay()
 // Called every frame
 void ACPP_MultiplayerGameMode::Tick(float DeltaTime)
 {
-    if (bWaitingForPlayers)
+    if (GameState->bWaitingForPlayers)
     {
         if (CameraOrbitControllers.Num() < GameInstance->MaxNumberOfPlayersInSession)
         {
@@ -66,30 +68,30 @@ void ACPP_MultiplayerGameMode::Tick(float DeltaTime)
 
         StartGameplay();
 
-        bWaitingForPlayers = false;
+        GameState->bWaitingForPlayers = false;
     }
 }
 
 // Called at a fixed DeltaTime to update physics
-void ACPP_MultiplayerGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
-{
-	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
-
-    if (bWaitingForPlayers)
-    {
-        return;
-    }
-
-	float ScaledDeltaTime = DeltaTime * TimeScale;
-
-	// Calculate current time
-	ElapsedTime += ScaledDeltaTime;
-	FTimespan ElapsedEpoch;
-	ElapsedEpoch = ElapsedEpoch.FromSeconds(ElapsedTime);
-
-	CurrentEpoch = InitialEpoch;
-	CurrentEpoch += ElapsedEpoch;
-}
+//void ACPP_MultiplayerGameMode::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
+//{
+//	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
+//
+//    if (bWaitingForPlayers)
+//    {
+//        return;
+//    }
+//
+//	float ScaledDeltaTime = DeltaTime * TimeScale;
+//
+//	// Calculate current time
+//	ElapsedTime += ScaledDeltaTime;
+//	FTimespan ElapsedEpoch;
+//	ElapsedEpoch = ElapsedEpoch.FromSeconds(ElapsedTime);
+//
+//	CurrentEpoch = InitialEpoch;
+//	CurrentEpoch += ElapsedEpoch;
+//}
 
 void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
 {
@@ -116,16 +118,16 @@ void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
 
 void ACPP_MultiplayerGameMode::InitializeSimulation(const FSimulationConfig& SimulationConfig)
 {
-	TimeScale = SimulationConfig.TimeScale;
-    GravityManager->TimeScale = TimeScale;
+	GameState->TimeScale = SimulationConfig.TimeScale;
     GravityManager->GravitationalConstant = SimulationConfig.GravitationalConstant;
 
-	FDateTime::ParseIso8601(*SimulationConfig.Planet.Epoch, InitialEpoch);
+	//FDateTime::ParseIso8601(*SimulationConfig.Planet.Epoch, GameState->InitialEpoch);
+	FDateTime::ParseIso8601(*SimulationConfig.Planet.Epoch, GameState->CurrentEpoch);
 
     ACPP_Planet* Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
     Planet->Name = SimulationConfig.Planet.Name;
-    Planet->RotationSpeed = FRotator(0, -SimulationConfig.Planet.RotationSpeed * TimeScale, 0);
-    Planet->SetRotationAtEpoch(InitialEpoch);
+    Planet->RotationSpeed = FRotator(0, -SimulationConfig.Planet.RotationSpeed * GameState->TimeScale, 0);
+    Planet->SetRotationAtEpoch(GameState->CurrentEpoch);
     Planet->SetActorScale3D(FVector(SimulationConfig.Planet.Size));
     Planet->GravityComponent->SetMass(SimulationConfig.Planet.Mass);
     Planet->GravityComponent->SetGravitationalParameter(SimulationConfig.Planet.GM);

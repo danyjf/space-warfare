@@ -6,6 +6,7 @@
 #include "CPP_GravityComponent.h"
 #include "CPP_CameraOrbitableComponent.h"
 #include "CPP_MultiplayerGameMode.h"
+#include "CPP_GameState.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -46,7 +47,7 @@ void ACPP_Planet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    if (HasAuthority() && MultiplayerGameMode->bWaitingForPlayers)
+    if (HasAuthority() && MultiplayerGameMode->GameState->bWaitingForPlayers)
     {
         return;
     }
