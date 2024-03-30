@@ -27,7 +27,7 @@ public:
 	class ACPP_Planet* OrbitingPlanet;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    TArray<FSatelliteCommandData> Commands;
+    TArray<class UCPP_SatelliteCommand*> Commands;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     class UCPP_GravityComponent* GravityComponent;
@@ -42,7 +42,7 @@ public:
     const FSatelliteInfo& GetSatelliteInfo();
 
     UFUNCTION(BlueprintCallable)
-    void AddCommand(const FSatelliteCommandData& Command);
+    void AddCommand(UCPP_SatelliteCommand* Command);
 
     UFUNCTION(BlueprintCallable)
     void PrintGeographicCoordinates();
