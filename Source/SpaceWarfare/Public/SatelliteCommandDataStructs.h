@@ -9,8 +9,8 @@ struct FSatelliteCommandData
     GENERATED_BODY();
 
     // Time at which to execute this command
-    UPROPERTY()
-    FDateTime ExecutionTime;
+    UPROPERTY(BlueprintReadWrite)
+    FDateTime ExecutionTime = FDateTime::MinValue();
 };
 
 USTRUCT(BlueprintType)

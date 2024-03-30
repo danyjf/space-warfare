@@ -28,7 +28,7 @@ class SPACEWARFARE_API UCPP_TorqueCommand : public UCPP_SatelliteCommand
 	GENERATED_BODY()
 
 public:
-    FTorqueCommandData TorqueData;
+    FVector Torque;
 
     virtual void Execute(class ACPP_Satellite* Satellite) override;
 };
@@ -39,7 +39,8 @@ class SPACEWARFARE_API UCPP_ThrustCommand : public UCPP_SatelliteCommand
 	GENERATED_BODY()
 
 public:
-    FThrustCommandData ThrustData;
+    FVector Force;
+    float Duration;
 
     virtual void Execute(class ACPP_Satellite* Satellite) override;
 };

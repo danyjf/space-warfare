@@ -51,10 +51,11 @@ void ACPP_Satellite::Tick(float DeltaTime)
     {
 	    GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
 
-        // TODO: Check if it's time to execute the command
-        if (Commands.Num() > 0 && MultiplayerGameMode->CurrentEpoch <= Commands[0]->ExecutionTime)
+        // Check if it's time to execute the command, the first on the list is always next
+        if (!Commands.IsEmpty() && MultiplayerGameMode->CurrentEpoch >= Commands[0]->ExecutionTime)
         {
-            //Command->Execute();
+            Commands[0]->Execute(this);
+            Commands.RemoveAt(0);
         }
     }
 }
