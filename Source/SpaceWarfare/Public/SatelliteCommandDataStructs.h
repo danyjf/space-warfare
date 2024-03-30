@@ -10,7 +10,7 @@ struct FSatelliteCommandData
 
     // Time at which to execute this command
     UPROPERTY(BlueprintReadWrite)
-    FDateTime ExecutionTime = FDateTime::MinValue();
+    FString ExecutionTime = "0000-00-00T00:00:00.000Z";  // Scheduled execution time in ISO 8601
 };
 
 USTRUCT(BlueprintType)

@@ -28,7 +28,7 @@ void UCPP_SatelliteCommandManager::SendCommandToSatellite(const FName& Satellite
 void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const FName& SatelliteID, const FTorqueCommandData& TorqueCommandData)
 {
     UCPP_TorqueCommand* TorqueCommand = NewObject<UCPP_TorqueCommand>();
-    TorqueCommand->ExecutionTime = TorqueCommandData.ExecutionTime;
+	FDateTime::ParseIso8601(*TorqueCommandData.ExecutionTime, TorqueCommand->ExecutionTime);
     TorqueCommand->Torque = TorqueCommandData.Torque;
 
     if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
@@ -43,7 +43,7 @@ void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(c
 void UCPP_SatelliteCommandManager::ServerSatelliteThrustForDurationCommand_Implementation(const FName& SatelliteID, const FThrustCommandData& ThrustCommandData)
 {
     UCPP_ThrustCommand* ThrustCommand = NewObject<UCPP_ThrustCommand>();
-    ThrustCommand->ExecutionTime = ThrustCommandData.ExecutionTime;
+	FDateTime::ParseIso8601(*ThrustCommandData.ExecutionTime, ThrustCommand->ExecutionTime);
     ThrustCommand->Force = ThrustCommandData.Force;
     ThrustCommand->Duration = ThrustCommandData.Duration;
 
