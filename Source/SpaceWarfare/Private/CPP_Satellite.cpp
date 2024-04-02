@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CPP_Satellite.h"
 #include "CPP_Planet.h"
 #include "CPP_Asteroid.h"
@@ -8,6 +7,8 @@
 #include "CPP_GravityComponent.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_GravityManager.h"
+#include "CPP_SatelliteCommands.h"
+#include "CPP_GameState.h"
 #include "Universe.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -39,6 +40,7 @@ void ACPP_Satellite::BeginPlay()
     if (HasAuthority())
     {
 	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+        SatelliteID = MultiplayerGameMode->NewSatelliteID();
         StaticMeshComponent->OnComponentHit.AddDynamic(this, &ACPP_Satellite::OnComponentHit);
     }
 }
@@ -50,6 +52,13 @@ void ACPP_Satellite::Tick(float DeltaTime)
     if (HasAuthority())
     {
 	    GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
+
+        // Check if it's time to execute the command, the first on the list is always next
+        if (!Commands.IsEmpty() && MultiplayerGameMode->GetGameState<ACPP_GameState>()->CurrentEpoch >= Commands[0]->ExecutionTime)
+        {
+            Commands[0]->Execute(this);
+            Commands.RemoveAt(0);
+        }
     }
 }
 
@@ -65,7 +74,7 @@ void ACPP_Satellite::Destroyed()
     // TODO: Change later, this is to remove the satellite on all players when it is destroyed
     for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
     {
-        GroundStationManager->ClientSatelliteDestroyed(GetFName());
+        GroundStationManager->ClientSatelliteDestroyed(GetSatelliteID());
     }
 }
 
@@ -98,8 +107,19 @@ const FSatelliteInfo& ACPP_Satellite::GetSatelliteInfo()
     SatelliteInfo.Position = GetActorLocation();
     SatelliteInfo.Rotation = GetActorRotation();
     SatelliteInfo.Velocity = GetVelocity();
+    SatelliteInfo.Mass = StaticMeshComponent->GetMass();
+    SatelliteInfo.Epoch = MultiplayerGameMode->GetGameState<ACPP_GameState>()->CurrentEpoch;
 
 	return SatelliteInfo;
+}
+
+void ACPP_Satellite::AddCommand(UCPP_SatelliteCommand* Command)
+{
+    Commands.Add(Command);
+
+    Algo::Sort(Commands, [](UCPP_SatelliteCommand* CommandA, UCPP_SatelliteCommand* CommandB) {
+        return CommandA->ExecutionTime < CommandB->ExecutionTime;
+    });
 }
 
 void ACPP_Satellite::PrintGeographicCoordinates()
@@ -108,7 +128,7 @@ void ACPP_Satellite::PrintGeographicCoordinates()
 		LogTemp,
 		Warning,
 		TEXT("Current Epoch: %s; Longitude: %f; Latitude: %f; Altitude: %f"),
-		*MultiplayerGameMode->CurrentEpoch.ToString(TEXT("%Y-%m-%d %H:%M:%S+0000")),
+		*MultiplayerGameMode->GetGameState<ACPP_GameState>()->CurrentEpoch.ToString(TEXT("%Y-%m-%d %H:%M:%S+0000")),
 		GeographicCoordinates.Longitude,
 		GeographicCoordinates.Latitude,
 		GeographicCoordinates.Altitude

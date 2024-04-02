@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CPP_GravityManager.h"
 #include "CPP_GravityComponent.h"
 #include "CPP_MultiplayerGameMode.h"
+#include "CPP_GameState.h"
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/GameplayStatics.h"
@@ -36,13 +36,13 @@ void ACPP_GravityManager::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
 	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 
-    if (MultiplayerGameMode->bWaitingForPlayers)
+    if (MultiplayerGameMode->GameState->bWaitingForPlayers)
     {
         return;
     }
 
-    SemiImplicitEulerIntegrator(DeltaTime * TimeScale);
-    //LeapFrogIntegrator(DeltaTime * TimeScale);
+    SemiImplicitEulerIntegrator(DeltaTime * MultiplayerGameMode->GameState->TimeScale);
+    //LeapFrogIntegrator(DeltaTime * GameState->TimeScale);
 }
 
 void ACPP_GravityManager::CalculateGravityForces()

@@ -27,6 +27,7 @@ public class SpaceWarfare : ModuleRules
                 "HTTP",
                 "HTTPServer",
                 "FileReadWrite",
+                "Json",
 				"JsonUtilities"
             }
         );

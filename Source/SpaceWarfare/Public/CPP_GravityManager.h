@@ -12,8 +12,8 @@ class SPACEWARFARE_API ACPP_GravityManager : public AActor
 	GENERATED_BODY()
 	
 public:	
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float TimeScale;
+    //UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    //float TimeScale;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TArray<class UCPP_GravityComponent*> GravityComponents;

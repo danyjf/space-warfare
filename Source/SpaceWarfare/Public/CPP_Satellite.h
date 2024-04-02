@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Universe.h"
+#include "SatelliteCommandDataStructs.h"
 
 #include "CoreMinimal.h"
 #include "CPP_Satellite.generated.h"
@@ -26,16 +27,25 @@ public:
 	class ACPP_Planet* OrbitingPlanet;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    TArray<class UCPP_SatelliteCommand*> Commands;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     class UCPP_GravityComponent* GravityComponent;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     class UStaticMeshComponent* StaticMeshComponent;
 
     UFUNCTION(BlueprintCallable)
+    const int GetSatelliteID() {return SatelliteID;}
+
+    UFUNCTION(BlueprintCallable)
 	const FGeographicCoordinates& GetGeographicCoordinates() const;
 
     UFUNCTION(BlueprintCallable)
     const FSatelliteInfo& GetSatelliteInfo();
+
+    UFUNCTION(BlueprintCallable)
+    void AddCommand(UCPP_SatelliteCommand* Command);
 
     UFUNCTION(BlueprintCallable)
     void PrintGeographicCoordinates();
@@ -54,6 +64,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+    int SatelliteID;
 	FGeographicCoordinates GeographicCoordinates;
     FSatelliteInfo SatelliteInfo;
     class ACPP_MultiplayerGameMode* MultiplayerGameMode;

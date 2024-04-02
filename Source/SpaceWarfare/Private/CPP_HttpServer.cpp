@@ -1,12 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CPP_HttpServer.h"
+#include "CPP_GroundStationManager.h"
+#include "CPP_MultiplayerGameMode.h"
+#include "CPP_SatelliteCommandManager.h"
+#include "SatelliteCommandDataStructs.h"
 
 #include "HttpPath.h"
 #include "IHttpRouter.h"
 #include "HttpServerHttpVersion.h"
 #include "HttpServerModule.h"
 #include "HttpServerResponse.h"
+#include "JsonUtilities.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACPP_HttpServer::ACPP_HttpServer()
@@ -19,12 +26,15 @@ ACPP_HttpServer::ACPP_HttpServer()
 void ACPP_HttpServer::BeginPlay()
 {
     StartServer();
+	MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
 	Super::BeginPlay();
 }
 
 void ACPP_HttpServer::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     Super::EndPlay(EndPlayReason);
+
     StopServer();
 }
 
@@ -32,26 +42,28 @@ void ACPP_HttpServer::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void ACPP_HttpServer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+    if (!GroundStationManager)
+    {
+        GroundStationManager = Cast<ACPP_GroundStationManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass()));
+    }
 }
 
 void ACPP_HttpServer::StartServer()
 {
 	FHttpServerModule& HttpServerModule = FHttpServerModule::Get();
-	TSharedPtr<IHttpRouter> HttpRouter = HttpServerModule.GetHttpRouter(ServerPort);
 
-	// If port already binded by another process, then this check must be failed
-	// !!! BUT !!!
-	// This check always true
-	// I don't no why...
+    // This looks pretty dumb but if I don't do it then I can't check if the 
+    // port is open, it sets bHttpListenersEnabled to true in the http server module
+	HttpServerModule.StartAllListeners();
+	TSharedPtr<IHttpRouter> HttpRouter = HttpServerModule.GetHttpRouter(ServerPort, true);
+
 	if (HttpRouter.IsValid())
 	{
-		// Bind as many routes as you need
-		HttpRouter->BindRoute(FHttpPath(HttpPathGET), EHttpServerRequestVerbs::VERB_GET,
-			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return RequestGET(Request, OnComplete); });
-		HttpRouter->BindRoute(FHttpPath(HttpPathPOST), EHttpServerRequestVerbs::VERB_POST,
-			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return RequestPOST(Request, OnComplete); });
-		HttpRouter->BindRoute(FHttpPath(HttpPathPUT), EHttpServerRequestVerbs::VERB_PUT,
-			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return RequestPUT(Request, OnComplete); });
+		HttpRouter->BindRoute(FHttpPath(SatelliteListPath), EHttpServerRequestVerbs::VERB_GET,
+			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return GetSatelliteList(Request, OnComplete); });
+		HttpRouter->BindRoute(FHttpPath(ThrustCommandPath), EHttpServerRequestVerbs::VERB_POST,
+			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return CreateThrustCommand(Request, OnComplete); });
 
 		HttpServerModule.StartAllListeners();
 
@@ -65,34 +77,64 @@ void ACPP_HttpServer::StartServer()
 
 void ACPP_HttpServer::StopServer()
 {
-    FHttpServerModule& httpServerModule = FHttpServerModule::Get();
-	httpServerModule.StopAllListeners();
+    FHttpServerModule& HttpServerModule = FHttpServerModule::Get();
+	HttpServerModule.StopAllListeners();
 }
 
-bool ACPP_HttpServer::RequestGET(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
+bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
 {
     RequestPrint(Request);
-    // NOTE: Use application/json content type later
-	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(TEXT("HttpServerExample GET"), TEXT("text/html"));
+
+    FSatelliteListResponse SatelliteListResponse;
+    SatelliteListResponse.ClientID = GroundStationManager->OwnerPlayerID;
+    SatelliteListResponse.Count = GroundStationManager->TrackedSatellites.Num();
+    for (const TPair<int, FSatelliteInfo>& Elem : GroundStationManager->TrackedSatellites)
+    {
+        const int& SatelliteID = Elem.Key;
+        const FSatelliteInfo& SatelliteInfo = Elem.Value;
+
+        FSatelliteResponse SatelliteResponse;
+        SatelliteResponse.OwnerID = SatelliteInfo.OwnerID;
+        SatelliteResponse.SatelliteID = SatelliteID;
+        SatelliteResponse.Label = SatelliteInfo.Label;
+        SatelliteResponse.Mass = SatelliteInfo.Mass;
+        SatelliteResponse.Position = SatelliteInfo.Position;
+        SatelliteResponse.Rotation = SatelliteInfo.Rotation;
+        SatelliteResponse.Velocity = SatelliteInfo.Velocity;
+        SatelliteResponse.Epoch = SatelliteInfo.Epoch;
+
+        SatelliteListResponse.Satellites.Add(SatelliteResponse);
+    }
+
+    FString JsonSatelliteList;
+    FJsonObjectConverter::UStructToJsonObjectString<FSatelliteListResponse>(SatelliteListResponse, JsonSatelliteList);
+
+	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonSatelliteList, TEXT("application/json"));
+    
 	OnComplete(MoveTemp(Response));
 	return true;
 }
 
-bool ACPP_HttpServer::RequestPOST(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
+bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
 {
     RequestPrint(Request);
-    // NOTE: Use application/json content type later
-	TUniquePtr<FHttpServerResponse> response = FHttpServerResponse::Create(TEXT("HttpServerExample POST"), TEXT("text/html"));
-	OnComplete(MoveTemp(response));
-	return true;
-}
 
-bool ACPP_HttpServer::RequestPUT(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
-{
-    RequestPrint(Request);
-    // NOTE: Use application/json content type later
-	TUniquePtr<FHttpServerResponse> response = FHttpServerResponse::Create(TEXT("HttpServerExample PUT"), TEXT("text/html"));
-	OnComplete(MoveTemp(response));
+    int SatelliteID = FCString::Atoi(*Request.PathParams.FindRef("id"));
+
+	FUTF8ToTCHAR BodyTCHARData(reinterpret_cast<const ANSICHAR*>(Request.Body.GetData()), Request.Body.Num());
+	FString BodyStrData {BodyTCHARData.Length(), BodyTCHARData.Get()};
+
+    FThrustCommandData ThrustCommandData;
+    FJsonObjectConverter::JsonObjectStringToUStruct<FThrustCommandData>(BodyStrData, &ThrustCommandData);
+
+    GroundStationManager->SatelliteCommandManager->ServerSatelliteThrustCommand(SatelliteID, ThrustCommandData);
+
+    FString JsonResponse;
+    FJsonObjectConverter::UStructToJsonObjectString<FThrustCommandData>(ThrustCommandData, JsonResponse);
+	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));
+    Response->Code = EHttpServerResponseCodes::Created;
+
+	OnComplete(MoveTemp(Response));
 	return true;
 }
 
@@ -106,9 +148,6 @@ void ACPP_HttpServer::RequestPrint(const FHttpServerRequest& Request, bool Print
 		break;
 	case EHttpServerRequestVerbs::VERB_POST:
 		StrRequestType = TEXT("POST");
-		break;
-	case EHttpServerRequestVerbs::VERB_PUT:
-		StrRequestType = TEXT("PUT");
 		break;
 	default:
 		StrRequestType = TEXT("Invalid");

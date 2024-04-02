@@ -9,6 +9,51 @@
 #include "GameFramework/Actor.h"
 #include "CPP_HttpServer.generated.h"
 
+USTRUCT(BlueprintType)
+struct FSatelliteResponse
+{
+	GENERATED_BODY();
+
+    UPROPERTY()
+    int SatelliteID;
+
+    UPROPERTY()
+    int OwnerID;
+
+    UPROPERTY()
+    FString Label;
+
+    UPROPERTY()
+    float Mass;
+
+	UPROPERTY()
+	FVector Position;
+
+	UPROPERTY()
+	FRotator Rotation;
+
+	UPROPERTY()
+	FVector Velocity;
+
+    UPROPERTY()
+    FDateTime Epoch;
+};
+
+USTRUCT(BlueprintType)
+struct FSatelliteListResponse
+{
+	GENERATED_BODY();
+
+    UPROPERTY()
+    int ClientID;
+
+    UPROPERTY()
+    int Count;
+
+	UPROPERTY()
+	TArray<FSatelliteResponse> Satellites;
+};
+
 UCLASS()
 class SPACEWARFARE_API ACPP_HttpServer : public AActor
 {
@@ -16,13 +61,10 @@ class SPACEWARFARE_API ACPP_HttpServer : public AActor
 	
 public:	
     UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Http")
-	FString HttpPathGET = TEXT("/get-test");
+	FString SatelliteListPath = TEXT("/satellites");
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Http")
-	FString HttpPathPOST = TEXT("/post-test");
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Http")
-	FString HttpPathPUT = TEXT("/put-test");
+	FString ThrustCommandPath = TEXT("/satellites/:id/thrust");
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Http")
 	int32 ServerPort = 8080;
@@ -40,13 +82,15 @@ protected:
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
+    class ACPP_MultiplayerGameMode* MultiplayerGameMode;
+    class ACPP_GroundStationManager* GroundStationManager;
+
     void StartServer();
 	void StopServer();
 
 	// Callbacks for HttpRequests
-	bool RequestGET(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
-	bool RequestPOST(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
-	bool RequestPUT(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
+	bool GetSatelliteList(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
+	bool CreateThrustCommand(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
 
 	// Just print request for example
 	void RequestPrint(const FHttpServerRequest& Request, bool PrintBody = true);

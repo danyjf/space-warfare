@@ -3,14 +3,14 @@
 #pragma once
 
 #include "Universe.h"
-#include "SatelliteCommands.h"
+#include "SatelliteCommandDataStructs.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "CPP_GroundStationManager.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FNewSatelliteDetected, FName, UniqueID, FSatelliteInfo, SatelliteInfo);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSatelliteDestroyed, FName, UniqueID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FNewSatelliteDetected, int, SatelliteID, FSatelliteInfo, SatelliteInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSatelliteDestroyed, int, SatelliteID);
 
 UCLASS()
 class SPACEWARFARE_API ACPP_GroundStationManager : public AActor
@@ -21,6 +21,12 @@ public:
     UPROPERTY(BlueprintReadWrite)
     TArray<class ACPP_GroundStation*> GroundStations;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    USceneComponent* Root;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    class UCPP_SatelliteCommandManager* SatelliteCommandManager;
+
     UPROPERTY(Replicated, BlueprintReadWrite)
     int OwnerPlayerID;
 
@@ -28,7 +34,10 @@ public:
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
     
     UPROPERTY(BlueprintReadOnly)
-    TMap<FName, FSatelliteInfo> TrackedSatellites;
+    TMap<int, ACPP_Satellite*> OverpassingSatellites;
+
+    UPROPERTY(BlueprintReadOnly)
+    TMap<int, FSatelliteInfo> TrackedSatellites;
 
     UPROPERTY(BlueprintAssignable)
     FNewSatelliteDetected OnNewSatelliteDetected;
@@ -46,40 +55,36 @@ public:
     void UpdateSatelliteInfo();
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientNewAsteroidTracked(const FName& UniqueID, const FVector& Location, const FVector& Velocity);
+    void ClientNewAsteroidTracked(const FName& AsteroidID, const FVector& Location, const FVector& Velocity);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientNewSatelliteTracked(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo);
+    void ClientNewSatelliteTracked(const int SatelliteID, const FSatelliteInfo& SatelliteInfo);
+
+    UFUNCTION(BlueprintCallable, Client, Unreliable)
+    void ClientUpdateSatelliteInfo(const int SatelliteID, const FSatelliteInfo& SatelliteInfo);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientUpdateSatelliteInfo(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo);
+    void ClientSatelliteDestroyed(const int SatelliteID);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientSatelliteDestroyed(const FName& UniqueID);
-
-    UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientAsteroidDestroyed(const FName& UniqueID);
-
-    UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteTorqueCommand(const FTorqueCommand& TorqueCommand);
-
-    UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteThrustCommand(const FThrustCommand& ThrustCommand);
+    void ClientAsteroidDestroyed(const FName& AsteroidID);
 
     UFUNCTION(BlueprintCallable)
     void AddGroundStation(class ACPP_GroundStation* GroundStation);
 
     UFUNCTION(BlueprintCallable)
-    void EnableOrbitVisualization(const FName& SatelliteID);
+    void EnableOrbitVisualization(const int SatelliteID);
 
     UFUNCTION(BlueprintCallable)
-    void DisableOrbitVisualization(const FName& SatelliteID);
+    void DisableOrbitVisualization(const int SatelliteID);
 
     UFUNCTION(BlueprintCallable)
-    const FSatelliteInfo& GetTrackedSatelliteInfo(const FName& SatelliteID);
+    const FSatelliteInfo& GetTrackedSatelliteInfo(const int SatelliteID);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// Sets default values for this actor's properties
 	ACPP_GroundStationManager();
@@ -94,7 +99,6 @@ private:
     bool bInitialized;
     FTimerHandle UpdateSatellitesTimerHandle;
 
-    TMap<FName, ACPP_Satellite*> OverpassingSatellites;
-    TMap<FName, class ACPP_OrbitSpline*> SatelliteOrbits;
+    TMap<int, class ACPP_OrbitSpline*> SatelliteOrbits;
     TMap<FName, class ACPP_OrbitSpline*> AsteroidOrbits;
 };
