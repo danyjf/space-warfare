@@ -36,6 +36,9 @@ public:
     class UStaticMeshComponent* StaticMeshComponent;
 
     UFUNCTION(BlueprintCallable)
+    const int GetSatelliteID() {return SatelliteID;}
+
+    UFUNCTION(BlueprintCallable)
 	const FGeographicCoordinates& GetGeographicCoordinates() const;
 
     UFUNCTION(BlueprintCallable)
@@ -61,6 +64,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+    int SatelliteID;
 	FGeographicCoordinates GeographicCoordinates;
     FSatelliteInfo SatelliteInfo;
     class ACPP_MultiplayerGameMode* MultiplayerGameMode;

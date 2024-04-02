@@ -15,7 +15,7 @@ struct FSatelliteResponse
 	GENERATED_BODY();
 
     UPROPERTY()
-    FName SatelliteID;
+    int SatelliteID;
 
     UPROPERTY()
     int OwnerID;

@@ -15,19 +15,19 @@ class SPACEWARFARE_API UCPP_SatelliteCommandManager : public UActorComponent
 
 public:
     UPROPERTY(BlueprintReadOnly)
-    TMap<FName, class UCPP_SatelliteCommand*> SatelliteCommands;
+    TMap<int, class UCPP_SatelliteCommand*> SatelliteCommands;
 
     UFUNCTION(BlueprintCallable)
-    void SendCommandToSatellite(const FName& SatelliteID, UCPP_SatelliteCommand* SatelliteCommandData);
+    void SendCommandToSatellite(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommandData);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteTorqueCommand(const FName& SatelliteID, const FTorqueCommandData& TorqueCommandData);
+    void ServerSatelliteTorqueCommand(const int SatelliteID, const FTorqueCommandData& TorqueCommandData);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteThrustCommand(const FName& SatelliteID, const FThrustCommandData& ThrustCommandData);
+    void ServerSatelliteThrustCommand(const int SatelliteID, const FThrustCommandData& ThrustCommandData);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerSatelliteThrustDeactivate(const FName& SatelliteID);
+    void ServerSatelliteThrustDeactivate(const int SatelliteID);
 
 	// Sets default values for this component's properties
 	UCPP_SatelliteCommandManager();

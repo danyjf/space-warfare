@@ -20,12 +20,12 @@ UCPP_SatelliteCommandManager::UCPP_SatelliteCommandManager()
     GroundStationManager = Cast<ACPP_GroundStationManager>(GetOwner());
 }
 
-void UCPP_SatelliteCommandManager::SendCommandToSatellite(const FName& SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
+void UCPP_SatelliteCommandManager::SendCommandToSatellite(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
 {
     GroundStationManager->OverpassingSatellites[SatelliteID]->AddCommand(SatelliteCommand);
 }
 
-void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const FName& SatelliteID, const FTorqueCommandData& TorqueCommandData)
+void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const int SatelliteID, const FTorqueCommandData& TorqueCommandData)
 {
     UCPP_TorqueCommand* TorqueCommand = NewObject<UCPP_TorqueCommand>();
 	FDateTime::ParseIso8601(*TorqueCommandData.ExecutionTime, TorqueCommand->ExecutionTime);
@@ -40,7 +40,7 @@ void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(c
     SendCommandToSatellite(SatelliteID, TorqueCommand);
 }
 
-void UCPP_SatelliteCommandManager::ServerSatelliteThrustCommand_Implementation(const FName& SatelliteID, const FThrustCommandData& ThrustCommandData)
+void UCPP_SatelliteCommandManager::ServerSatelliteThrustCommand_Implementation(const int SatelliteID, const FThrustCommandData& ThrustCommandData)
 {
     UCPP_ThrustCommand* ThrustCommand = NewObject<UCPP_ThrustCommand>();
 	FDateTime::ParseIso8601(*ThrustCommandData.ExecutionTime, ThrustCommand->ExecutionTime);
@@ -56,7 +56,7 @@ void UCPP_SatelliteCommandManager::ServerSatelliteThrustCommand_Implementation(c
     SendCommandToSatellite(SatelliteID, ThrustCommand);
 }
 
-void UCPP_SatelliteCommandManager::ServerSatelliteThrustDeactivate_Implementation(const FName& SatelliteID)
+void UCPP_SatelliteCommandManager::ServerSatelliteThrustDeactivate_Implementation(const int SatelliteID)
 {
     ACPP_Satellite* Satellite = GroundStationManager->OverpassingSatellites[SatelliteID];
     UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));

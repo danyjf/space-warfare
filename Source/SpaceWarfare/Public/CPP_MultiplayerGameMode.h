@@ -43,6 +43,9 @@ public:
     int StartingCurrency;
 
     UFUNCTION(BlueprintCallable)
+    int NewSatelliteID() {return CurrentSatelliteID++;}
+
+    UFUNCTION(BlueprintCallable)
     const TArray<class ACPP_GroundStationManager*>& GetGroundStationManagers() {return GroundStationManagers;}
 
 	UFUNCTION(BlueprintCallable)
@@ -71,6 +74,7 @@ protected:
 
 private:
     int CurrentPlayerID;
+    int CurrentSatelliteID;
     class UCPP_GameInstance* GameInstance;
 
     template <class T>

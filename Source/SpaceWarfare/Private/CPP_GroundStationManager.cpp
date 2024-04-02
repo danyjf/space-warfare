@@ -78,7 +78,7 @@ void ACPP_GroundStationManager::UpdateSatelliteInfo()
     for (AActor* Actor : Satellites)
     {
         ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-        ClientUpdateSatelliteInfo(Satellite->GetFName(), Satellite->GetSatelliteInfo());
+        ClientUpdateSatelliteInfo(Satellite->GetSatelliteID(), Satellite->GetSatelliteInfo());
     }
 }
 
@@ -88,12 +88,12 @@ void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Sat
 
     if (Satellite->OwnerPlayerID == OwnerPlayerID)
     {
-        OverpassingSatellites.Emplace(Satellite->GetFName(), Satellite);
+        OverpassingSatellites.Emplace(Satellite->GetSatelliteID(), Satellite);
     }
 
-    if (!TrackedSatellites.Contains(Satellite->GetFName()))
+    if (!TrackedSatellites.Contains(Satellite->GetSatelliteID()))
     {
-        ClientNewSatelliteTracked(Satellite->GetFName(), SatelliteInfo);
+        ClientNewSatelliteTracked(Satellite->GetSatelliteID(), SatelliteInfo);
     }
 }
 
@@ -101,11 +101,11 @@ void ACPP_GroundStationManager::SatelliteExitedOverpassArea(ACPP_Satellite* Sate
 {
     if (Satellite->OwnerPlayerID == OwnerPlayerID)
     {
-        OverpassingSatellites.Remove(Satellite->GetFName());
+        OverpassingSatellites.Remove(Satellite->GetSatelliteID());
     }
 }
 
-void ACPP_GroundStationManager::ClientNewAsteroidTracked_Implementation(const FName& UniqueID, const FVector& Location, const FVector& Velocity)
+void ACPP_GroundStationManager::ClientNewAsteroidTracked_Implementation(const FName& AsteroidID, const FVector& Location, const FVector& Velocity)
 {
     ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
 
@@ -114,24 +114,24 @@ void ACPP_GroundStationManager::ClientNewAsteroidTracked_Implementation(const FN
 
     OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
     OrbitSpline->SetColor(FLinearColor::Yellow);
-    AsteroidOrbits.Emplace(UniqueID, OrbitSpline);
+    AsteroidOrbits.Emplace(AsteroidID, OrbitSpline);
 }
 
-void ACPP_GroundStationManager::ClientAsteroidDestroyed_Implementation(const FName& UniqueID)
+void ACPP_GroundStationManager::ClientAsteroidDestroyed_Implementation(const FName& AsteroidID)
 {
-    AsteroidOrbits[UniqueID]->Destroy();
-    AsteroidOrbits.Remove(UniqueID);
+    AsteroidOrbits[AsteroidID]->Destroy();
+    AsteroidOrbits.Remove(AsteroidID);
 }
 
-void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo)
+void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const int SatelliteID, const FSatelliteInfo& SatelliteInfo)
 {
-    if (TrackedSatellites.Contains(UniqueID))
+    if (TrackedSatellites.Contains(SatelliteID))
     {
         return;
     }
 
-    TrackedSatellites.Emplace(UniqueID, SatelliteInfo);
-    OnNewSatelliteDetected.Broadcast(UniqueID, SatelliteInfo);
+    TrackedSatellites.Emplace(SatelliteID, SatelliteInfo);
+    OnNewSatelliteDetected.Broadcast(SatelliteID, SatelliteInfo);
 
     // Create the orbit spline of the satellite
     ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
@@ -148,37 +148,37 @@ void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const F
     {
         OrbitSpline->SetColor(FLinearColor::Red);
     }
-    SatelliteOrbits.Emplace(UniqueID, OrbitSpline);
+    SatelliteOrbits.Emplace(SatelliteID, OrbitSpline);
 }
 
-void ACPP_GroundStationManager::ClientUpdateSatelliteInfo_Implementation(const FName& UniqueID, const FSatelliteInfo& SatelliteInfo)
+void ACPP_GroundStationManager::ClientUpdateSatelliteInfo_Implementation(const int SatelliteID, const FSatelliteInfo& SatelliteInfo)
 {
-    if (!TrackedSatellites.Contains(UniqueID))
+    if (!TrackedSatellites.Contains(SatelliteID))
     {
-        ClientNewSatelliteTracked(UniqueID, SatelliteInfo);
+        ClientNewSatelliteTracked(SatelliteID, SatelliteInfo);
         return;
     }
 
-    TrackedSatellites[UniqueID] = SatelliteInfo;
+    TrackedSatellites[SatelliteID] = SatelliteInfo;
 
     FOrbitalState OrbitalState = FOrbitalState(SatelliteInfo.Position, SatelliteInfo.Velocity);
     FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
-    if (SatelliteOrbits.Contains(UniqueID) && !SatelliteOrbits[UniqueID]->IsHidden())
+    if (SatelliteOrbits.Contains(SatelliteID) && !SatelliteOrbits[SatelliteID]->IsHidden())
     {
-        SatelliteOrbits[UniqueID]->UpdateOrbit(OrbitalElements, Planet);
+        SatelliteOrbits[SatelliteID]->UpdateOrbit(OrbitalElements, Planet);
     }
 }
 
-void ACPP_GroundStationManager::ClientSatelliteDestroyed_Implementation(const FName& UniqueID)
+void ACPP_GroundStationManager::ClientSatelliteDestroyed_Implementation(const int SatelliteID)
 {
-    OnSatelliteDestroyed.Broadcast(UniqueID);
+    OnSatelliteDestroyed.Broadcast(SatelliteID);
 
-    if (TrackedSatellites.Contains(UniqueID))
+    if (TrackedSatellites.Contains(SatelliteID))
     {
-        TrackedSatellites.Remove(UniqueID);
-        SatelliteOrbits[UniqueID]->Destroy();
-        SatelliteOrbits.Remove(UniqueID);
+        TrackedSatellites.Remove(SatelliteID);
+        SatelliteOrbits[SatelliteID]->Destroy();
+        SatelliteOrbits.Remove(SatelliteID);
     }
 }
 
@@ -188,7 +188,7 @@ void ACPP_GroundStationManager::AddGroundStation(ACPP_GroundStation* GroundStati
     GroundStation->GroundStationManager = this;
 }
 
-void ACPP_GroundStationManager::EnableOrbitVisualization(const FName& SatelliteID)
+void ACPP_GroundStationManager::EnableOrbitVisualization(const int SatelliteID)
 {
     if (SatelliteOrbits.Contains(SatelliteID))
     {
@@ -200,7 +200,7 @@ void ACPP_GroundStationManager::EnableOrbitVisualization(const FName& SatelliteI
     }
 }
 
-void ACPP_GroundStationManager::DisableOrbitVisualization(const FName& SatelliteID)
+void ACPP_GroundStationManager::DisableOrbitVisualization(const int SatelliteID)
 {
     if (SatelliteOrbits.Contains(SatelliteID))
     {
@@ -208,7 +208,7 @@ void ACPP_GroundStationManager::DisableOrbitVisualization(const FName& Satellite
     }
 }
 
-const FSatelliteInfo& ACPP_GroundStationManager::GetTrackedSatelliteInfo(const FName& SatelliteID)
+const FSatelliteInfo& ACPP_GroundStationManager::GetTrackedSatelliteInfo(const int SatelliteID)
 {
     return TrackedSatellites[SatelliteID];
 }

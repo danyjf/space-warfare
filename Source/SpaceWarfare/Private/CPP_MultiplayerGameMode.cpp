@@ -23,6 +23,7 @@ ACPP_MultiplayerGameMode::ACPP_MultiplayerGameMode()
 {
     DefaultNumberOfPlayers = 2;
     CurrentPlayerID = 0;
+    CurrentSatelliteID = 0;
     StartingCurrency = 300; // Millions
 }
 

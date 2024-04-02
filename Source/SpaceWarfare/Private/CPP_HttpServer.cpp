@@ -88,9 +88,9 @@ bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const 
     FSatelliteListResponse SatelliteListResponse;
     SatelliteListResponse.ClientID = GroundStationManager->OwnerPlayerID;
     SatelliteListResponse.Count = GroundStationManager->TrackedSatellites.Num();
-    for (const TPair<FName, FSatelliteInfo>& Elem : GroundStationManager->TrackedSatellites)
+    for (const TPair<int, FSatelliteInfo>& Elem : GroundStationManager->TrackedSatellites)
     {
-        const FName& SatelliteID = Elem.Key;
+        const int& SatelliteID = Elem.Key;
         const FSatelliteInfo& SatelliteInfo = Elem.Value;
 
         FSatelliteResponse SatelliteResponse;
@@ -119,7 +119,7 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
 {
     RequestPrint(Request);
 
-    FName SatelliteID = FName(*Request.PathParams.FindRef("id"));
+    int SatelliteID = FCString::Atoi(*Request.PathParams.FindRef("id"));
 
 	FUTF8ToTCHAR BodyTCHARData(reinterpret_cast<const ANSICHAR*>(Request.Body.GetData()), Request.Body.Num());
 	FString BodyStrData {BodyTCHARData.Length(), BodyTCHARData.Get()};
