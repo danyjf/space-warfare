@@ -124,13 +124,13 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
 	FUTF8ToTCHAR BodyTCHARData(reinterpret_cast<const ANSICHAR*>(Request.Body.GetData()), Request.Body.Num());
 	FString BodyStrData {BodyTCHARData.Length(), BodyTCHARData.Get()};
 
-    FThrustCommandData ThrustCommand;
-    FJsonObjectConverter::JsonObjectStringToUStruct<FThrustCommandData>(BodyStrData, &ThrustCommand);
+    FThrustCommandData ThrustCommandData;
+    FJsonObjectConverter::JsonObjectStringToUStruct<FThrustCommandData>(BodyStrData, &ThrustCommandData);
 
-    GroundStationManager->SatelliteCommandManager->ServerSatelliteThrustCommand(SatelliteID, ThrustCommand);
+    GroundStationManager->SatelliteCommandManager->ServerSatelliteThrustCommand(SatelliteID, ThrustCommandData);
 
     FString JsonResponse;
-    FJsonObjectConverter::UStructToJsonObjectString<FThrustCommandData>(ThrustCommand, JsonResponse);
+    FJsonObjectConverter::UStructToJsonObjectString<FThrustCommandData>(ThrustCommandData, JsonResponse);
 	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));
     Response->Code = EHttpServerResponseCodes::Created;
 
