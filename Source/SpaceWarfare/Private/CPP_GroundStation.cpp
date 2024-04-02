@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CPP_GroundStation.h"
+#include "CPP_GroundStationManager.h"
+#include "CPP_MultiplayerGameMode.h"
 
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -18,10 +20,24 @@ void ACPP_GroundStation::BeginPlay()
 {
 	Super::BeginPlay();
 
-    // Hide enemy ground stations on listen server
-    if (HasAuthority() && UGameplayStatics::GetPlayerController(GetWorld(), 0) != GetOwner())
+    if (HasAuthority())
     {
-        SetActorHiddenInGame(true);
+	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+        // Find the ground station manager responsible for this ground station
+        for(ACPP_GroundStationManager* Manager : MultiplayerGameMode->GetGroundStationManagers())
+        {
+            if (Manager->OwnerPlayerID == OwnerPlayerID)
+            {
+                GroundStationManager = Manager;
+            }
+        }
+
+        // Hide enemy ground stations on listen server
+        if (UGameplayStatics::GetPlayerController(GetWorld(), 0) != GetOwner())
+        {
+            SetActorHiddenInGame(true);
+        }
     }
     else if (!HasAuthority())
     {

@@ -159,6 +159,7 @@ void ACPP_MultiplayerGameMode::InitializeSatellites(TArray<FSatelliteStruct>& Sa
         {
             ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(SatelliteActor);
             GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
+            GroundStationManager->SatelliteExitedOverpassArea(Satellite);
         }
     }
 }

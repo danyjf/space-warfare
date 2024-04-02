@@ -182,12 +182,6 @@ void ACPP_GroundStationManager::ClientSatelliteDestroyed_Implementation(const in
     }
 }
 
-void ACPP_GroundStationManager::AddGroundStation(ACPP_GroundStation* GroundStation)
-{
-    GroundStations.Add(GroundStation);
-    GroundStation->GroundStationManager = this;
-}
-
 void ACPP_GroundStationManager::EnableOrbitVisualization(const int SatelliteID)
 {
     if (SatelliteOrbits.Contains(SatelliteID))
