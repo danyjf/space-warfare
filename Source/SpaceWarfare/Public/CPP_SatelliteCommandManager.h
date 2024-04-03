@@ -8,6 +8,15 @@
 #include "Components/ActorComponent.h"
 #include "CPP_SatelliteCommandManager.generated.h"
 
+USTRUCT(BlueprintType)
+struct FSatelliteCommandList
+{
+	GENERATED_BODY()
+
+    UPROPERTY()
+    TArray<class UCPP_SatelliteCommand*> CommandList;
+};
+
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPACEWARFARE_API UCPP_SatelliteCommandManager : public UActorComponent
 {
@@ -15,10 +24,16 @@ class SPACEWARFARE_API UCPP_SatelliteCommandManager : public UActorComponent
 
 public:
     UPROPERTY(BlueprintReadOnly)
-    TMap<int, class UCPP_SatelliteCommand*> SatelliteCommands;
+    TMap<int, FSatelliteCommandList> PendingSatelliteCommands;
 
     UFUNCTION(BlueprintCallable)
     void SendCommandToSatellite(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommandData);
+
+    UFUNCTION(BlueprintCallable)
+    void SendPendingCommandsToSatellite(const int SatelliteID);
+
+    UFUNCTION(BlueprintCallable)
+    void StoreSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSatelliteTorqueCommand(const int SatelliteID, const FTorqueCommandData& TorqueCommandData);

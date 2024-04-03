@@ -151,17 +151,6 @@ void ACPP_MultiplayerGameMode::InitializeSatellites(TArray<FSatelliteStruct>& Sa
             }
         }
     }
-
-    // TODO: Maybe change this, it is adding all satellites to the clients at the beginning
-    for (ACPP_GroundStationManager* GroundStationManager : GroundStationManagers)
-    {
-        for (AActor* SatelliteActor : Satellites)
-        {
-            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(SatelliteActor);
-            GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
-            GroundStationManager->SatelliteExitedOverpassArea(Satellite);
-        }
-    }
 }
 
 template <class T>

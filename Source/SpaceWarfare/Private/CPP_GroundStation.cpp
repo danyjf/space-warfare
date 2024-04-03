@@ -3,6 +3,7 @@
 #include "CPP_GroundStation.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_MultiplayerGameMode.h"
+#include "CPP_Satellite.h"
 
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -33,6 +34,9 @@ void ACPP_GroundStation::BeginPlay()
             }
         }
 
+        DetectionCone->OnComponentBeginOverlap.AddDynamic(this, &ACPP_GroundStation::OnComponentBeginOverlap);
+        DetectionCone->OnComponentEndOverlap.AddDynamic(this, &ACPP_GroundStation::OnComponentEndOverlap);
+
         // Hide enemy ground stations on listen server
         if (UGameplayStatics::GetPlayerController(GetWorld(), 0) != GetOwner())
         {
@@ -49,4 +53,28 @@ void ACPP_GroundStation::BeginPlay()
 void ACPP_GroundStation::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ACPP_GroundStation::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+    if (HasAuthority())
+    {
+        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(OtherActor);
+        if (Satellite)
+        {
+            GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
+        }
+    }
+}
+
+void ACPP_GroundStation::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+    if (HasAuthority())
+    {
+        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(OtherActor);
+        if (Satellite)
+        {
+            GroundStationManager->SatelliteExitedOverpassArea(Satellite);
+        }
+    }
 }

@@ -25,6 +25,33 @@ void UCPP_SatelliteCommandManager::SendCommandToSatellite(const int SatelliteID,
     GroundStationManager->OverpassingSatellites[SatelliteID]->AddCommand(SatelliteCommand);
 }
 
+void UCPP_SatelliteCommandManager::SendPendingCommandsToSatellite(const int SatelliteID)
+{
+    if (!PendingSatelliteCommands.Contains(SatelliteID))
+    {
+        return;
+    }
+
+    for (UCPP_SatelliteCommand* Command : PendingSatelliteCommands[SatelliteID].CommandList)
+    {
+        SendCommandToSatellite(SatelliteID, Command);
+    }
+
+    PendingSatelliteCommands.Remove(SatelliteID);
+}
+
+void UCPP_SatelliteCommandManager::StoreSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
+{
+    if (!PendingSatelliteCommands.Contains(SatelliteID))
+    {
+        FSatelliteCommandList SatelliteCommandList;
+        SatelliteCommandList.CommandList.Add(SatelliteCommand);
+        PendingSatelliteCommands.Emplace(SatelliteID, SatelliteCommandList);
+        return;
+    }
+    PendingSatelliteCommands[SatelliteID].CommandList.Add(SatelliteCommand);
+}
+
 void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const int SatelliteID, const FTorqueCommandData& TorqueCommandData)
 {
     UCPP_TorqueCommand* TorqueCommand = NewObject<UCPP_TorqueCommand>();
@@ -33,7 +60,7 @@ void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(c
 
     if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
     {
-        SatelliteCommands.Emplace(SatelliteID, TorqueCommand);
+        StoreSatelliteCommand(SatelliteID, TorqueCommand);
         return;
     }
 
@@ -49,7 +76,7 @@ void UCPP_SatelliteCommandManager::ServerSatelliteThrustCommand_Implementation(c
 
     if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
     {
-        SatelliteCommands.Emplace(SatelliteID, ThrustCommand);
+        StoreSatelliteCommand(SatelliteID, ThrustCommand);
         return;
     }
 
@@ -58,6 +85,11 @@ void UCPP_SatelliteCommandManager::ServerSatelliteThrustCommand_Implementation(c
 
 void UCPP_SatelliteCommandManager::ServerSatelliteThrustDeactivate_Implementation(const int SatelliteID)
 {
+    if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
+    {
+        return;
+    }
+
     ACPP_Satellite* Satellite = GroundStationManager->OverpassingSatellites[SatelliteID];
     UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
 

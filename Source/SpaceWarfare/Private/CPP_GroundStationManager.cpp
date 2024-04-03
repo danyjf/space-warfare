@@ -95,6 +95,8 @@ void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Sat
     {
         ClientNewSatelliteTracked(Satellite->GetSatelliteID(), SatelliteInfo);
     }
+
+    SatelliteCommandManager->SendPendingCommandsToSatellite(Satellite->GetSatelliteID());
 }
 
 void ACPP_GroundStationManager::SatelliteExitedOverpassArea(ACPP_Satellite* Satellite)
