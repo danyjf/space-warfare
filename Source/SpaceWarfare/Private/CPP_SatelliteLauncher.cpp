@@ -1,15 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CPP_SatelliteLauncher.h"
 #include "CPP_Satellite.h"
 #include "CPP_Planet.h"
 #include "CPP_GravityComponent.h"
 #include "CPP_GravityManager.h"
 #include "CPP_MultiplayerGameMode.h"
+#include "CPP_BotGameMode.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_CameraOrbitController.h"
-
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -69,5 +68,9 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
     for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
     {
         GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
+        if (Cast<ACPP_BotGameMode>(MultiplayerGameMode))
+        {
+            GroundStationManager->SatelliteExitedOverpassArea(Satellite);
+        }
     }
 }
