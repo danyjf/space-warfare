@@ -60,8 +60,9 @@ void ACPP_GroundStation::OnComponentBeginOverlap(UPrimitiveComponent* Overlapped
     if (HasAuthority())
     {
         ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(OtherActor);
-        if (Satellite)
+        if (Satellite && GroundStationManager)
         {
+            UKismetSystemLibrary::PrintString(GetWorld(), FString::FromInt(GroundStationManager->OwnerPlayerID));
             GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
         }
     }
@@ -72,7 +73,7 @@ void ACPP_GroundStation::OnComponentEndOverlap(UPrimitiveComponent* OverlappedCo
     if (HasAuthority())
     {
         ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(OtherActor);
-        if (Satellite)
+        if (Satellite && GroundStationManager)
         {
             GroundStationManager->SatelliteExitedOverpassArea(Satellite);
         }
