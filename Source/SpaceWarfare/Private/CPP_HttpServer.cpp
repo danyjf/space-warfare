@@ -72,6 +72,8 @@ void ACPP_HttpServer::StartServer()
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Could not start web server on port = %d"), ServerPort);
+        ServerPort++;
+        StartServer();
 	}
 }
 
@@ -121,14 +123,38 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
 
     int SatelliteID = FCString::Atoi(*Request.PathParams.FindRef("id"));
 
+    // Check if satellite belongs to the player
+    if (SatelliteID != GroundStationManager->OwnerPlayerID)
+    {
+        // Generate forbidden access response
+        FString JsonResponse = "{\"message\": \"The provided satellite ID corresponds to a satellite that is not owned by the player\"}";
+	    TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));
+        Response->Code = EHttpServerResponseCodes::Forbidden;
+
+	    OnComplete(MoveTemp(Response));
+        return true;
+    }
+
+    // Parse request body into command struct
 	FUTF8ToTCHAR BodyTCHARData(reinterpret_cast<const ANSICHAR*>(Request.Body.GetData()), Request.Body.Num());
 	FString BodyStrData {BodyTCHARData.Length(), BodyTCHARData.Get()};
-
     FThrustCommandData ThrustCommandData;
-    FJsonObjectConverter::JsonObjectStringToUStruct<FThrustCommandData>(BodyStrData, &ThrustCommandData);
 
+    if (!FJsonObjectConverter::JsonObjectStringToUStruct<FThrustCommandData>(BodyStrData, &ThrustCommandData))
+    {
+        // Generate a bad request response
+        FString JsonResponse = "{\"message\": \"The provided request body could not be parsed\"}";
+	    TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));
+        Response->Code = EHttpServerResponseCodes::Forbidden;
+
+	    OnComplete(MoveTemp(Response));
+        return true;
+    }
+
+    // Send the command to the server
     GroundStationManager->SatelliteCommandManager->ServerSatelliteThrustCommand(SatelliteID, ThrustCommandData);
 
+    // Generate the http success response
     FString JsonResponse;
     FJsonObjectConverter::UStructToJsonObjectString<FThrustCommandData>(ThrustCommandData, JsonResponse);
 	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));

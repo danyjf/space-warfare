@@ -20,6 +20,7 @@ public:
     FDateTime ExecutionTime;
 
     virtual void Execute(class ACPP_Satellite* Satellite) PURE_VIRTUAL(UCPP_SatelliteCommand::Execute,);
+    virtual FSatelliteCommandData SerializeToStruct() PURE_VIRTUAL(UCPP_SatelliteCommand::SerializeToStruct, return FSatelliteCommandData(););
 };
 
 UCLASS()
@@ -31,6 +32,7 @@ public:
     FVector Torque;
 
     virtual void Execute(class ACPP_Satellite* Satellite) override;
+    virtual FSatelliteCommandData SerializeToStruct() override;
 };
 
 UCLASS()
@@ -43,4 +45,5 @@ public:
     float Duration;
 
     virtual void Execute(class ACPP_Satellite* Satellite) override;
+    virtual FSatelliteCommandData SerializeToStruct() override;
 };

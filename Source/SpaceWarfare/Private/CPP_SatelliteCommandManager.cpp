@@ -38,6 +38,7 @@ void UCPP_SatelliteCommandManager::SendPendingCommandsToSatellite(const int Sate
     }
 
     PendingSatelliteCommands.Remove(SatelliteID);
+    ClientRemovePendingSatelliteCommand();
 }
 
 void UCPP_SatelliteCommandManager::StoreSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
@@ -52,8 +53,22 @@ void UCPP_SatelliteCommandManager::StoreSatelliteCommand(const int SatelliteID, 
     PendingSatelliteCommands[SatelliteID].CommandList.Add(SatelliteCommand);
 }
 
+void UCPP_SatelliteCommandManager::ClientRemovePendingSatelliteCommand_Implementation()
+{
+    // Remove the command from the command list on the client
+}
+
 void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const int SatelliteID, const FTorqueCommandData& TorqueCommandData)
 {
+    // Check if satellite belongs to the player
+    if (
+        !GroundStationManager->TrackedSatellites.Contains(SatelliteID) 
+        || GroundStationManager->TrackedSatellites[SatelliteID].OwnerID != GroundStationManager->OwnerPlayerID
+    )
+    {
+        return;
+    }
+
     UCPP_TorqueCommand* TorqueCommand = NewObject<UCPP_TorqueCommand>();
 	FDateTime::ParseIso8601(*TorqueCommandData.ExecutionTime, TorqueCommand->ExecutionTime);
     TorqueCommand->Torque = TorqueCommandData.Torque;

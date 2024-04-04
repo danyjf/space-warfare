@@ -13,9 +13,26 @@ void UCPP_TorqueCommand::Execute(ACPP_Satellite* Satellite)
     Satellite->StaticMeshComponent->AddTorqueInDegrees(LocalTorque, NAME_None, true);
 }
 
+FSatelliteCommandData UCPP_TorqueCommand::SerializeToStruct()
+{
+    FTorqueCommandData TorqueCommandData;
+    TorqueCommandData.ExecutionTime = ExecutionTime.ToIso8601();
+    TorqueCommandData.Torque = Torque;
+    return TorqueCommandData;
+}
+
 void UCPP_ThrustCommand::Execute(ACPP_Satellite* Satellite)
 {
     UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
     Thruster->SetThrusterDirectionInECICoordinates(Force);
     Thruster->ActivateThruster(Force.Size(), Duration);
+}
+
+FSatelliteCommandData UCPP_ThrustCommand::SerializeToStruct()
+{
+    FThrustCommandData ThrustCommandData;
+    ThrustCommandData.ExecutionTime = ExecutionTime.ToIso8601();
+    ThrustCommandData.Force = Force;
+    ThrustCommandData.Duration = Duration;
+    return ThrustCommandData;
 }

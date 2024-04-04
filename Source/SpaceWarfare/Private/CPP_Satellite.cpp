@@ -120,6 +120,21 @@ void ACPP_Satellite::AddCommand(UCPP_SatelliteCommand* Command)
     Algo::Sort(Commands, [](UCPP_SatelliteCommand* CommandA, UCPP_SatelliteCommand* CommandB) {
         return CommandA->ExecutionTime < CommandB->ExecutionTime;
     });
+
+    if (HasAuthority())
+    {
+        ClientNewSatelliteCommandAdded();
+    }
+}
+
+void ACPP_Satellite::ClientNewSatelliteCommandAdded_Implementation()
+{
+    // Add the command to the command list on the client
+}
+
+void ACPP_Satellite::ClientSatelliteCommandExecuted_Implementation()
+{
+    // Remove the command from the command list on the client
 }
 
 void ACPP_Satellite::PrintGeographicCoordinates()

@@ -50,6 +50,12 @@ public:
     UFUNCTION(BlueprintCallable)
     void PrintGeographicCoordinates();
 
+    UFUNCTION(Client, Reliable)
+    void ClientNewSatelliteCommandAdded();
+
+    UFUNCTION(Client, Reliable)
+    void ClientSatelliteCommandExecuted();
+
     UFUNCTION()
     void OnComponentHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 

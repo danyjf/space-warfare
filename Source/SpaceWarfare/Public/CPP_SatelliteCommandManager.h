@@ -35,6 +35,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void StoreSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand);
 
+    UFUNCTION(Client, Reliable)
+    void ClientRemovePendingSatelliteCommand();
+
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSatelliteTorqueCommand(const int SatelliteID, const FTorqueCommandData& TorqueCommandData);
 
