@@ -208,3 +208,11 @@ const FSatelliteInfo& ACPP_GroundStationManager::GetTrackedSatelliteInfo(const i
 {
     return TrackedSatellites[SatelliteID];
 }
+
+void ACPP_GroundStationManager::PrintOverpassingSatellites()
+{
+    for (const auto& Elem : OverpassingSatellites)
+    {
+        UKismetSystemLibrary::PrintString(GetWorld(), Elem.Value->Label);
+    }
+}

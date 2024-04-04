@@ -43,6 +43,9 @@ public:
     FSatelliteDestroyed OnSatelliteDestroyed;
 
     UFUNCTION(BlueprintCallable)
+    void PrintOverpassingSatellites();
+
+    UFUNCTION(BlueprintCallable)
     void SatelliteEnteredOverpassArea(class ACPP_Satellite* Satellite);
 
     UFUNCTION(BlueprintCallable)

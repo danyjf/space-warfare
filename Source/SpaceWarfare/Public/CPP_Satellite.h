@@ -50,6 +50,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void PrintGeographicCoordinates();
 
+    UFUNCTION(BlueprintCallable)
+    void PrintCommands();
+
     UFUNCTION(Client, Reliable)
     void ClientNewSatelliteCommandAdded();
 

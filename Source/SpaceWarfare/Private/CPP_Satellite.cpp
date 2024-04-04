@@ -149,3 +149,14 @@ void ACPP_Satellite::PrintGeographicCoordinates()
 		GeographicCoordinates.Altitude
 	);
 }
+
+void ACPP_Satellite::PrintCommands()
+{
+    for (UCPP_SatelliteCommand* Command : Commands)
+    {
+        if (Cast<UCPP_ThrustCommand>(Command))
+        {
+            UKismetSystemLibrary::PrintString(GetWorld(), "Thrust Command -> " + Command->ExecutionTime.ToIso8601());
+        }
+    }
+}

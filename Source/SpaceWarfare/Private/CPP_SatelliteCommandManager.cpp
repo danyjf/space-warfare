@@ -59,7 +59,10 @@ void UCPP_SatelliteCommandManager::PrintPendingSatelliteCommands()
     {
         for (UCPP_SatelliteCommand* SatelliteCommand : Elem.Value.CommandList)
         {
-            UKismetSystemLibrary::PrintString(GetWorld(), SatelliteCommand->ExecutionTime.ToIso8601());
+            if (Cast<UCPP_ThrustCommand>(SatelliteCommand))
+            {
+                UKismetSystemLibrary::PrintString(GetWorld(), "Thrust Command -> " + SatelliteCommand->ExecutionTime.ToIso8601());
+            }
         }
     }
 }
