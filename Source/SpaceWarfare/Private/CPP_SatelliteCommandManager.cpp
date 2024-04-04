@@ -20,11 +20,23 @@ UCPP_SatelliteCommandManager::UCPP_SatelliteCommandManager()
     GroundStationManager = Cast<ACPP_GroundStationManager>(GetOwner());
 }
 
+void UCPP_SatelliteCommandManager::HandleNewCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
+{
+    if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
+    {
+        StoreSatelliteCommand(SatelliteID, SatelliteCommand);
+        return;
+    }
+
+    SendCommandToSatellite(SatelliteID, SatelliteCommand);
+}
+
 void UCPP_SatelliteCommandManager::SendCommandToSatellite(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
 {
     GroundStationManager->OverpassingSatellites[SatelliteID]->AddCommand(SatelliteCommand);
 }
 
+// This is only called on the server
 void UCPP_SatelliteCommandManager::SendPendingCommandsToSatellite(const int SatelliteID)
 {
     if (!PendingSatelliteCommands.Contains(SatelliteID))
@@ -39,6 +51,14 @@ void UCPP_SatelliteCommandManager::SendPendingCommandsToSatellite(const int Sate
 
     PendingSatelliteCommands.Remove(SatelliteID);
     ClientRemovePendingSatelliteCommand();
+}
+
+void UCPP_SatelliteCommandManager::PrintPendingSatelliteCommands()
+{
+    for (auto& Elem : PendingSatelliteCommands)
+    {
+        
+    }
 }
 
 void UCPP_SatelliteCommandManager::StoreSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
@@ -60,42 +80,40 @@ void UCPP_SatelliteCommandManager::ClientRemovePendingSatelliteCommand_Implement
 
 void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const int SatelliteID, const FTorqueCommandData& TorqueCommandData)
 {
+    // Check if the satellite id exists
+    if (!GroundStationManager->TrackedSatellites.Contains(SatelliteID))
+    {
+        return;
+    }
+
     // Check if satellite belongs to the player
-    if (
-        !GroundStationManager->TrackedSatellites.Contains(SatelliteID) 
-        || GroundStationManager->TrackedSatellites[SatelliteID].OwnerID != GroundStationManager->OwnerPlayerID
-    )
+    if (GroundStationManager->TrackedSatellites[SatelliteID].OwnerID != GroundStationManager->OwnerPlayerID)
     {
         return;
     }
 
     UCPP_TorqueCommand* TorqueCommand = NewObject<UCPP_TorqueCommand>();
-	FDateTime::ParseIso8601(*TorqueCommandData.ExecutionTime, TorqueCommand->ExecutionTime);
-    TorqueCommand->Torque = TorqueCommandData.Torque;
-
-    if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
-    {
-        StoreSatelliteCommand(SatelliteID, TorqueCommand);
-        return;
-    }
-
-    SendCommandToSatellite(SatelliteID, TorqueCommand);
+    TorqueCommand->DeserializeFromStruct(TorqueCommandData);
+    HandleNewCommand(SatelliteID, TorqueCommand);
 }
 
 void UCPP_SatelliteCommandManager::ServerSatelliteThrustCommand_Implementation(const int SatelliteID, const FThrustCommandData& ThrustCommandData)
 {
-    UCPP_ThrustCommand* ThrustCommand = NewObject<UCPP_ThrustCommand>();
-	FDateTime::ParseIso8601(*ThrustCommandData.ExecutionTime, ThrustCommand->ExecutionTime);
-    ThrustCommand->Force = ThrustCommandData.Force;
-    ThrustCommand->Duration = ThrustCommandData.Duration;
-
-    if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
+    // Check if the satellite id exists
+    if (!GroundStationManager->TrackedSatellites.Contains(SatelliteID))
     {
-        StoreSatelliteCommand(SatelliteID, ThrustCommand);
         return;
     }
 
-    SendCommandToSatellite(SatelliteID, ThrustCommand);
+    // Check if satellite belongs to the player
+    if (GroundStationManager->TrackedSatellites[SatelliteID].OwnerID != GroundStationManager->OwnerPlayerID)
+    {
+        return;
+    }
+
+    UCPP_ThrustCommand* ThrustCommand = NewObject<UCPP_ThrustCommand>();
+    ThrustCommand->DeserializeFromStruct(ThrustCommandData);
+    HandleNewCommand(SatelliteID, ThrustCommand);
 }
 
 void UCPP_SatelliteCommandManager::ServerSatelliteThrustDeactivate_Implementation(const int SatelliteID)

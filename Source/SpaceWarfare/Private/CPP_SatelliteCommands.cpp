@@ -6,6 +6,7 @@
 
 #include "Kismet/KismetMathLibrary.h"
 
+// Torque command
 void UCPP_TorqueCommand::Execute(ACPP_Satellite* Satellite)
 {
     FVector LocalTorque = UKismetMathLibrary::TransformDirection(Satellite->GetActorTransform(), Torque);
@@ -21,6 +22,13 @@ FSatelliteCommandData UCPP_TorqueCommand::SerializeToStruct()
     return TorqueCommandData;
 }
 
+void UCPP_TorqueCommand::DeserializeFromStruct(const FTorqueCommandData& CommandData)
+{
+	FDateTime::ParseIso8601(*CommandData.ExecutionTime, ExecutionTime);
+    Torque = CommandData.Torque;
+}
+
+// Thrust command
 void UCPP_ThrustCommand::Execute(ACPP_Satellite* Satellite)
 {
     UCPP_Thruster* Thruster = Cast<UCPP_Thruster>(Satellite->FindComponentByClass(UCPP_Thruster::StaticClass()));
@@ -35,4 +43,11 @@ FSatelliteCommandData UCPP_ThrustCommand::SerializeToStruct()
     ThrustCommandData.Force = Force;
     ThrustCommandData.Duration = Duration;
     return ThrustCommandData;
+}
+
+void UCPP_ThrustCommand::DeserializeFromStruct(const FThrustCommandData& CommandData)
+{
+	FDateTime::ParseIso8601(*CommandData.ExecutionTime, ExecutionTime);
+    Force = CommandData.Force;
+    Duration = CommandData.Duration;
 }

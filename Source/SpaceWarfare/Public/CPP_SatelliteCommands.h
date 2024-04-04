@@ -33,6 +33,7 @@ public:
 
     virtual void Execute(class ACPP_Satellite* Satellite) override;
     virtual FSatelliteCommandData SerializeToStruct() override;
+    virtual void DeserializeFromStruct(const FTorqueCommandData& CommandData);
 };
 
 UCLASS()
@@ -46,4 +47,5 @@ public:
 
     virtual void Execute(class ACPP_Satellite* Satellite) override;
     virtual FSatelliteCommandData SerializeToStruct() override;
+    virtual void DeserializeFromStruct(const FThrustCommandData& CommandData);
 };

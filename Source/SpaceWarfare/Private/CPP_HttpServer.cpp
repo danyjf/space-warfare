@@ -4,6 +4,7 @@
 #include "CPP_GroundStationManager.h"
 #include "CPP_MultiplayerGameMode.h"
 #include "CPP_SatelliteCommandManager.h"
+#include "CPP_SatelliteCommands.h"
 #include "SatelliteCommandDataStructs.h"
 
 #include "HttpPath.h"
@@ -123,8 +124,20 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
 
     int SatelliteID = FCString::Atoi(*Request.PathParams.FindRef("id"));
 
+    // Check if satellite exists
+    if (!GroundStationManager->TrackedSatellites.Contains(SatelliteID))
+    {
+        // Generate forbidden access response
+        FString JsonResponse = "{\"message\": \"The provided satellite ID does not exist\"}";
+	    TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));
+        Response->Code = EHttpServerResponseCodes::NotFound;
+
+	    OnComplete(MoveTemp(Response));
+        return true;
+    }
+
     // Check if satellite belongs to the player
-    if (SatelliteID != GroundStationManager->OwnerPlayerID)
+    if (GroundStationManager->TrackedSatellites[SatelliteID].OwnerID != GroundStationManager->OwnerPlayerID)
     {
         // Generate forbidden access response
         FString JsonResponse = "{\"message\": \"The provided satellite ID corresponds to a satellite that is not owned by the player\"}";
@@ -140,6 +153,7 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
 	FString BodyStrData {BodyTCHARData.Length(), BodyTCHARData.Get()};
     FThrustCommandData ThrustCommandData;
 
+    // Check if the request body is valid
     if (!FJsonObjectConverter::JsonObjectStringToUStruct<FThrustCommandData>(BodyStrData, &ThrustCommandData))
     {
         // Generate a bad request response
@@ -151,7 +165,13 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
         return true;
     }
 
-    // Send the command to the server
+    // Add the command locally and send it to the server
+    if (!HasAuthority())
+    {
+        UCPP_ThrustCommand* ThrustCommand = NewObject<UCPP_ThrustCommand>();
+        ThrustCommand->DeserializeFromStruct(ThrustCommandData);
+        GroundStationManager->SatelliteCommandManager->HandleNewCommand(SatelliteID, ThrustCommand);
+    }
     GroundStationManager->SatelliteCommandManager->ServerSatelliteThrustCommand(SatelliteID, ThrustCommandData);
 
     // Generate the http success response

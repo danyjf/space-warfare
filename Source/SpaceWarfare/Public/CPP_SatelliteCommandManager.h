@@ -26,14 +26,14 @@ public:
     UPROPERTY(BlueprintReadOnly)
     TMap<int, FSatelliteCommandList> PendingSatelliteCommands;
 
-    UFUNCTION(BlueprintCallable)
-    void SendCommandToSatellite(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommandData);
+    UFUNCTION()
+    void HandleNewCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand);
 
     UFUNCTION(BlueprintCallable)
     void SendPendingCommandsToSatellite(const int SatelliteID);
 
     UFUNCTION(BlueprintCallable)
-    void StoreSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand);
+    void PrintPendingSatelliteCommands();
 
     UFUNCTION(Client, Reliable)
     void ClientRemovePendingSatelliteCommand();
@@ -52,4 +52,7 @@ public:
 
 private:
     class ACPP_GroundStationManager* GroundStationManager;
+
+    void SendCommandToSatellite(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommandData);
+    void StoreSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand);
 };
