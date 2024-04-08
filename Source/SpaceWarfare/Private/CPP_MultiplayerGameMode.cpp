@@ -119,16 +119,15 @@ void ACPP_MultiplayerGameMode::InitializeSatellites(TArray<FSatelliteStruct>& Sa
     {
 	    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
 
-        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprint));
-        Satellite->SetActorLocation(OrbitalState.Location);
-        Satellite->SetActorScale3D(FVector(SatelliteConfig.Size));
+        FTransform SpawnTransform(FRotator(0.0f, 0.0f, 0.0f), OrbitalState.Location, FVector(SatelliteConfig.Size));
+        ACPP_Satellite* Satellite = GetWorld()->SpawnActorDeferred<ACPP_Satellite>(SatelliteBlueprint, SpawnTransform);
         Satellite->OrbitingPlanet = Planet;
         Satellite->Label = SatelliteConfig.Name;
         Satellite->OwnerPlayerID = AssignedPlayerID;
-
         Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
         Satellite->GravityComponent->SetMass(SatelliteConfig.Mass);
         Satellite->GravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * SatelliteConfig.Mass);
+        Satellite->FinishSpawning(SpawnTransform);
 
         AssignedPlayerID = (AssignedPlayerID + 1) % GameInstance->MaxNumberOfPlayersInSession;
     }

@@ -76,9 +76,7 @@ void ACPP_BotGameMode::CheckAllPlayersFinishedPlacingGroundStations()
         for (AActor* SatelliteActor : Satellites)
         {
             ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(SatelliteActor);
-            GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
-            // TODO: Remove comment this is just for demonstration
-            //GroundStationManager->SatelliteExitedOverpassArea(Satellite);
+            GroundStationManager->ClientNewSatelliteTracked(Satellite->GetSatelliteID(), Satellite->GetSatelliteInfo());
         }
     }
 

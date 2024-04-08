@@ -119,7 +119,7 @@ void ACPP_GroundStation::OnComponentBeginOverlap(UPrimitiveComponent* Overlapped
     if (Satellite)
     {
         UKismetSystemLibrary::PrintString(GetWorld(), "BeginOverlap");
-        //GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
+        GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
     }
 }
 
@@ -134,6 +134,6 @@ void ACPP_GroundStation::OnComponentEndOverlap(UPrimitiveComponent* OverlappedCo
     if (Satellite)
     {
         UKismetSystemLibrary::PrintString(GetWorld(), "EndOverlap");
-        //GroundStationManager->SatelliteExitedOverpassArea(Satellite);
+        GroundStationManager->SatelliteExitedOverpassArea(Satellite);
     }
 }

@@ -213,6 +213,6 @@ void ACPP_GroundStationManager::PrintOverpassingSatellites()
 {
     for (const auto& Elem : OverpassingSatellites)
     {
-        UKismetSystemLibrary::PrintString(GetWorld(), Elem.Value->Label);
+        UKismetSystemLibrary::PrintString(GetWorld(), FString::FromInt(OverpassingSatellites.Num()) + " " + Elem.Value->Label);
     }
 }
