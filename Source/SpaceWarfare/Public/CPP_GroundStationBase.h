@@ -20,37 +20,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FGeographicCoordinates GeographicCoordinates;
 
-    //UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    //float DetectionFieldOfView;
-
-    //UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    //float DetectionHeight;
-
-    //UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    //float DetectionVisualizationHeight;
-
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int Cost;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UTextureRenderTarget2D* CostMaterialRenderTarget;
 
-    //UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
-    //USceneComponent* Root;
-
-    //UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
-    //UStaticMeshComponent* DetectionCone;
-
-    //UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
-    //UStaticMeshComponent* DetectionConeVisualization;
-
     UFUNCTION(BlueprintCallable)
     void UpdateCost();
 
     UFUNCTION(BlueprintCallable)
     void SetGeographicCoordinates(const FGeographicCoordinates& Value);
-
-    //virtual void OnConstruction(const FTransform& Transform) override;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
