@@ -4,6 +4,7 @@
 #include "CPP_GroundStationManager.h"
 #include "CPP_MultiplayerGameMode.h"
 #include "CPP_SatelliteCommandManager.h"
+#include "CPP_SatelliteCommands.h"
 #include "SatelliteCommandDataStructs.h"
 
 #include "HttpPath.h"
@@ -72,6 +73,8 @@ void ACPP_HttpServer::StartServer()
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Could not start web server on port = %d"), ServerPort);
+        ServerPort++;
+        StartServer();
 	}
 }
 
@@ -121,14 +124,57 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
 
     int SatelliteID = FCString::Atoi(*Request.PathParams.FindRef("id"));
 
+    // Check if satellite exists
+    if (!GroundStationManager->TrackedSatellites.Contains(SatelliteID))
+    {
+        // Generate forbidden access response
+        FString JsonResponse = "{\"message\": \"The provided satellite ID does not exist\"}";
+	    TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));
+        Response->Code = EHttpServerResponseCodes::NotFound;
+
+	    OnComplete(MoveTemp(Response));
+        return true;
+    }
+
+    // Check if satellite belongs to the player
+    if (GroundStationManager->TrackedSatellites[SatelliteID].OwnerID != GroundStationManager->OwnerPlayerID)
+    {
+        // Generate forbidden access response
+        FString JsonResponse = "{\"message\": \"The provided satellite ID corresponds to a satellite that is not owned by the player\"}";
+	    TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));
+        Response->Code = EHttpServerResponseCodes::Forbidden;
+
+	    OnComplete(MoveTemp(Response));
+        return true;
+    }
+
+    // Parse request body into command struct
 	FUTF8ToTCHAR BodyTCHARData(reinterpret_cast<const ANSICHAR*>(Request.Body.GetData()), Request.Body.Num());
 	FString BodyStrData {BodyTCHARData.Length(), BodyTCHARData.Get()};
-
     FThrustCommandData ThrustCommandData;
-    FJsonObjectConverter::JsonObjectStringToUStruct<FThrustCommandData>(BodyStrData, &ThrustCommandData);
 
+    // Check if the request body is valid
+    if (!FJsonObjectConverter::JsonObjectStringToUStruct<FThrustCommandData>(BodyStrData, &ThrustCommandData))
+    {
+        // Generate a bad request response
+        FString JsonResponse = "{\"message\": \"The provided request body could not be parsed\"}";
+	    TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));
+        Response->Code = EHttpServerResponseCodes::Forbidden;
+
+	    OnComplete(MoveTemp(Response));
+        return true;
+    }
+
+    // Add the command locally and send it to the server
+    if (!HasAuthority())
+    {
+        UCPP_ThrustCommand* ThrustCommand = NewObject<UCPP_ThrustCommand>();
+        ThrustCommand->DeserializeFromStruct(ThrustCommandData);
+        GroundStationManager->SatelliteCommandManager->HandleNewCommand(SatelliteID, ThrustCommand);
+    }
     GroundStationManager->SatelliteCommandManager->ServerSatelliteThrustCommand(SatelliteID, ThrustCommandData);
 
+    // Generate the http success response
     FString JsonResponse;
     FJsonObjectConverter::UStructToJsonObjectString<FThrustCommandData>(ThrustCommandData, JsonResponse);
 	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));

@@ -21,15 +21,6 @@ public:
     FGeographicCoordinates GeographicCoordinates;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float DetectionFieldOfView;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float DetectionHeight;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float DetectionVisualizationHeight;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int Cost;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -41,8 +32,6 @@ public:
     UFUNCTION(BlueprintCallable)
     void SetGeographicCoordinates(const FGeographicCoordinates& Value);
 
-    virtual void OnConstruction(const FTransform& Transform) override;
-
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -50,15 +39,6 @@ public:
 	ACPP_GroundStationBase();
 
 protected:
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    USceneComponent* Root;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    UStaticMeshComponent* DetectionCone;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    UStaticMeshComponent* DetectionConeVisualization;
-
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

@@ -3,6 +3,7 @@
 #include "CPP_CasualGameMode.h"
 #include "CPP_Satellite.h"
 #include "CPP_CameraOrbitController.h"
+#include "CPP_GroundStationManager.h"
 #include "JsonReadWrite.h"
 
 #include "Kismet/KismetSystemLibrary.h"
@@ -31,6 +32,18 @@ void ACPP_CasualGameMode::StartGameplay()
         UJsonReadWrite::ReadStructFromJsonFile<FSatellitesConfig>(SatellitesJsonPath, &SatellitesConfig);
     }
     InitializeSatellites(SatellitesConfig.Satellites);
+
+    // TODO: Maybe change this, it is adding all satellites to the clients at the beginning
+    TArray<AActor*> Satellites;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
+    for (ACPP_GroundStationManager* GroundStationManager : GroundStationManagers)
+    {
+        for (AActor* SatelliteActor : Satellites)
+        {
+            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(SatelliteActor);
+            GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
+        }
+    }
 
     for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
     {

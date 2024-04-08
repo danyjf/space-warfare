@@ -38,6 +38,8 @@ void ACPP_BotGameMode::StartGameplay()
 
 void ACPP_BotGameMode::PostLogin(APlayerController* NewPlayer)
 {
+    Super::PostLogin(NewPlayer);
+
     ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(NewPlayer);
 
     // Create a GroundStationSpawner for each player
@@ -46,8 +48,6 @@ void ACPP_BotGameMode::PostLogin(APlayerController* NewPlayer)
     FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
     ACPP_GroundStationSpawner* GroundStationSpawner = Cast<ACPP_GroundStationSpawner>(GetWorld()->SpawnActor(GroundStationSpawnerBlueprint, &SpawnLocation, SpawnParameters));
     GroundStationSpawner->OwnerPlayerID = PlayerController->PlayerID;
-
-    Super::PostLogin(NewPlayer);
 }
 
 void ACPP_BotGameMode::CheckAllPlayersFinishedPlacingGroundStations()
@@ -67,6 +67,18 @@ void ACPP_BotGameMode::CheckAllPlayersFinishedPlacingGroundStations()
         UJsonReadWrite::ReadStructFromJsonFile<FSatellitesConfig>(SatellitesJsonPath, &SatellitesConfig);
     }
     InitializeSatellites(SatellitesConfig.Satellites);
+
+    // TODO: Maybe change this, it is adding all satellites to the clients at the beginning
+    TArray<AActor*> Satellites;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
+    for (ACPP_GroundStationManager* GroundStationManager : GroundStationManagers)
+    {
+        for (AActor* SatelliteActor : Satellites)
+        {
+            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(SatelliteActor);
+            GroundStationManager->ClientNewSatelliteTracked(Satellite->GetSatelliteID(), Satellite->GetSatelliteInfo());
+        }
+    }
 
     for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
     {

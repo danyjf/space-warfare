@@ -18,9 +18,6 @@ class SPACEWARFARE_API ACPP_GroundStationManager : public AActor
 	GENERATED_BODY()
 	
 public:	
-    UPROPERTY(BlueprintReadWrite)
-    TArray<class ACPP_GroundStation*> GroundStations;
-
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     USceneComponent* Root;
 
@@ -46,6 +43,9 @@ public:
     FSatelliteDestroyed OnSatelliteDestroyed;
 
     UFUNCTION(BlueprintCallable)
+    void PrintOverpassingSatellites();
+
+    UFUNCTION(BlueprintCallable)
     void SatelliteEnteredOverpassArea(class ACPP_Satellite* Satellite);
 
     UFUNCTION(BlueprintCallable)
@@ -68,9 +68,6 @@ public:
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientAsteroidDestroyed(const FName& AsteroidID);
-
-    UFUNCTION(BlueprintCallable)
-    void AddGroundStation(class ACPP_GroundStation* GroundStation);
 
     UFUNCTION(BlueprintCallable)
     void EnableOrbitVisualization(const int SatelliteID);

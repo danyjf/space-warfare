@@ -95,6 +95,8 @@ void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Sat
     {
         ClientNewSatelliteTracked(Satellite->GetSatelliteID(), SatelliteInfo);
     }
+
+    SatelliteCommandManager->SendPendingCommandsToSatellite(Satellite->GetSatelliteID());
 }
 
 void ACPP_GroundStationManager::SatelliteExitedOverpassArea(ACPP_Satellite* Satellite)
@@ -182,12 +184,6 @@ void ACPP_GroundStationManager::ClientSatelliteDestroyed_Implementation(const in
     }
 }
 
-void ACPP_GroundStationManager::AddGroundStation(ACPP_GroundStation* GroundStation)
-{
-    GroundStations.Add(GroundStation);
-    GroundStation->GroundStationManager = this;
-}
-
 void ACPP_GroundStationManager::EnableOrbitVisualization(const int SatelliteID)
 {
     if (SatelliteOrbits.Contains(SatelliteID))
@@ -211,4 +207,12 @@ void ACPP_GroundStationManager::DisableOrbitVisualization(const int SatelliteID)
 const FSatelliteInfo& ACPP_GroundStationManager::GetTrackedSatelliteInfo(const int SatelliteID)
 {
     return TrackedSatellites[SatelliteID];
+}
+
+void ACPP_GroundStationManager::PrintOverpassingSatellites()
+{
+    for (const auto& Elem : OverpassingSatellites)
+    {
+        UKismetSystemLibrary::PrintString(GetWorld(), FString::FromInt(OverpassingSatellites.Num()) + " " + Elem.Value->Label);
+    }
 }
