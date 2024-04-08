@@ -20,14 +20,14 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FGeographicCoordinates GeographicCoordinates;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float DetectionFieldOfView;
+    //UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    //float DetectionFieldOfView;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float DetectionHeight;
+    //UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    //float DetectionHeight;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float DetectionVisualizationHeight;
+    //UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    //float DetectionVisualizationHeight;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int Cost;
@@ -35,13 +35,22 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UTextureRenderTarget2D* CostMaterialRenderTarget;
 
+    //UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+    //USceneComponent* Root;
+
+    //UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+    //UStaticMeshComponent* DetectionCone;
+
+    //UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+    //UStaticMeshComponent* DetectionConeVisualization;
+
     UFUNCTION(BlueprintCallable)
     void UpdateCost();
 
     UFUNCTION(BlueprintCallable)
     void SetGeographicCoordinates(const FGeographicCoordinates& Value);
 
-    virtual void OnConstruction(const FTransform& Transform) override;
+    //virtual void OnConstruction(const FTransform& Transform) override;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -50,15 +59,6 @@ public:
 	ACPP_GroundStationBase();
 
 protected:
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    USceneComponent* Root;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    UStaticMeshComponent* DetectionCone;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    UStaticMeshComponent* DetectionConeVisualization;
-
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

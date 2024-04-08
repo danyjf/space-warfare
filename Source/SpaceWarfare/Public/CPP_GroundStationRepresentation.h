@@ -17,8 +17,24 @@ class SPACEWARFARE_API ACPP_GroundStationRepresentation : public ACPP_GroundStat
 	GENERATED_BODY()
 
 public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float DetectionFieldOfView;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float DetectionVisualizationHeight;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+    USceneComponent* Root;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+    UStaticMeshComponent* DetectionConeVisualization;
+
     UFUNCTION(BlueprintCallable)
     void SetConeColor(FLinearColor Color);
+
+    virtual void OnConstruction(const FTransform& Transform) override;
+
+    ACPP_GroundStationRepresentation();
 
 protected:
 	// Called when the game starts or when spawned
