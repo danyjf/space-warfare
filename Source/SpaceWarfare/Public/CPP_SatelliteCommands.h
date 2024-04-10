@@ -11,16 +11,16 @@
 /**
  * 
  */
-UCLASS(Abstract)
+UCLASS(Abstract, Blueprintable, BlueprintType)
 class SPACEWARFARE_API UCPP_SatelliteCommand : public UObject
 {
 	GENERATED_BODY()
 
 public:
+    UPROPERTY(BlueprintReadOnly)
     FDateTime ExecutionTime;
 
     virtual void Execute(class ACPP_Satellite* Satellite) PURE_VIRTUAL(UCPP_SatelliteCommand::Execute,);
-    virtual FSatelliteCommandData SerializeToStruct() PURE_VIRTUAL(UCPP_SatelliteCommand::SerializeToStruct, return FSatelliteCommandData(););
 };
 
 UCLASS()
@@ -29,10 +29,10 @@ class SPACEWARFARE_API UCPP_TorqueCommand : public UCPP_SatelliteCommand
 	GENERATED_BODY()
 
 public:
+    UPROPERTY(BlueprintReadOnly)
     FVector Torque;
 
     virtual void Execute(class ACPP_Satellite* Satellite) override;
-    virtual FSatelliteCommandData SerializeToStruct() override;
     virtual void DeserializeFromStruct(const FTorqueCommandData& CommandData);
 };
 
@@ -42,10 +42,12 @@ class SPACEWARFARE_API UCPP_ThrustCommand : public UCPP_SatelliteCommand
 	GENERATED_BODY()
 
 public:
+    UPROPERTY(BlueprintReadOnly)
     FVector Force;
+
+    UPROPERTY(BlueprintReadOnly)
     float Duration;
 
     virtual void Execute(class ACPP_Satellite* Satellite) override;
-    virtual FSatelliteCommandData SerializeToStruct() override;
     virtual void DeserializeFromStruct(const FThrustCommandData& CommandData);
 };

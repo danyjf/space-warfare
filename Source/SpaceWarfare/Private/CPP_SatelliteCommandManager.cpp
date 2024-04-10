@@ -22,23 +22,41 @@ UCPP_SatelliteCommandManager::UCPP_SatelliteCommandManager()
 
 void UCPP_SatelliteCommandManager::HandleNewCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
 {
+    UKismetSystemLibrary::PrintString(GetWorld(), "HandleNewCommand");
+
+    if (!GetOwner()->HasAuthority())
+    {
+        return;
+    }
+
     if (!GroundStationManager->OverpassingSatellites.Contains(SatelliteID))
     {
-        StoreSatelliteCommand(SatelliteID, SatelliteCommand);
+        StorePendingSatelliteCommand(SatelliteID, SatelliteCommand);
         return;
     }
 
     SendCommandToSatellite(SatelliteID, SatelliteCommand);
+    StoreSatelliteCommand(SatelliteID, SatelliteCommand);
+    ClientSendPendingSatelliteCommands(SatelliteID);
 }
 
 void UCPP_SatelliteCommandManager::SendCommandToSatellite(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
 {
+    if (!GetOwner()->HasAuthority())
+    {
+        return;
+    }
+
     GroundStationManager->OverpassingSatellites[SatelliteID]->AddCommand(SatelliteCommand);
 }
 
-// This is only called on the server
 void UCPP_SatelliteCommandManager::SendPendingCommandsToSatellite(const int SatelliteID)
 {
+    if (!GetOwner()->HasAuthority())
+    {
+        return;
+    }
+
     if (!PendingSatelliteCommands.Contains(SatelliteID))
     {
         return;
@@ -47,10 +65,11 @@ void UCPP_SatelliteCommandManager::SendPendingCommandsToSatellite(const int Sate
     for (UCPP_SatelliteCommand* Command : PendingSatelliteCommands[SatelliteID].CommandList)
     {
         SendCommandToSatellite(SatelliteID, Command);
+        StoreSatelliteCommand(SatelliteID, Command);
     }
 
     PendingSatelliteCommands.Remove(SatelliteID);
-    ClientRemovePendingSatelliteCommand();
+    ClientSendPendingSatelliteCommands(SatelliteID);
 }
 
 void UCPP_SatelliteCommandManager::PrintPendingSatelliteCommands()
@@ -67,7 +86,7 @@ void UCPP_SatelliteCommandManager::PrintPendingSatelliteCommands()
     }
 }
 
-void UCPP_SatelliteCommandManager::StoreSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
+void UCPP_SatelliteCommandManager::StorePendingSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
 {
     if (!PendingSatelliteCommands.Contains(SatelliteID))
     {
@@ -79,9 +98,47 @@ void UCPP_SatelliteCommandManager::StoreSatelliteCommand(const int SatelliteID, 
     PendingSatelliteCommands[SatelliteID].CommandList.Add(SatelliteCommand);
 }
 
-void UCPP_SatelliteCommandManager::ClientRemovePendingSatelliteCommand_Implementation()
+void UCPP_SatelliteCommandManager::StoreSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
 {
-    // Remove the command from the command list on the client
+    if (!SatelliteCommands.Contains(SatelliteID))
+    {
+        FSatelliteCommandList SatelliteCommandList;
+        SatelliteCommandList.CommandList.Add(SatelliteCommand);
+        SatelliteCommands.Emplace(SatelliteID, SatelliteCommandList);
+        return;
+    }
+
+    SatelliteCommands[SatelliteID].CommandList.Add(SatelliteCommand);
+    Algo::Sort(SatelliteCommands[SatelliteID].CommandList, [](UCPP_SatelliteCommand* CommandA, UCPP_SatelliteCommand* CommandB) {
+        return CommandA->ExecutionTime < CommandB->ExecutionTime;
+    });
+}
+
+void UCPP_SatelliteCommandManager::ClientSendPendingSatelliteCommands_Implementation(const int SatelliteID)
+{
+    UKismetSystemLibrary::PrintString(GetWorld(), "ClientSendPendingSatelliteCommand");
+
+    if (!PendingSatelliteCommands.Contains(SatelliteID))
+    {
+        return;
+    }
+
+    for (UCPP_SatelliteCommand* Command : PendingSatelliteCommands[SatelliteID].CommandList)
+    {
+        StoreSatelliteCommand(SatelliteID, Command);
+    }
+
+    PendingSatelliteCommands.Remove(SatelliteID);
+}
+
+void UCPP_SatelliteCommandManager::ClientSatelliteExecutedCommand_Implementation(const int SatelliteID)
+{
+    if (!SatelliteCommands.Contains(SatelliteID))
+    {
+        return;
+    }
+
+    SatelliteCommands[SatelliteID].CommandList.RemoveAt(0);
 }
 
 void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const int SatelliteID, const FTorqueCommandData& TorqueCommandData)
@@ -105,9 +162,12 @@ void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(c
 
 void UCPP_SatelliteCommandManager::ServerSatelliteThrustCommand_Implementation(const int SatelliteID, const FThrustCommandData& ThrustCommandData)
 {
+    UKismetSystemLibrary::PrintString(GetWorld(), "ServerSatelliteThrustCommand");
+
     // Check if the satellite id exists
     if (!GroundStationManager->TrackedSatellites.Contains(SatelliteID))
     {
+        UKismetSystemLibrary::PrintString(GetWorld(), "SatelliteID not in TrackedSatellites");
         return;
     }
 
