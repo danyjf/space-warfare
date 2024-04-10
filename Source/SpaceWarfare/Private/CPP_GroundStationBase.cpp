@@ -7,6 +7,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ACPP_GroundStationBase::ACPP_GroundStationBase()
@@ -29,6 +30,13 @@ void ACPP_GroundStationBase::BeginPlay()
 void ACPP_GroundStationBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ACPP_GroundStationBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME_CONDITION(ACPP_GroundStationBase, GeographicCoordinates, COND_InitialOnly);
 }
 
 void ACPP_GroundStationBase::SetGeographicCoordinates(const FGeographicCoordinates& Value)
