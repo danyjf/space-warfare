@@ -27,6 +27,8 @@ void UCPP_SatelliteCommandManager::BeginPlay()
     {
 	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     }
+
+    Super::BeginPlay();
 }
 
 void UCPP_SatelliteCommandManager::HandleNewCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
