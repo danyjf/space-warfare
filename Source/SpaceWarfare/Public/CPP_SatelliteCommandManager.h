@@ -69,8 +69,12 @@ public:
 	// Sets default values for this component's properties
 	UCPP_SatelliteCommandManager();
 
+protected:
+    virtual void BeginPlay() override;
+
 private:
     class ACPP_GroundStationManager* GroundStationManager;
+    class ACPP_MultiplayerGameMode* MultiplayerGameMode;
 
     void SendCommandToSatellite(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommandData);
 };

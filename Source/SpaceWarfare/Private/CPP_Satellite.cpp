@@ -43,6 +43,7 @@ void ACPP_Satellite::BeginPlay()
 	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
         SatelliteCommandManager = MultiplayerGameMode->GetGroundStationManagers()[OwnerPlayerID]->SatelliteCommandManager;
         SatelliteID = MultiplayerGameMode->NewSatelliteID();
+        MultiplayerGameMode->AllSatellites.Emplace(SatelliteID, this);
         StaticMeshComponent->OnComponentHit.AddDynamic(this, &ACPP_Satellite::OnComponentHit);
     }
 }
@@ -73,6 +74,8 @@ void ACPP_Satellite::Destroyed()
     {
         return;
     }
+
+    MultiplayerGameMode->AllSatellites.Remove(SatelliteID);
 
     // TODO: Change later, this is to remove the satellite on all players when it is destroyed
     for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
