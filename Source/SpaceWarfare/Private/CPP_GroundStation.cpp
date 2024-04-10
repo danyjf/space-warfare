@@ -9,6 +9,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ACPP_GroundStation::ACPP_GroundStation()
@@ -106,6 +107,13 @@ void ACPP_GroundStation::BeginPlay()
 void ACPP_GroundStation::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ACPP_GroundStation::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME_CONDITION(ACPP_GroundStation, OwnerPlayerID, COND_InitialOnly);
 }
 
 void ACPP_GroundStation::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
