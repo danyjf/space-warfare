@@ -39,6 +39,20 @@ void ACPP_SatelliteLauncher::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+FVector ACPP_SatelliteLauncher::GetLocationFromHeight(float Height)
+{
+    FVector Location;
+
+    return Location;
+}
+
+FVector ACPP_SatelliteLauncher::GetVelocityFromAngle(float Angle, float Value)
+{
+    FVector Velocity;
+
+    return Velocity;
+}
+
 void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Label)
 {
     ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
@@ -49,6 +63,40 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
     }
 
     FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
+
+    ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
+    Satellite->SetActorLocation(OrbitalState.Location);
+    Satellite->SetActorScale3D(FVector(Size));
+    Satellite->OrbitingPlanet = Planet;
+    Satellite->Label = Label;
+    Satellite->OwnerPlayerID = OwnerPlayerID;
+    Satellite->SetOwner(CameraOrbitController);
+
+    Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
+    Satellite->GravityComponent->SetMass(Mass);
+    Satellite->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * Mass);
+
+    CameraOrbitController->SpendCurrency(LaunchCost);
+
+    // TODO: Change later, this is just to show the satellite on all players when it is launched
+    for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
+    {
+        GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
+        if (Cast<ACPP_BotGameMode>(MultiplayerGameMode))
+        {
+            GroundStationManager->SatelliteExitedOverpassArea(Satellite);
+        }
+    }
+}
+
+void ACPP_SatelliteLauncher::ServerLaunchSatelliteWithOrbitalState_Implementation(FOrbitalState OrbitalState, float Size, float Mass, const FString& Label)
+{
+    ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
+    if (CameraOrbitController->Currency < LaunchCost)
+    {
+        UKismetSystemLibrary::PrintString(GetWorld(), "Not enough money to launch!!!");
+        return;
+    }
 
     ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
     Satellite->SetActorLocation(OrbitalState.Location);
