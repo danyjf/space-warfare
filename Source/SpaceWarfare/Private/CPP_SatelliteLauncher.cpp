@@ -21,6 +21,7 @@ ACPP_SatelliteLauncher::ACPP_SatelliteLauncher()
 
     OwnerPlayerID = 0;
     LaunchCost = 50;    // Millions
+    LaunchDirection = FVector(0.0f, 0.0f, 1.0f);
 }
 
 void ACPP_SatelliteLauncher::BeginPlay()
@@ -41,15 +42,19 @@ void ACPP_SatelliteLauncher::Tick(float DeltaTime)
 
 FVector ACPP_SatelliteLauncher::GetLocationFromHeight(float Height)
 {
-    FVector Location;
-
-    return Location;
+    if (!Planet)
+    {
+        Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
+    }
+    // Add radius of earth to heigth
+    Height += Planet->GetActorScale().X / 2;
+    return LaunchDirection * Height;
 }
 
 FVector ACPP_SatelliteLauncher::GetVelocityFromAngle(float Angle, float Value)
 {
-    FVector Velocity;
-
+    FVector Velocity = FVector(1.0f, 0.0f, 0.0f) * Value;
+    Velocity.RotateAngleAxis(Angle, LaunchDirection);
     return Velocity;
 }
 
