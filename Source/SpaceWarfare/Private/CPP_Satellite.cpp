@@ -8,6 +8,7 @@
 #include "CPP_GroundStationManager.h"
 #include "CPP_GravityManager.h"
 #include "CPP_SatelliteCommands.h"
+#include "CPP_SatelliteCommandManager.h"
 #include "CPP_GameState.h"
 #include "Universe.h"
 
@@ -40,7 +41,9 @@ void ACPP_Satellite::BeginPlay()
     if (HasAuthority())
     {
 	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+        SatelliteCommandManager = MultiplayerGameMode->GetGroundStationManagers()[OwnerPlayerID]->SatelliteCommandManager;
         SatelliteID = MultiplayerGameMode->NewSatelliteID();
+        MultiplayerGameMode->AllSatellites.Emplace(SatelliteID, this);
         StaticMeshComponent->OnComponentHit.AddDynamic(this, &ACPP_Satellite::OnComponentHit);
     }
 }
@@ -58,6 +61,7 @@ void ACPP_Satellite::Tick(float DeltaTime)
         {
             Commands[0]->Execute(this);
             Commands.RemoveAt(0);
+            SatelliteCommandManager->ClientSatelliteExecutedCommand(SatelliteID);
         }
     }
 }
@@ -70,6 +74,8 @@ void ACPP_Satellite::Destroyed()
     {
         return;
     }
+
+    MultiplayerGameMode->AllSatellites.Remove(SatelliteID);
 
     // TODO: Change later, this is to remove the satellite on all players when it is destroyed
     for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
@@ -120,21 +126,6 @@ void ACPP_Satellite::AddCommand(UCPP_SatelliteCommand* Command)
     Algo::Sort(Commands, [](UCPP_SatelliteCommand* CommandA, UCPP_SatelliteCommand* CommandB) {
         return CommandA->ExecutionTime < CommandB->ExecutionTime;
     });
-
-    if (HasAuthority())
-    {
-        ClientNewSatelliteCommandAdded();
-    }
-}
-
-void ACPP_Satellite::ClientNewSatelliteCommandAdded_Implementation()
-{
-    // Add the command to the command list on the client
-}
-
-void ACPP_Satellite::ClientSatelliteCommandExecuted_Implementation()
-{
-    // Remove the command from the command list on the client
 }
 
 void ACPP_Satellite::PrintGeographicCoordinates()

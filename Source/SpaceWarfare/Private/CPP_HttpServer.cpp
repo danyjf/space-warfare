@@ -170,7 +170,7 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
     {
         UCPP_ThrustCommand* ThrustCommand = NewObject<UCPP_ThrustCommand>();
         ThrustCommand->DeserializeFromStruct(ThrustCommandData);
-        GroundStationManager->SatelliteCommandManager->HandleNewCommand(SatelliteID, ThrustCommand);
+        GroundStationManager->SatelliteCommandManager->StorePendingSatelliteCommand(SatelliteID, ThrustCommand);
     }
     GroundStationManager->SatelliteCommandManager->ServerSatelliteThrustCommand(SatelliteID, ThrustCommandData);
 

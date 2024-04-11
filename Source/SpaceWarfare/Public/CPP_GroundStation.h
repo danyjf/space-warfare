@@ -21,7 +21,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FString Name;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
     int OwnerPlayerID;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -52,6 +52,8 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// Sets default values for this actor's properties
 	ACPP_GroundStation();

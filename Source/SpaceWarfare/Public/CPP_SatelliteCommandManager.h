@@ -8,12 +8,15 @@
 #include "Components/ActorComponent.h"
 #include "CPP_SatelliteCommandManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FNewPendingSatelliteCommand, int, SatelliteID, UCPP_SatelliteCommand*, SatelliteCommand);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSentPendingSatelliteCommands, int, SatelliteID);
+
 USTRUCT(BlueprintType)
 struct FSatelliteCommandList
 {
 	GENERATED_BODY()
 
-    UPROPERTY()
+    UPROPERTY(BlueprintReadOnly)
     TArray<class UCPP_SatelliteCommand*> CommandList;
 };
 
@@ -26,6 +29,22 @@ public:
     UPROPERTY(BlueprintReadOnly)
     TMap<int, FSatelliteCommandList> PendingSatelliteCommands;
 
+    /**
+     * This variable is used to store the satellite commands on the client
+     * side so that the UI can have access to them.
+     * 
+     * It's being done this way because initially, the idea was for the client
+     * to not have access to the satellites themselves
+    */
+    UPROPERTY(BlueprintReadOnly)
+    TMap<int, FSatelliteCommandList> SatelliteCommands;
+
+    UPROPERTY(BlueprintAssignable)
+    FNewPendingSatelliteCommand OnNewPendingSatelliteCommand;
+
+    UPROPERTY(BlueprintAssignable)
+    FSentPendingSatelliteCommands OnSentPendingSatelliteCommands;
+
     UFUNCTION()
     void HandleNewCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand);
 
@@ -35,8 +54,17 @@ public:
     UFUNCTION(BlueprintCallable)
     void PrintPendingSatelliteCommands();
 
+    UFUNCTION(BlueprintCallable)
+    void StorePendingSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand);
+
+    UFUNCTION(BlueprintCallable)
+    void StoreSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand);
+
     UFUNCTION(Client, Reliable)
-    void ClientRemovePendingSatelliteCommand();
+    void ClientSendPendingSatelliteCommands(const int SatelliteID);
+
+    UFUNCTION(Client, Reliable)
+    void ClientSatelliteExecutedCommand(const int SatelliteID);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerSatelliteTorqueCommand(const int SatelliteID, const FTorqueCommandData& TorqueCommandData);
@@ -50,9 +78,12 @@ public:
 	// Sets default values for this component's properties
 	UCPP_SatelliteCommandManager();
 
+protected:
+    virtual void BeginPlay() override;
+
 private:
     class ACPP_GroundStationManager* GroundStationManager;
+    class ACPP_MultiplayerGameMode* MultiplayerGameMode;
 
     void SendCommandToSatellite(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommandData);
-    void StoreSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand);
 };

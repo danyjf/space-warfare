@@ -16,7 +16,7 @@
         },
         {
             "name": "Test1",
-            "mass": 1410,
+            "mass": 1500,
             "size": 100,
             "orbitalElements": {
                 "eccentricity": 0.09131,
@@ -30,7 +30,7 @@
         },
         {
             "name": "Test2",
-            "mass": 32000,
+            "mass": 1500,
             "size": 100,
             "orbitalElements": {
                 "eccentricity": 0.008,
@@ -44,7 +44,7 @@
         },
         {
             "name": "Test3",
-            "mass": 134000,
+            "mass": 1500,
             "size": 100,
             "orbitalElements": {
                 "eccentricity": 0.0002,

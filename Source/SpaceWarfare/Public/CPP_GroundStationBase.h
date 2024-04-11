@@ -17,7 +17,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class ACPP_Planet* Planet;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
     FGeographicCoordinates GeographicCoordinates;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -34,6 +34,8 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// Sets default values for this actor's properties
 	ACPP_GroundStationBase();
