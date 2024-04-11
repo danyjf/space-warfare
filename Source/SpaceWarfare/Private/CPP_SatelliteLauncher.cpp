@@ -11,6 +11,7 @@
 #include "CPP_CameraOrbitController.h"
 
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -21,7 +22,7 @@ ACPP_SatelliteLauncher::ACPP_SatelliteLauncher()
 
     OwnerPlayerID = 0;
     LaunchCost = 50;    // Millions
-    LaunchDirection = FVector(0.0f, 0.0f, 1.0f);
+    LaunchDirection = FVector(1.0f, 0.0f, 0.0f);
 }
 
 void ACPP_SatelliteLauncher::BeginPlay()
@@ -54,7 +55,15 @@ FVector ACPP_SatelliteLauncher::GetLocationFromHeight(float Height)
 
 FVector ACPP_SatelliteLauncher::GetVelocityFromAngle(float Angle, float Value)
 {
-    FVector Velocity = FVector(1.0f, 0.0f, 0.0f) * Value;
+    if (LaunchDirection == FVector(0.0f, 0.0f, 1.0f))
+    {
+        FVector Velocity = FVector(1.0f, 0.0f, 0.0f) * Value;
+        Velocity = Velocity.RotateAngleAxis(Angle, LaunchDirection);
+        return Velocity;
+    }
+
+    FVector PerpendicularToLaunchDirection = UKismetMathLibrary::Cross_VectorVector(LaunchDirection, FVector(0.0f, 0.0f, 1.0f));
+    FVector Velocity = PerpendicularToLaunchDirection * Value;
     Velocity = Velocity.RotateAngleAxis(Angle, LaunchDirection);
     return Velocity;
 }
