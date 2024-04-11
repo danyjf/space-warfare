@@ -8,6 +8,9 @@
 #include "Components/ActorComponent.h"
 #include "CPP_SatelliteCommandManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FNewPendingSatelliteCommand, int, SatelliteID, UCPP_SatelliteCommand*, SatelliteCommand);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSentPendingSatelliteCommands, int, SatelliteID);
+
 USTRUCT(BlueprintType)
 struct FSatelliteCommandList
 {
@@ -35,6 +38,12 @@ public:
     */
     UPROPERTY(BlueprintReadOnly)
     TMap<int, FSatelliteCommandList> SatelliteCommands;
+
+    UPROPERTY(BlueprintAssignable)
+    FNewPendingSatelliteCommand OnNewPendingSatelliteCommand;
+
+    UPROPERTY(BlueprintAssignable)
+    FSentPendingSatelliteCommands OnSentPendingSatelliteCommands;
 
     UFUNCTION()
     void HandleNewCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand);

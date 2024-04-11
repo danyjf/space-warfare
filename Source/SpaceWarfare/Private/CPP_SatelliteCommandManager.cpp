@@ -97,6 +97,7 @@ void UCPP_SatelliteCommandManager::PrintPendingSatelliteCommands()
 
 void UCPP_SatelliteCommandManager::StorePendingSatelliteCommand(const int SatelliteID, UCPP_SatelliteCommand* SatelliteCommand)
 {
+    OnNewPendingSatelliteCommand.Broadcast(SatelliteID, SatelliteCommand);
     if (!PendingSatelliteCommands.Contains(SatelliteID))
     {
         FSatelliteCommandList SatelliteCommandList;
@@ -125,6 +126,7 @@ void UCPP_SatelliteCommandManager::StoreSatelliteCommand(const int SatelliteID, 
 
 void UCPP_SatelliteCommandManager::ClientSendPendingSatelliteCommands_Implementation(const int SatelliteID)
 {
+    OnSentPendingSatelliteCommands.Broadcast(SatelliteID);
     if (!PendingSatelliteCommands.Contains(SatelliteID))
     {
         return;
