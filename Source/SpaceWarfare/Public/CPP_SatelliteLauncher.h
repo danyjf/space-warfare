@@ -25,9 +25,18 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ACPP_Satellite> SatelliteBlueprintClass;
+
+    UFUNCTION(BlueprintCallable)
+    FVector GetLocationFromHeight(float Height);
+
+    UFUNCTION(BlueprintCallable)
+    FVector GetVelocityFromAngle(float Angle, float Value);
     
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerLaunchSatellite(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Label);
+
+    UFUNCTION(BlueprintCallable, Server, Reliable)
+    void ServerLaunchSatelliteWithOrbitalState(FOrbitalState OrbitalState, float Size, float Mass, const FString& Label);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -41,4 +50,6 @@ protected:
 
 private:
     class ACPP_MultiplayerGameMode* MultiplayerGameMode;
+
+    FVector LaunchDirection;
 };

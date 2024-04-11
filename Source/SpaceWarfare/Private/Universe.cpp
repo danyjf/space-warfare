@@ -1,13 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Universe.h"
 #include "CPP_Planet.h"
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Math/UnrealMathUtility.h"
-
 
 FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(const FOrbitalElements& OrbitalElements, double GM)
 {
