@@ -46,6 +46,7 @@ FVector ACPP_SatelliteLauncher::GetLocationFromHeight(float Height)
     {
         Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
     }
+
     // Add radius of earth to heigth
     Height += Planet->GetActorScale().X / 2;
     return LaunchDirection * Height;
@@ -54,7 +55,7 @@ FVector ACPP_SatelliteLauncher::GetLocationFromHeight(float Height)
 FVector ACPP_SatelliteLauncher::GetVelocityFromAngle(float Angle, float Value)
 {
     FVector Velocity = FVector(1.0f, 0.0f, 0.0f) * Value;
-    Velocity.RotateAngleAxis(Angle, LaunchDirection);
+    Velocity = Velocity.RotateAngleAxis(Angle, LaunchDirection);
     return Velocity;
 }
 
