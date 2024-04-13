@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "CPP_SatelliteLauncherSpawner.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSatelliteLauncherRepresentationUpdate);
+
 UCLASS()
 class SPACEWARFARE_API ACPP_SatelliteLauncherSpawner : public AActor
 {
@@ -26,6 +28,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ACPP_SatelliteLauncher> SatelliteLauncherBlueprint;
+
+    UPROPERTY(BlueprintAssignable)
+    FSatelliteLauncherRepresentationUpdate OnUpdateSatelliteLauncherRepresentation;
 
     UFUNCTION()
     void SpawnSatelliteLauncherRepresentation(const FVector& Location);

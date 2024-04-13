@@ -43,7 +43,7 @@ void ACPP_SatelliteLauncherSpawner::SpawnSatelliteLauncherRepresentation(const F
 
     SatelliteLauncherRepresentation = SatelliteLauncher;
 
-    //OnUpdateGroundStationRepresentation.Broadcast();
+    OnUpdateSatelliteLauncherRepresentation.Broadcast();
 }
 
 void ACPP_SatelliteLauncherSpawner::UpdateSatelliteLauncherLocation(const FVector& Location)
@@ -52,7 +52,7 @@ void ACPP_SatelliteLauncherSpawner::UpdateSatelliteLauncherLocation(const FVecto
     GeographicCoordinates.Altitude = 0.0f;
     SatelliteLauncherRepresentation->SetGeographicCoordinates(GeographicCoordinates);
 
-    //OnUpdateGroundStationRepresentation.Broadcast();
+    OnUpdateSatelliteLauncherRepresentation.Broadcast();
 }
 
 void ACPP_SatelliteLauncherSpawner::ServerSpawnSatelliteLauncher_Implementation(const FVector& Location)
