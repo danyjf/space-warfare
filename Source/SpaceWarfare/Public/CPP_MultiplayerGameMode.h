@@ -33,8 +33,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class ACPP_GroundStationManager> GroundStationManagerBlueprint;
 
+    //UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    //TSubclassOf<class ACPP_SatelliteLauncher> SatelliteLauncherBlueprint;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TSubclassOf<class ACPP_SatelliteLauncher> SatelliteLauncherBlueprint;
+    TSubclassOf<class ACPP_SatelliteLauncherSpawner> SatelliteLauncherSpawnerBlueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ACPP_Satellite> SatelliteBlueprint;

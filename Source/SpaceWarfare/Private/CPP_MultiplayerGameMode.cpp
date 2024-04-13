@@ -9,6 +9,7 @@
 #include "CPP_GroundStationManager.h"
 #include "CPP_GroundStation.h"
 #include "CPP_SatelliteLauncher.h"
+#include "CPP_SatelliteLauncherSpawner.h"
 #include "CPP_GameInstance.h"
 #include "CPP_GameState.h"
 #include "JsonReadWrite.h"
@@ -87,10 +88,15 @@ void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
     GroundStationManagers.Add(GroundStationManager);
 
     // Create a SatelliteLauncher for each player
-    ACPP_SatelliteLauncher* SatelliteLauncher = Cast<ACPP_SatelliteLauncher>(GetWorld()->SpawnActor(SatelliteLauncherBlueprint));
-    SatelliteLauncher->SetOwner(PlayerController);
-    SatelliteLauncher->OwnerPlayerID = PlayerController->PlayerID;
-    SatelliteLauncher->Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
+    //ACPP_SatelliteLauncher* SatelliteLauncher = Cast<ACPP_SatelliteLauncher>(GetWorld()->SpawnActor(SatelliteLauncherBlueprint));
+    //SatelliteLauncher->SetOwner(PlayerController);
+    //SatelliteLauncher->OwnerPlayerID = PlayerController->PlayerID;
+    //SatelliteLauncher->Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
+
+    // Create a SatelliteLauncherSpawner for each player
+    ACPP_SatelliteLauncherSpawner* SatelliteLauncherSpawner = Cast<ACPP_SatelliteLauncherSpawner>(GetWorld()->SpawnActor(SatelliteLauncherSpawnerBlueprint));
+    SatelliteLauncherSpawner->SetOwner(PlayerController);
+    SatelliteLauncherSpawner->OwnerPlayerID = PlayerController->PlayerID;
 }
 
 void ACPP_MultiplayerGameMode::InitializeSimulation(const FSimulationConfig& SimulationConfig)
