@@ -9,9 +9,10 @@
 UENUM(BlueprintType)
 enum class EPlayerStatus : uint8 
 {
-    WAITING = 0                 UMETA(DisplayName = "Waiting"),
-    PLACING_GROUND_STATIONS = 1 UMETA(DisplayName = "PlacingGroundStations"),
-    GROUND_STATION_CONTROL = 2  UMETA(DisplayName = "ControllingSatellites")
+    WAITING = 0                     UMETA(DisplayName = "Waiting"),
+    PLACING_SATELLITE_LAUNCHER = 1  UMETA(DisplayName = "PlacingSatelliteLauncher"),
+    PLACING_GROUND_STATIONS = 2     UMETA(DisplayName = "PlacingGroundStations"),
+    GROUND_STATION_CONTROL = 3      UMETA(DisplayName = "ControllingSatellites")
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCurrencyUpdated, int, Currency);

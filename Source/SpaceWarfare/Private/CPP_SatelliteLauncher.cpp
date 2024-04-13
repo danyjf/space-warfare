@@ -18,7 +18,7 @@
 ACPP_SatelliteLauncher::ACPP_SatelliteLauncher()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
     OwnerPlayerID = 0;
     LaunchCost = 50;    // Millions
@@ -39,6 +39,19 @@ void ACPP_SatelliteLauncher::BeginPlay()
 void ACPP_SatelliteLauncher::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ACPP_SatelliteLauncher::SetGeographicCoordinates(const FGeographicCoordinates& Value)
+{
+    GeographicCoordinates = Value;
+
+    // Set the location from the latitude and longitude
+    FVector ECILocation = UUniverse::ConvertGeographicCoordinatesToECILocation(Planet, GeographicCoordinates);
+    ECILocation.Y = -ECILocation.Y;     // convert coordinates to left handed system
+    SetActorLocation(ECILocation);
+
+    // Set the rotation to be orthogonal to earths surface
+    SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Planet->GetActorLocation(), GetActorLocation()));
 }
 
 FVector ACPP_SatelliteLauncher::GetLocationFromHeight(float Height)

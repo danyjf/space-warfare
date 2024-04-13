@@ -21,8 +21,20 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bIsChoosingLocation;
 
+    UPROPERTY()
+    class ACPP_SatelliteLauncher* SatelliteLauncherRepresentation;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ACPP_SatelliteLauncher> SatelliteLauncherBlueprint;
+
+    UFUNCTION()
+    void SpawnSatelliteLauncherRepresentation(const FVector& Location);
+
+    UFUNCTION()
+    void UpdateSatelliteLauncherLocation(const FVector& Location);
+
+    UFUNCTION(BlueprintCallable, Server, Reliable)
+    void ServerSpawnSatelliteLauncher(const FVector& Location);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

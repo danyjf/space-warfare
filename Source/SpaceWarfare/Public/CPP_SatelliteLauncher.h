@@ -18,6 +18,9 @@ public:
     int OwnerPlayerID;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FGeographicCoordinates GeographicCoordinates;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int LaunchCost;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -25,6 +28,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ACPP_Satellite> SatelliteBlueprintClass;
+
+    UFUNCTION(BlueprintCallable)
+    void SetGeographicCoordinates(const FGeographicCoordinates& Value);
 
     UFUNCTION(BlueprintCallable)
     FVector GetLocationFromHeight(float Height);

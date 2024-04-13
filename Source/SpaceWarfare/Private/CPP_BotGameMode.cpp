@@ -30,7 +30,7 @@ void ACPP_BotGameMode::StartGameplay()
 
     for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
     {
-        PlayerController->PlayerStatus = EPlayerStatus::PLACING_GROUND_STATIONS;
+        PlayerController->PlayerStatus = EPlayerStatus::PLACING_SATELLITE_LAUNCHER;
     }
 
     GetWorld()->GetTimerManager().SetTimer(CheckPlayersReadyTimerHandle, this, &ACPP_BotGameMode::CheckAllPlayersFinishedPlacingGroundStations, 2.0f, true);

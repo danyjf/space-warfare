@@ -5,6 +5,7 @@
 #include "CPP_Planet.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_GroundStationSpawner.h"
+#include "CPP_SatelliteLauncherSpawner.h"
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -113,6 +114,26 @@ void ACPP_CameraOrbitController::MouseSelect(const FInputActionValue& Value)
 
     switch (PlayerStatus)
     {
+    case EPlayerStatus::PLACING_SATELLITE_LAUNCHER:
+    {
+        ACPP_Planet* Planet = Cast<ACPP_Planet>(HitActor);
+        ACPP_SatelliteLauncherSpawner* SatelliteLauncherSpawner = Cast<ACPP_SatelliteLauncherSpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_SatelliteLauncherSpawner::StaticClass()));
+        if (!IsValid(Planet) || !IsValid(SatelliteLauncherSpawner))
+        {
+            return;
+        }
+
+        if (SatelliteLauncherSpawner->bIsChoosingLocation)
+        {
+            SatelliteLauncherSpawner->UpdateSatelliteLauncherLocation(HitResult.Location);
+        }
+        else
+        {
+            SatelliteLauncherSpawner->SpawnSatelliteLauncherRepresentation(HitResult.Location);
+        }
+
+        break;
+    }
     case EPlayerStatus::PLACING_GROUND_STATIONS:
     {
         ACPP_Planet* Planet = Cast<ACPP_Planet>(HitActor);
