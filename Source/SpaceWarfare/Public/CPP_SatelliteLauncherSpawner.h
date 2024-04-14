@@ -23,7 +23,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bIsChoosingLocation;
 
-    UPROPERTY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class ACPP_SatelliteLauncher* SatelliteLauncherRepresentation;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
