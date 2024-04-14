@@ -32,7 +32,7 @@ void ACPP_SatelliteLauncherSpawner::SpawnSatelliteLauncherRepresentation(const F
     bIsChoosingLocation = true;
 
     FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
-    ACPP_SatelliteLauncher* SatelliteLauncher = GetWorld()->SpawnActorDeferred<ACPP_SatelliteLauncher>(SatelliteLauncherBlueprint, SpawnLocation);
+    ACPP_SatelliteLauncher* SatelliteLauncher = GetWorld()->SpawnActorDeferred<ACPP_SatelliteLauncher>(SatelliteLauncherBlueprint, SpawnLocation, UGameplayStatics::GetPlayerController(GetWorld(), 0));
     SatelliteLauncher->Planet = Planet;
     SatelliteLauncher->AttachToActor(Planet, FAttachmentTransformRules::KeepWorldTransform);
     SatelliteLauncher->FinishSpawning(SpawnLocation);

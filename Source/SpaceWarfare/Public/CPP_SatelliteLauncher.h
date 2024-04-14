@@ -29,6 +29,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ACPP_Satellite> SatelliteBlueprintClass;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+    USceneComponent* Root;
+
     UFUNCTION(BlueprintCallable)
     void SetGeographicCoordinates(const FGeographicCoordinates& Value);
 

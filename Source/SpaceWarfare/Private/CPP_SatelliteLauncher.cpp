@@ -20,6 +20,10 @@ ACPP_SatelliteLauncher::ACPP_SatelliteLauncher()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+    Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+    RootComponent = Root;
+    Root->SetIsReplicated(true);
+
     OwnerPlayerID = 0;
     LaunchCost = 50;    // Millions
     LaunchDirection = FVector(1.0f, 0.0f, 0.0f);
@@ -29,9 +33,19 @@ void ACPP_SatelliteLauncher::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (HasAuthority())
+    if (!HasAuthority())
+    {
+        SetActorHiddenInGame(false);
+    }
+    else if (HasAuthority())
     {
         MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+        // Hide enemy satellite launcher on listen server
+        if (UGameplayStatics::GetPlayerController(GetWorld(), 0) != GetOwner())
+        {
+            SetActorHiddenInGame(true);
+        }
     }
 }
 
