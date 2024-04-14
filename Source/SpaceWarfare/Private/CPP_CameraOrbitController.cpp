@@ -118,7 +118,7 @@ void ACPP_CameraOrbitController::MouseSelect(const FInputActionValue& Value)
     {
         ACPP_Planet* Planet = Cast<ACPP_Planet>(HitActor);
         ACPP_SatelliteLauncherSpawner* SatelliteLauncherSpawner = Cast<ACPP_SatelliteLauncherSpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_SatelliteLauncherSpawner::StaticClass()));
-        if (!IsValid(Planet) || !IsValid(SatelliteLauncherSpawner))
+        if (!IsValid(Planet) || !IsValid(SatelliteLauncherSpawner) || !SatelliteLauncherSpawner->bCanSpawnSatelliteLauncher)
         {
             return;
         }

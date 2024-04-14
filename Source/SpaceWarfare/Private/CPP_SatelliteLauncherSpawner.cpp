@@ -14,6 +14,9 @@ ACPP_SatelliteLauncherSpawner::ACPP_SatelliteLauncherSpawner()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+    bIsChoosingLocation = false;
+    bCanSpawnSatelliteLauncher = true;
 }
 
 // Called when the game starts or when spawned
@@ -80,9 +83,5 @@ void ACPP_SatelliteLauncherSpawner::ServerSpawnSatelliteLauncher_Implementation(
     if (Cast<ACPP_BotGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
     {
         PlayerController->PlayerStatus = EPlayerStatus::PLACING_GROUND_STATIONS;
-    }
-    else if (Cast<ACPP_CasualGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
-    {
-        PlayerController->PlayerStatus = EPlayerStatus::GROUND_STATION_CONTROL;
     }
 }
