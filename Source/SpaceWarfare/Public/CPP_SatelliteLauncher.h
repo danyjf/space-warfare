@@ -59,6 +59,4 @@ protected:
 
 private:
     class ACPP_MultiplayerGameMode* MultiplayerGameMode;
-
-    FVector LaunchDirection;
 };

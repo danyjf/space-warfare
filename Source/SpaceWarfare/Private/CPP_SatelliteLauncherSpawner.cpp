@@ -4,6 +4,8 @@
 #include "CPP_SatelliteLauncher.h"
 #include "CPP_Planet.h"
 #include "CPP_CameraOrbitController.h"
+#include "CPP_BotGameMode.h"
+#include "CPP_CasualGameMode.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -74,4 +76,13 @@ void ACPP_SatelliteLauncherSpawner::ServerSpawnSatelliteLauncher_Implementation(
     FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
     GeographicCoordinates.Altitude = 0.0f;
     SatelliteLauncher->SetGeographicCoordinates(GeographicCoordinates);
+
+    if (Cast<ACPP_BotGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
+    {
+        PlayerController->PlayerStatus = EPlayerStatus::PLACING_GROUND_STATIONS;
+    }
+    else if (Cast<ACPP_CasualGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
+    {
+        PlayerController->PlayerStatus = EPlayerStatus::GROUND_STATION_CONTROL;
+    }
 }

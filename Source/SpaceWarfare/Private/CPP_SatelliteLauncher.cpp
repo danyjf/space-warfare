@@ -26,7 +26,6 @@ ACPP_SatelliteLauncher::ACPP_SatelliteLauncher()
 
     OwnerPlayerID = 0;
     LaunchCost = 50;    // Millions
-    LaunchDirection = FVector(1.0f, 0.0f, 0.0f);
 }
 
 void ACPP_SatelliteLauncher::BeginPlay()
@@ -77,21 +76,21 @@ FVector ACPP_SatelliteLauncher::GetLocationFromHeight(float Height)
 
     // Add radius of earth to heigth
     Height += Planet->GetActorScale().X / 2;
-    return LaunchDirection * Height;
+    return GetActorForwardVector() * Height;
 }
 
 FVector ACPP_SatelliteLauncher::GetVelocityFromAngle(float Angle, float Value)
 {
-    if (LaunchDirection == FVector(0.0f, 0.0f, 1.0f))
+    if (GetActorForwardVector() == FVector(0.0f, 0.0f, 1.0f))
     {
         FVector Velocity = FVector(1.0f, 0.0f, 0.0f) * Value;
-        Velocity = Velocity.RotateAngleAxis(Angle, LaunchDirection);
+        Velocity = Velocity.RotateAngleAxis(Angle, GetActorForwardVector());
         return Velocity;
     }
 
-    FVector PerpendicularToLaunchDirection = UKismetMathLibrary::Cross_VectorVector(LaunchDirection, FVector(0.0f, 0.0f, 1.0f));
+    FVector PerpendicularToLaunchDirection = UKismetMathLibrary::Cross_VectorVector(GetActorForwardVector(), FVector(0.0f, 0.0f, 1.0f));
     FVector Velocity = PerpendicularToLaunchDirection * Value;
-    Velocity = Velocity.RotateAngleAxis(Angle, LaunchDirection);
+    Velocity = Velocity.RotateAngleAxis(Angle, GetActorForwardVector());
     return Velocity;
 }
 
