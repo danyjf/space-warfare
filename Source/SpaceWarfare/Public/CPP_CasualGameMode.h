@@ -20,4 +20,9 @@ public:
 protected:
     // Called when all players have joined the session
     virtual void StartGameplay() override;
+
+private:
+    FTimerHandle CheckPlayersReadyTimerHandle;
+
+    void CheckAllPlayersFinishedPlacingGroundStations();
 };

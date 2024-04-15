@@ -18,6 +18,9 @@ public:
     int OwnerPlayerID;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FGeographicCoordinates GeographicCoordinates;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int LaunchCost;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -25,6 +28,12 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ACPP_Satellite> SatelliteBlueprintClass;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+    USceneComponent* Root;
+
+    UFUNCTION(BlueprintCallable)
+    void SetGeographicCoordinates(const FGeographicCoordinates& Value);
 
     UFUNCTION(BlueprintCallable)
     FVector GetLocationFromHeight(float Height);
@@ -50,6 +59,4 @@ protected:
 
 private:
     class ACPP_MultiplayerGameMode* MultiplayerGameMode;
-
-    FVector LaunchDirection;
 };

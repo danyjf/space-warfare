@@ -25,6 +25,24 @@ void ACPP_CasualGameMode::StartGameplay()
     }
     InitializeSimulation(SimulationConfig);
 
+    for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
+    {
+        PlayerController->PlayerStatus = EPlayerStatus::PLACING_SATELLITE_LAUNCHER;
+    }
+
+    GetWorld()->GetTimerManager().SetTimer(CheckPlayersReadyTimerHandle, this, &ACPP_CasualGameMode::CheckAllPlayersFinishedPlacingGroundStations, 2.0f, true);
+}
+
+void ACPP_CasualGameMode::CheckAllPlayersFinishedPlacingGroundStations()
+{
+    for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
+    {
+        if (!PlayerController->bFinishedPlacingGroundStations)
+        {
+            return;
+        }
+    }
+
     FSatellitesConfig SatellitesConfig;
     FString SatellitesJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSTestConfig.json");
     if (FPaths::FileExists(SatellitesJsonPath))
@@ -48,5 +66,8 @@ void ACPP_CasualGameMode::StartGameplay()
     for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
     {
         PlayerController->PlayerStatus = EPlayerStatus::GROUND_STATION_CONTROL;
+        PlayerController->ClientAllPlayersFinishedPlacingGroundStations();
     }
+
+    GetWorld()->GetTimerManager().ClearTimer(CheckPlayersReadyTimerHandle);
 }
