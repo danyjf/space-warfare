@@ -17,22 +17,50 @@ FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(const FOrbitalElem
 	float M = UKismetMathLibrary::DegreesToRadians(OrbitalElements.MeanAnomaly);
 
 	// Solve Keplers Equation for the eccentric anomaly using Newton's method
-	float E = M;
-	float F = E - e * sin(E) - M;
+    float E = 0.0f;
+    float F = 0.0f;
 	float Delta = 0.000001;
-	for (int j = 0; j < 30; j++)
-	{
-		E = E - F / (1 - e * cos(E));
-		F = E - e * sin(E) - M;
+    if (e < 1.0f)
+    {
+	    E = M;
+	    F = E - e * sin(E) - M;
+	    for (int j = 0; j < 30; j++)
+	    {
+	    	E = E - F / (1 - e * cos(E));
+	    	F = E - e * sin(E) - M;
 
-		if (abs(F) < Delta)
-		{
-			break;
-		}
-	}
+	    	if (abs(F) < Delta)
+	    	{
+	    		break;
+	    	}
+	    }
+    }
+    else if (e > 1.0f)
+    {
+	    E = M;
+	    F = e * sinh(E) - E - M;
+	    for (int j = 0; j < 30; j++)
+	    {
+	    	E = E - F / (e * cosh(E) - 1);
+	    	F = e * sinh(E) - E - M;
+
+	    	if (abs(F) < Delta)
+	    	{
+	    		break;
+	    	}
+	    }
+    }
 
 	// Obtain the true anomaly
-	float v = 2 * atan2(sqrt(1 + e) * sin(E / 2), sqrt(1 - e) * cos(E / 2));
+    float v = 0.0f;
+    if (e < 1.0f)
+    {
+	    v = 2 * atan2(sqrt(1 + e) * sin(E / 2), sqrt(1 - e) * cos(E / 2));
+    }
+    else if (e > 1.0f)
+    {
+	    v = 2 * atan2(sqrt(e + 1) * sinh(E / 2), sqrt(e - 1) * cosh(E / 2));
+    }
 
 	// Use the eccentric anomaly to get the distance to the central body
 	float rc = a * (1 - e * cos(E));
