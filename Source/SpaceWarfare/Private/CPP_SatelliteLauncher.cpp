@@ -89,6 +89,7 @@ FVector ACPP_SatelliteLauncher::GetVelocityFromAngle(float Angle, float Value)
     }
 
     FVector PerpendicularToLaunchDirection = UKismetMathLibrary::Cross_VectorVector(GetActorForwardVector(), FVector(0.0f, 0.0f, 1.0f));
+    PerpendicularToLaunchDirection.Normalize();
     FVector Velocity = PerpendicularToLaunchDirection * Value;
     Velocity = Velocity.RotateAngleAxis(Angle, GetActorForwardVector());
     return Velocity;
