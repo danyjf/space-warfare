@@ -54,6 +54,7 @@ protected:
 private:
     TArray<USplineMeshComponent*> SplineMeshComponents;
     UMaterialInstanceDynamic* DynamicMaterial;
+    bool bIsHyperbolic;
 
     void CreateSplineMeshComponent(const FVector& StartPoint, const FVector& StartTangent, const FVector& EndPoint, const FVector& EndTangent);
 };
