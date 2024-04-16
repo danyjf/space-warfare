@@ -152,14 +152,8 @@ void UCPP_SatelliteCommandManager::ClientSatelliteExecutedCommand_Implementation
 
 void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const int SatelliteID, const FTorqueCommandData& TorqueCommandData)
 {
-    // Check if the satellite id exists
-    if (!GroundStationManager->TrackedSatellites.Contains(SatelliteID))
-    {
-        return;
-    }
-
     // Check if satellite belongs to the player
-    if (GroundStationManager->TrackedSatellites[SatelliteID].OwnerID != GroundStationManager->OwnerPlayerID)
+    if (MultiplayerGameMode->AllSatellites[SatelliteID]->OwnerPlayerID != GroundStationManager->OwnerPlayerID)
     {
         return;
     }
