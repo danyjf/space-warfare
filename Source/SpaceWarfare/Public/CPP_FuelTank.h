@@ -19,6 +19,7 @@ public:
     UFUNCTION(BlueprintCallable)
     bool SpendFuel(float Value);
 
+    /** Get current amount of fuel in the tank in liters */
     UFUNCTION(BlueprintCallable)
     float GetFuelLevel();
 
@@ -33,5 +34,8 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+    /** Current amount of fuel in the tank in liters */
     float FuelLevel;
+    class ACPP_MultiplayerGameMode* MultiplayerGameMode;
+    class ACPP_Satellite* Satellite;
 };

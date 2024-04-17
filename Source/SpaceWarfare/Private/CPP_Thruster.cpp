@@ -35,7 +35,6 @@ void UCPP_Thruster::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
         ThrusterTimer <= ThrusterDuration && 
         FuelTank->SpendFuel(FuelConsumption * DeltaTime))
     {
-        UKismetSystemLibrary::PrintString(GetWorld(), FString::SanitizeFloat(FuelTank->GetFuelLevel()));
         StaticMeshComponent->AddForce(ThrusterStrength * UKismetMathLibrary::TransformDirection(GetOwner()->GetTransform(), ThrusterDirection));
         ThrusterTimer += DeltaTime;
     }

@@ -1,6 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CPP_FuelTank.h"
+#include "CPP_Satellite.h"
+#include "CPP_MultiplayerGameMode.h"
+#include "CPP_GroundStationManager.h"
+
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UCPP_FuelTank::UCPP_FuelTank()
@@ -10,13 +16,16 @@ UCPP_FuelTank::UCPP_FuelTank()
 	PrimaryComponentTick.bCanEverTick = false;
 
     MaxFuel = 100.0f;
-    FuelLevel = MaxFuel;
 }
 
 // Called when the game starts
 void UCPP_FuelTank::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+    Satellite = Cast<ACPP_Satellite>(GetOwner());
+    FuelLevel = MaxFuel;
 }
 
 // Called every frame
@@ -44,5 +53,6 @@ bool UCPP_FuelTank::SpendFuel(float Value)
     }
 
     FuelLevel -= Value;
+    MultiplayerGameMode->GetGroundStationManagers()[Satellite->OwnerPlayerID]->ClientUpdateSatelliteFuelLevel(Satellite->GetSatelliteID(), FuelLevel / MaxFuel);
     return true;
 }
