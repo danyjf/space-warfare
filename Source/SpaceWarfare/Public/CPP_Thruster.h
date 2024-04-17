@@ -15,6 +15,10 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float MaxThrusterStrength;
 
+    /** Consumption of fuel for this thruster in liters per second */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float FuelConsumption;
+
     UFUNCTION(BlueprintCallable)
     void SetThrusterDirectionInECICoordinates(FVector Direction);
 
@@ -44,4 +48,5 @@ private:
     float ThrusterTimer;
     float ThrusterStrength;
     class UStaticMeshComponent* StaticMeshComponent;
+    class UCPP_FuelTank* FuelTank;
 };

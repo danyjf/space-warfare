@@ -11,6 +11,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FNewSatelliteDetected, int, SatelliteID, FSatelliteInfo, SatelliteInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSatelliteDestroyed, int, SatelliteID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FFuelLevelUpdatedSignature, int, SatelliteID, float, FuelPercentage);
 
 UCLASS()
 class SPACEWARFARE_API ACPP_GroundStationManager : public AActor
@@ -42,6 +43,9 @@ public:
     UPROPERTY(BlueprintAssignable)
     FSatelliteDestroyed OnSatelliteDestroyed;
 
+    UPROPERTY(BlueprintAssignable)
+    FFuelLevelUpdatedSignature OnFuelLevelUpdated;
+
     UFUNCTION(BlueprintCallable)
     void PrintOverpassingSatellites();
 
@@ -68,6 +72,9 @@ public:
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientAsteroidDestroyed(const FName& AsteroidID);
+
+    UFUNCTION(BlueprintCallable, Client, Unreliable)
+    void ClientUpdateSatelliteFuelLevel(const int SatelliteID, float FuelPercentage);
 
     UFUNCTION(BlueprintCallable)
     void EnableOrbitVisualization(const int SatelliteID);

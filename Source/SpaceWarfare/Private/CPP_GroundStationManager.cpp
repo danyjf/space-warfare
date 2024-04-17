@@ -184,6 +184,11 @@ void ACPP_GroundStationManager::ClientSatelliteDestroyed_Implementation(const in
     }
 }
 
+void ACPP_GroundStationManager::ClientUpdateSatelliteFuelLevel_Implementation(const int SatelliteID, float FuelPercentage)
+{
+    OnFuelLevelUpdated.Broadcast(SatelliteID, FuelPercentage);
+}
+
 void ACPP_GroundStationManager::EnableOrbitVisualization(const int SatelliteID)
 {
     if (SatelliteOrbits.Contains(SatelliteID))
