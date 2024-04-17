@@ -12,6 +12,7 @@ class SPACEWARFARE_API UCPP_FuelTank : public UActorComponent
 	GENERATED_BODY()
 
 public:	
+    /** Maximum amount of fuel for the tank in liters */
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float MaxFuel;
 
