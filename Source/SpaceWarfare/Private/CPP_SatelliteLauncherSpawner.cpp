@@ -25,7 +25,21 @@ ACPP_SatelliteLauncherSpawner::ACPP_SatelliteLauncherSpawner()
 void ACPP_SatelliteLauncherSpawner::BeginPlay()
 {
 	Super::BeginPlay();
+
     Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
+    if (!HasAuthority())
+    {
+        PlayerController = Cast<ACPP_CameraOrbitController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+    }
+    else
+    {
+        PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
+    }
+
+    if (PlayerController->IsLocalPlayerController())
+    {
+        PlayerController->OnAllPlayersFinishedPlacingGroundStations.AddDynamic(this, &ACPP_SatelliteLauncherSpawner::DestroyRepresentations);
+    }
 }
 
 // Called every frame
@@ -36,8 +50,6 @@ void ACPP_SatelliteLauncherSpawner::Tick(float DeltaTime)
 
 void ACPP_SatelliteLauncherSpawner::SpawnSatelliteLauncherRepresentation(const FVector& Location)
 {
-    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
-
     bIsChoosingLocation = true;
 
     FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
@@ -68,8 +80,6 @@ void ACPP_SatelliteLauncherSpawner::UpdateSatelliteLauncherLocation(const FVecto
 
 void ACPP_SatelliteLauncherSpawner::ServerSpawnSatelliteLauncher_Implementation(const FVector& Location)
 {
-    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
-
     if (PlayerController->PlayerStatus != EPlayerStatus::PLACING_SATELLITE_LAUNCHER)
     {
         return;
@@ -111,5 +121,14 @@ void ACPP_SatelliteLauncherSpawner::ServerSpawnSatelliteLauncher_Implementation(
     if (Cast<ACPP_BotGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
     {
         PlayerController->PlayerStatus = EPlayerStatus::PLACING_GROUND_STATIONS;
+    }
+}
+
+void ACPP_SatelliteLauncherSpawner::DestroyRepresentations()
+{
+    if (GroundStationRepresentation)
+    {
+        GroundStationRepresentation->Destroy();
+        GroundStationRepresentation = nullptr;
     }
 }

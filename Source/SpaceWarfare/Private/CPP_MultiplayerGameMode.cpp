@@ -88,8 +88,10 @@ void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
     GroundStationManagers.Add(GroundStationManager);
 
     // Create a SatelliteLauncherSpawner for each player
-    ACPP_SatelliteLauncherSpawner* SatelliteLauncherSpawner = Cast<ACPP_SatelliteLauncherSpawner>(GetWorld()->SpawnActor(SatelliteLauncherSpawnerBlueprint));
-    SatelliteLauncherSpawner->SetOwner(PlayerController);
+    FActorSpawnParameters SpawnParameters;
+    SpawnParameters.Owner = PlayerController;
+    FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
+    ACPP_SatelliteLauncherSpawner* SatelliteLauncherSpawner = Cast<ACPP_SatelliteLauncherSpawner>(GetWorld()->SpawnActor(SatelliteLauncherSpawnerBlueprint, &SpawnLocation, SpawnParameters));
     SatelliteLauncherSpawner->OwnerPlayerID = PlayerController->PlayerID;
 }
 
