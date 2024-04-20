@@ -4,6 +4,7 @@
 #include "CPP_Planet.h"
 
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 ACPP_GroundStationRepresentation::ACPP_GroundStationRepresentation()
 {
@@ -51,6 +52,15 @@ void ACPP_GroundStationRepresentation::BeginPlay()
     UMaterialInterface* Material = DetectionConeVisualization->GetMaterial(0);
     DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
     DetectionConeVisualization->SetMaterial(0, DynamicMaterial);
+
+    if (!HasAuthority())
+    {
+        SetActorHiddenInGame(false);
+    }
+    else if (UGameplayStatics::GetPlayerController(GetWorld(), 0) != GetOwner())
+    {
+        SetActorHiddenInGame(true);
+    }
 }
 
 void ACPP_GroundStationRepresentation::SetConeColor(FLinearColor Color)

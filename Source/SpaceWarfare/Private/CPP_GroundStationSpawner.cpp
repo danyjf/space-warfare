@@ -95,10 +95,12 @@ void ACPP_GroundStationSpawner::ServerSpawnGroundStation_Implementation(FVector 
 
 void ACPP_GroundStationSpawner::SpawnGroundStationRepresentation(FVector Location)
 {
+    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
+
     bIsChoosingLocation = true;
 
     FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
-    ACPP_GroundStationRepresentation* GroundStation = GetWorld()->SpawnActorDeferred<ACPP_GroundStationRepresentation>(GroundStationRepresentationBlueprint, SpawnLocation);
+    ACPP_GroundStationRepresentation* GroundStation = GetWorld()->SpawnActorDeferred<ACPP_GroundStationRepresentation>(GroundStationRepresentationBlueprint, SpawnLocation, PlayerController);
     GroundStation->Planet = Planet;
     GroundStation->AttachToActor(Planet, FAttachmentTransformRules::KeepWorldTransform);
     GroundStation->FinishSpawning(SpawnLocation);

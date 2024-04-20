@@ -73,12 +73,9 @@ void ACPP_GroundStationManager::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 
 void ACPP_GroundStationManager::UpdateSatelliteInfo()
 {
-    TArray<AActor*> Satellites;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-    for (AActor* Actor : Satellites)
+    for (const TPair<int, ACPP_Satellite*>& Elem : OverpassingSatellites)
     {
-        ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-        ClientUpdateSatelliteInfo(Satellite->GetSatelliteID(), Satellite->GetSatelliteInfo());
+        ClientUpdateSatelliteInfo(Elem.Key, Elem.Value->GetSatelliteInfo());
     }
 }
 
