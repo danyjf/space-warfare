@@ -6,6 +6,8 @@
 #include "CPP_CameraOrbitController.h"
 #include "CPP_BotGameMode.h"
 #include "CPP_CasualGameMode.h"
+#include "CPP_GroundStation.h"
+#include "CPP_GroundStationRepresentation.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -34,19 +36,37 @@ void ACPP_SatelliteLauncherSpawner::Tick(float DeltaTime)
 
 void ACPP_SatelliteLauncherSpawner::SpawnSatelliteLauncherRepresentation(const FVector& Location)
 {
+    //bIsChoosingLocation = true;
+
+    //FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
+    //ACPP_SatelliteLauncher* SatelliteLauncher = GetWorld()->SpawnActorDeferred<ACPP_SatelliteLauncher>(SatelliteLauncherBlueprint, SpawnLocation, UGameplayStatics::GetPlayerController(GetWorld(), 0));
+    //SatelliteLauncher->Planet = Planet;
+    //SatelliteLauncher->AttachToActor(Planet, FAttachmentTransformRules::KeepWorldTransform);
+    //SatelliteLauncher->FinishSpawning(SpawnLocation);
+
+    //FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
+    //GeographicCoordinates.Altitude = 0.0f;
+    //SatelliteLauncher->SetGeographicCoordinates(GeographicCoordinates);
+
+    //SatelliteLauncherRepresentation = SatelliteLauncher;
+
+    //OnUpdateSatelliteLauncherRepresentation.Broadcast();
+
     bIsChoosingLocation = true;
 
     FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
-    ACPP_SatelliteLauncher* SatelliteLauncher = GetWorld()->SpawnActorDeferred<ACPP_SatelliteLauncher>(SatelliteLauncherBlueprint, SpawnLocation, UGameplayStatics::GetPlayerController(GetWorld(), 0));
-    SatelliteLauncher->Planet = Planet;
-    SatelliteLauncher->AttachToActor(Planet, FAttachmentTransformRules::KeepWorldTransform);
-    SatelliteLauncher->FinishSpawning(SpawnLocation);
+    ACPP_GroundStationRepresentation* GroundStation = GetWorld()->SpawnActorDeferred<ACPP_GroundStationRepresentation>(GroundStationRepresentationBlueprint, SpawnLocation);
+    GroundStation->Planet = Planet;
+    GroundStation->AttachToActor(Planet, FAttachmentTransformRules::KeepWorldTransform);
+    GroundStation->FinishSpawning(SpawnLocation);
 
     FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
     GeographicCoordinates.Altitude = 0.0f;
-    SatelliteLauncher->SetGeographicCoordinates(GeographicCoordinates);
+    GroundStation->SetGeographicCoordinates(GeographicCoordinates);
 
-    SatelliteLauncherRepresentation = SatelliteLauncher;
+    GroundStation->SetConeColor(FLinearColor::Blue);
+
+    GroundStationRepresentation = GroundStation;
 
     OnUpdateSatelliteLauncherRepresentation.Broadcast();
 }
@@ -55,7 +75,7 @@ void ACPP_SatelliteLauncherSpawner::UpdateSatelliteLauncherLocation(const FVecto
 {
     FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
     GeographicCoordinates.Altitude = 0.0f;
-    SatelliteLauncherRepresentation->SetGeographicCoordinates(GeographicCoordinates);
+    GroundStationRepresentation->SetGeographicCoordinates(GeographicCoordinates);
 
     OnUpdateSatelliteLauncherRepresentation.Broadcast();
 }
@@ -69,6 +89,7 @@ void ACPP_SatelliteLauncherSpawner::ServerSpawnSatelliteLauncher_Implementation(
         return;
     }
     
+    // Create satellite launcher
     FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
     ACPP_SatelliteLauncher* SatelliteLauncher = GetWorld()->SpawnActorDeferred<ACPP_SatelliteLauncher>(SatelliteLauncherBlueprint, SpawnLocation, PlayerController);
     SatelliteLauncher->Planet = Planet;
@@ -79,6 +100,15 @@ void ACPP_SatelliteLauncherSpawner::ServerSpawnSatelliteLauncher_Implementation(
     FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
     GeographicCoordinates.Altitude = 0.0f;
     SatelliteLauncher->SetGeographicCoordinates(GeographicCoordinates);
+
+    // Create ground station on same location as satellite launcher
+    ACPP_GroundStation* GroundStation = GetWorld()->SpawnActorDeferred<ACPP_GroundStation>(GroundStationBlueprint, SpawnLocation, PlayerController);
+    GroundStation->Planet = Planet;
+    GroundStation->OwnerPlayerID = OwnerPlayerID;
+    GroundStation->AttachToActor(Planet, FAttachmentTransformRules::KeepWorldTransform);
+    GroundStation->FinishSpawning(SpawnLocation);
+
+    GroundStation->SetGeographicCoordinates(GeographicCoordinates);
 
     if (Cast<ACPP_BotGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
     {
