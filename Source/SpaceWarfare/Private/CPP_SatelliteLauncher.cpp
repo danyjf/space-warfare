@@ -97,8 +97,8 @@ FVector ACPP_SatelliteLauncher::GetVelocityFromAngle(float Angle, float Value)
 
 void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Label)
 {
-    ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
-    if (CameraOrbitController->Currency < LaunchCost)
+    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
+    if (PlayerController->Currency < LaunchCost)
     {
         UKismetSystemLibrary::PrintString(GetWorld(), "Not enough money to launch!!!");
         return;
@@ -106,19 +106,18 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
 
     FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
 
-    ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
-    Satellite->SetActorLocation(OrbitalState.Location);
-    Satellite->SetActorScale3D(FVector(Size));
+    FTransform SpawnLocation(FRotator(0.0f, 0.0f, 0.0f), OrbitalState.Location, FVector(Size));
+    ACPP_Satellite* Satellite = GetWorld()->SpawnActorDeferred<ACPP_Satellite>(SatelliteBlueprintClass, SpawnLocation, PlayerController);
     Satellite->OrbitingPlanet = Planet;
     Satellite->Label = Label;
     Satellite->OwnerPlayerID = OwnerPlayerID;
-    Satellite->SetOwner(CameraOrbitController);
-
+    Satellite->SetOwner(PlayerController);
     Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
     Satellite->GravityComponent->SetMass(Mass);
     Satellite->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * Mass);
+    Satellite->FinishSpawning(SpawnLocation);
 
-    CameraOrbitController->SpendCurrency(LaunchCost);
+    PlayerController->SpendCurrency(LaunchCost);
 
     // TODO: Change later, this is just to show the satellite on all players when it is launched
     for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
@@ -133,26 +132,25 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
 
 void ACPP_SatelliteLauncher::ServerLaunchSatelliteWithOrbitalState_Implementation(FOrbitalState OrbitalState, float Size, float Mass, const FString& Label)
 {
-    ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
-    if (CameraOrbitController->Currency < LaunchCost)
+    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
+    if (PlayerController->Currency < LaunchCost)
     {
         UKismetSystemLibrary::PrintString(GetWorld(), "Not enough money to launch!!!");
         return;
     }
 
-    ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
-    Satellite->SetActorLocation(OrbitalState.Location);
-    Satellite->SetActorScale3D(FVector(Size));
+    FTransform SpawnLocation(FRotator(0.0f, 0.0f, 0.0f), OrbitalState.Location, FVector(Size));
+    ACPP_Satellite* Satellite = GetWorld()->SpawnActorDeferred<ACPP_Satellite>(SatelliteBlueprintClass, SpawnLocation, PlayerController);
     Satellite->OrbitingPlanet = Planet;
     Satellite->Label = Label;
     Satellite->OwnerPlayerID = OwnerPlayerID;
-    Satellite->SetOwner(CameraOrbitController);
-
+    Satellite->SetOwner(PlayerController);
     Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
     Satellite->GravityComponent->SetMass(Mass);
     Satellite->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * Mass);
+    Satellite->FinishSpawning(SpawnLocation);
 
-    CameraOrbitController->SpendCurrency(LaunchCost);
+    PlayerController->SpendCurrency(LaunchCost);
 
     // TODO: Change later, this is just to show the satellite on all players when it is launched
     for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
