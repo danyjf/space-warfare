@@ -26,9 +26,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bCanSpawnSatelliteLauncher;
 
-    //UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    //class ACPP_SatelliteLauncher* SatelliteLauncherRepresentation;
-
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class ACPP_GroundStationRepresentation* GroundStationRepresentation;
 
