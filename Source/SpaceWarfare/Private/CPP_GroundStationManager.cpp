@@ -171,7 +171,7 @@ void ACPP_GroundStationManager::ClientUpdateSatelliteInfo_Implementation(const i
     FOrbitalState OrbitalState = FOrbitalState(SatelliteInfo.Position, SatelliteInfo.Velocity);
     FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
 
-    if (SatelliteOrbits.Contains(SatelliteID) && !SatelliteOrbits[SatelliteID]->IsHidden())
+    if (SatelliteOrbits.Contains(SatelliteID) && SatelliteOrbits[SatelliteID]->bIsVisualizationEnabled)
     {
         SatelliteOrbits[SatelliteID]->UpdateOrbit(OrbitalElements, Planet);
     }
@@ -202,6 +202,7 @@ void ACPP_GroundStationManager::EnableOrbitVisualization(const int SatelliteID)
         FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
         SatelliteOrbits[SatelliteID]->UpdateOrbit(OrbitalElements, Planet);
 
+        SatelliteOrbits[SatelliteID]->bIsVisualizationEnabled = true;
         SatelliteOrbits[SatelliteID]->SetActorHiddenInGame(false);
     }
 }
@@ -210,6 +211,7 @@ void ACPP_GroundStationManager::DisableOrbitVisualization(const int SatelliteID)
 {
     if (SatelliteOrbits.Contains(SatelliteID))
     {
+        SatelliteOrbits[SatelliteID]->bIsVisualizationEnabled = false;
         SatelliteOrbits[SatelliteID]->SetActorHiddenInGame(true);
     }
 }

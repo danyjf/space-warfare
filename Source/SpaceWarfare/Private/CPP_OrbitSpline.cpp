@@ -23,6 +23,7 @@ ACPP_OrbitSpline::ACPP_OrbitSpline()
     SplineMeshScale = 0.25f;
     NumberOfPoints = 24;
     bIsHyperbolic = false;
+    bIsVisualizationEnabled = false;
 }
 
 void ACPP_OrbitSpline::OnConstruction(const FTransform& Transform)
