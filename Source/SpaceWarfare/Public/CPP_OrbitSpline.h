@@ -27,6 +27,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int NumberOfPoints;
 
+    UPROPERTY(BlueprintReadWrite)
+    bool bIsVisualizationEnabled;
+
     UFUNCTION(BlueprintCallable)
     void UpdateOrbit(FOrbitalElements OrbitalElements, class ACPP_Planet* Planet);
 

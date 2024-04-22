@@ -6,6 +6,7 @@
 #include "CPP_Thruster.h"
 #include "CPP_Satellite.h"
 #include "CPP_SatelliteCommands.h"
+#include "CPP_GameState.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -153,7 +154,7 @@ void UCPP_SatelliteCommandManager::ClientSatelliteExecutedCommand_Implementation
 void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(const int SatelliteID, const FTorqueCommandData& TorqueCommandData)
 {
     // Check if satellite belongs to the player
-    if (MultiplayerGameMode->AllSatellites[SatelliteID]->OwnerPlayerID != GroundStationManager->OwnerPlayerID)
+    if (MultiplayerGameMode->GetGameState<ACPP_GameState>()->AllSatellites[SatelliteID]->OwnerPlayerID != GroundStationManager->OwnerPlayerID)
     {
         return;
     }
@@ -166,7 +167,7 @@ void UCPP_SatelliteCommandManager::ServerSatelliteTorqueCommand_Implementation(c
 void UCPP_SatelliteCommandManager::ServerSatelliteThrustCommand_Implementation(const int SatelliteID, const FThrustCommandData& ThrustCommandData)
 {
     // Check if satellite belongs to the player
-    if (MultiplayerGameMode->AllSatellites[SatelliteID]->OwnerPlayerID != GroundStationManager->OwnerPlayerID)
+    if (MultiplayerGameMode->GetGameState<ACPP_GameState>()->AllSatellites[SatelliteID]->OwnerPlayerID != GroundStationManager->OwnerPlayerID)
     {
         return;
     }

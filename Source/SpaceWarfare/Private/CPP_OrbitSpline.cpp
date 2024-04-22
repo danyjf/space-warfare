@@ -23,6 +23,7 @@ ACPP_OrbitSpline::ACPP_OrbitSpline()
     SplineMeshScale = 0.25f;
     NumberOfPoints = 24;
     bIsHyperbolic = false;
+    bIsVisualizationEnabled = false;
 }
 
 void ACPP_OrbitSpline::OnConstruction(const FTransform& Transform)
@@ -111,7 +112,7 @@ void ACPP_OrbitSpline::CreateSplineMeshComponent(const FVector& StartPoint, cons
 void ACPP_OrbitSpline::UpdateOrbit(FOrbitalElements OrbitalElements, ACPP_Planet* Planet)
 {
     // Hide orbit when it is hyperbolic
-    if (OrbitalElements.Eccentricity >= 1.0f)
+    if (OrbitalElements.Eccentricity >= 1.0f || !bIsVisualizationEnabled)
     {
         bIsHyperbolic = true;
         SetActorHiddenInGame(true);

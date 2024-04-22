@@ -37,6 +37,9 @@ public:
     UPROPERTY(BlueprintReadOnly)
     TMap<int, FSatelliteInfo> TrackedSatellites;
 
+    UPROPERTY(BlueprintReadOnly)
+    TMap<FName, class ACPP_OrbitSpline*> AsteroidOrbits;
+
     UPROPERTY(BlueprintAssignable)
     FNewSatelliteDetected OnNewSatelliteDetected;
 
@@ -77,12 +80,6 @@ public:
     void ClientUpdateSatelliteFuelLevel(const int SatelliteID, float FuelPercentage);
 
     UFUNCTION(BlueprintCallable)
-    void EnableOrbitVisualization(const int SatelliteID);
-
-    UFUNCTION(BlueprintCallable)
-    void DisableOrbitVisualization(const int SatelliteID);
-
-    UFUNCTION(BlueprintCallable)
     const FSatelliteInfo& GetTrackedSatelliteInfo(const int SatelliteID);
 
 	// Called every frame
@@ -102,7 +99,4 @@ private:
     class ACPP_MultiplayerGameMode* MultiplayerGameMode;
     bool bInitialized;
     FTimerHandle UpdateSatellitesTimerHandle;
-
-    TMap<int, class ACPP_OrbitSpline*> SatelliteOrbits;
-    TMap<FName, class ACPP_OrbitSpline*> AsteroidOrbits;
 };

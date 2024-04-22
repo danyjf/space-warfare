@@ -88,8 +88,10 @@ void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
     GroundStationManagers.Add(GroundStationManager);
 
     // Create a SatelliteLauncherSpawner for each player
-    ACPP_SatelliteLauncherSpawner* SatelliteLauncherSpawner = Cast<ACPP_SatelliteLauncherSpawner>(GetWorld()->SpawnActor(SatelliteLauncherSpawnerBlueprint));
-    SatelliteLauncherSpawner->SetOwner(PlayerController);
+    FActorSpawnParameters SpawnParameters;
+    SpawnParameters.Owner = PlayerController;
+    FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
+    ACPP_SatelliteLauncherSpawner* SatelliteLauncherSpawner = Cast<ACPP_SatelliteLauncherSpawner>(GetWorld()->SpawnActor(SatelliteLauncherSpawnerBlueprint, &SpawnLocation, SpawnParameters));
     SatelliteLauncherSpawner->OwnerPlayerID = PlayerController->PlayerID;
 }
 
@@ -112,15 +114,27 @@ void ACPP_MultiplayerGameMode::InitializeSimulation(const FSimulationConfig& Sim
 void ACPP_MultiplayerGameMode::InitializeSatellites(TArray<FSatelliteStruct>& SatellitesConfigs)
 {
     ACPP_Planet* Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
+    TArray<AActor*> PlayerControllers;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
 
     ShuffleArray(SatellitesConfigs);
-    int AssignedPlayerID = 0;
+    int AssignedPlayerID = 0;   // PlayerID that will be assigned to each satellite
     for (const FSatelliteStruct& SatelliteConfig : SatellitesConfigs)
     {
-	    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
+        // Find the PlayerController that will own this satellite
+        ACPP_CameraOrbitController* OwnerPlayerController = Cast<ACPP_CameraOrbitController>(PlayerControllers[0]);
+        for (AActor* Actor : PlayerControllers)
+        {
+            OwnerPlayerController = Cast<ACPP_CameraOrbitController>(Actor);
+            if (OwnerPlayerController->PlayerID == AssignedPlayerID)
+            {
+                break;
+            }
+        }
 
+	    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(SatelliteConfig.OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
         FTransform SpawnTransform(FRotator(0.0f, 0.0f, 0.0f), OrbitalState.Location, FVector(SatelliteConfig.Size));
-        ACPP_Satellite* Satellite = GetWorld()->SpawnActorDeferred<ACPP_Satellite>(SatelliteBlueprint, SpawnTransform);
+        ACPP_Satellite* Satellite = GetWorld()->SpawnActorDeferred<ACPP_Satellite>(SatelliteBlueprint, SpawnTransform, OwnerPlayerController);
         Satellite->OrbitingPlanet = Planet;
         Satellite->Label = SatelliteConfig.Name;
         Satellite->OwnerPlayerID = AssignedPlayerID;
@@ -130,25 +144,6 @@ void ACPP_MultiplayerGameMode::InitializeSatellites(TArray<FSatelliteStruct>& Sa
         Satellite->FinishSpawning(SpawnTransform);
 
         AssignedPlayerID = (AssignedPlayerID + 1) % GameInstance->MaxNumberOfPlayersInSession;
-    }
-
-    TArray<AActor*> Satellites;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-    TArray<AActor*> PlayerControllers;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
-    for (AActor* Actor : PlayerControllers)
-    {
-        ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(Actor);
-
-        // Assign the owners of the satellites
-        for (AActor* ActorSatellite : Satellites)
-        {
-            ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(ActorSatellite);
-            if (Satellite->OwnerPlayerID == PlayerController->PlayerID)
-            {
-                Satellite->SetOwner(PlayerController);
-            }
-        }
     }
 }
 

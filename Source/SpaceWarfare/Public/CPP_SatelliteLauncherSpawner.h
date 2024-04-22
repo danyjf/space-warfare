@@ -59,4 +59,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+private:
+    class ACPP_CameraOrbitController* PlayerController;
+
+    UFUNCTION()
+    void DestroyRepresentations();
 };

@@ -3,6 +3,7 @@
 #include "CPP_Satellite.h"
 #include "CPP_Planet.h"
 #include "CPP_Asteroid.h"
+#include "CPP_OrbitSpline.h"
 #include "CPP_MultiplayerGameMode.h"
 #include "CPP_GravityComponent.h"
 #include "CPP_GroundStationManager.h"
@@ -14,6 +15,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 
 ACPP_Satellite::ACPP_Satellite()
@@ -43,8 +45,25 @@ void ACPP_Satellite::BeginPlay()
 	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
         SatelliteCommandManager = MultiplayerGameMode->GetGroundStationManagers()[OwnerPlayerID]->SatelliteCommandManager;
         SatelliteID = MultiplayerGameMode->NewSatelliteID();
-        MultiplayerGameMode->AllSatellites.Emplace(SatelliteID, this);
+        //MultiplayerGameMode->AllSatellites.Emplace(SatelliteID, this);
         StaticMeshComponent->OnComponentHit.AddDynamic(this, &ACPP_Satellite::OnComponentHit);
+    }
+    
+    GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites.Emplace(SatelliteID, this);
+
+    // Create the orbit spline of the satellite
+    OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
+
+    OrbitalState = FOrbitalState(GetActorLocation(), GetVelocity());
+    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, OrbitingPlanet->GravityComponent->GetGravitationalParameter());
+
+    if (IsOwnedBy(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+    {
+        OrbitSpline->SetColor(FLinearColor::Green);
+    }
+    else
+    {
+        OrbitSpline->SetColor(FLinearColor::Red);
     }
 }
 
@@ -55,6 +74,8 @@ void ACPP_Satellite::Tick(float DeltaTime)
     if (HasAuthority())
     {
 	    GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
+        OrbitalState.Location = GetActorLocation();
+        OrbitalState.Velocity = GetVelocity();
 
         // Check if it's time to execute the command, the first on the list is always next
         if (!Commands.IsEmpty() && MultiplayerGameMode->GetGameState<ACPP_GameState>()->CurrentEpoch >= Commands[0]->ExecutionTime)
@@ -64,23 +85,61 @@ void ACPP_Satellite::Tick(float DeltaTime)
             SatelliteCommandManager->ClientSatelliteExecutedCommand(SatelliteID);
         }
     }
+
+    // Update the satellite orbit
+    if (OrbitSpline->bIsVisualizationEnabled)
+    {
+        FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, OrbitingPlanet->GravityComponent->GetGravitationalParameter());
+        OrbitSpline->UpdateOrbit(OrbitalElements, OrbitingPlanet);
+    }
 }
 
 void ACPP_Satellite::Destroyed()
 {
     Super::Destroyed();
 
+    // Do this check because the Destroyed event gets called by the editor when compiling
+    if (GetWorld()->GetGameState<ACPP_GameState>())
+    {
+        GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites.Remove(SatelliteID);
+
+        OrbitSpline->Destroy();
+    }
+
     if (!HasAuthority() || !MultiplayerGameMode)
     {
         return;
     }
 
-    MultiplayerGameMode->AllSatellites.Remove(SatelliteID);
-
     // TODO: Change later, this is to remove the satellite on all players when it is destroyed
     for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
     {
         GroundStationManager->ClientSatelliteDestroyed(GetSatelliteID());
+        if (GroundStationManager->TrackedSatellites.Contains(GetSatelliteID()))
+        {
+            GroundStationManager->TrackedSatellites.Remove(GetSatelliteID());
+        }
+        if (GroundStationManager->OverpassingSatellites.Contains(GetSatelliteID()))
+        {
+            GroundStationManager->OverpassingSatellites.Remove(GetSatelliteID());
+        }
+    }
+}
+
+void ACPP_Satellite::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME_CONDITION(ACPP_Satellite, OrbitingPlanet, COND_InitialOnly);
+    DOREPLIFETIME(ACPP_Satellite, OrbitalState);
+    DOREPLIFETIME(ACPP_Satellite, SatelliteID);
+}
+
+void ACPP_Satellite::OnRep_SatelliteID()
+{
+    if (!GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites.Contains(SatelliteID))
+    {
+        GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites.Emplace(SatelliteID, this);
     }
 }
 

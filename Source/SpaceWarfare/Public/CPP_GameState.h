@@ -24,6 +24,9 @@ public:
     UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
 	int TimeScale;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TMap<int, class ACPP_Satellite*> AllSatellites;
+
 	ACPP_GameState();
 
 	// Called at a fixed DeltaTime to update physics

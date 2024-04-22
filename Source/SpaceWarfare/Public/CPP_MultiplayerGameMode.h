@@ -42,9 +42,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int StartingCurrency;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TMap<int, class ACPP_Satellite*> AllSatellites;
-
     UFUNCTION(BlueprintCallable)
     int NewSatelliteID() {return CurrentSatelliteID++;}
 
