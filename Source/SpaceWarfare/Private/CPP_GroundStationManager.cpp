@@ -151,39 +151,12 @@ void ACPP_GroundStationManager::ClientSatelliteDestroyed_Implementation(const in
     if (TrackedSatellites.Contains(SatelliteID))
     {
         TrackedSatellites.Remove(SatelliteID);
-        //SatelliteOrbits[SatelliteID]->Destroy();
-        //SatelliteOrbits.Remove(SatelliteID);
     }
 }
 
 void ACPP_GroundStationManager::ClientUpdateSatelliteFuelLevel_Implementation(const int SatelliteID, float FuelPercentage)
 {
     OnFuelLevelUpdated.Broadcast(SatelliteID, FuelPercentage);
-}
-
-void ACPP_GroundStationManager::EnableOrbitVisualization(const int SatelliteID)
-{
-    if (GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites.Contains(SatelliteID))
-    {
-        ACPP_OrbitSpline* OrbitSpline = GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites[SatelliteID]->OrbitSpline;
-        FOrbitalState OrbitalState = FOrbitalState(TrackedSatellites[SatelliteID].Position, TrackedSatellites[SatelliteID].Velocity);
-        FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
-        OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
-
-        OrbitSpline->bIsVisualizationEnabled = true;
-        OrbitSpline->SetActorHiddenInGame(false);
-    }
-}
-
-void ACPP_GroundStationManager::DisableOrbitVisualization(const int SatelliteID)
-{
-    if (GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites.Contains(SatelliteID))
-    {
-        ACPP_OrbitSpline* OrbitSpline = GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites[SatelliteID]->OrbitSpline;
-
-        OrbitSpline->bIsVisualizationEnabled = false;
-        OrbitSpline->SetActorHiddenInGame(true);
-    }
 }
 
 const FSatelliteInfo& ACPP_GroundStationManager::GetTrackedSatelliteInfo(const int SatelliteID)

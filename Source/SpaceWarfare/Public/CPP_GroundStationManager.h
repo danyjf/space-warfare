@@ -80,12 +80,6 @@ public:
     void ClientUpdateSatelliteFuelLevel(const int SatelliteID, float FuelPercentage);
 
     UFUNCTION(BlueprintCallable)
-    void EnableOrbitVisualization(const int SatelliteID);
-
-    UFUNCTION(BlueprintCallable)
-    void DisableOrbitVisualization(const int SatelliteID);
-
-    UFUNCTION(BlueprintCallable)
     const FSatelliteInfo& GetTrackedSatelliteInfo(const int SatelliteID);
 
 	// Called every frame
