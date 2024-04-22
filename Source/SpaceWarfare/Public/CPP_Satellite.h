@@ -23,11 +23,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int OwnerPlayerID;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
 	class ACPP_Planet* OrbitingPlanet;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     TArray<class UCPP_SatelliteCommand*> Commands;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    class ACPP_OrbitSpline* OrbitSpline;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     class UCPP_GravityComponent* GravityComponent;
@@ -67,9 +73,20 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+    UPROPERTY(ReplicatedUsing=OnRep_SatelliteID)
     int SatelliteID;
 	FGeographicCoordinates GeographicCoordinates;
     FSatelliteInfo SatelliteInfo;
     class ACPP_MultiplayerGameMode* MultiplayerGameMode;
     class UCPP_SatelliteCommandManager* SatelliteCommandManager;
+
+    /** 
+     * Variable used to replicate the state of the satellite to the clients 
+     * so that the orbit display can be updated
+    */
+    UPROPERTY(Replicated)
+    FOrbitalState OrbitalState;
+
+    UFUNCTION()
+    void OnRep_SatelliteID();
 };

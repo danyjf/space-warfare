@@ -73,14 +73,6 @@ void ACPP_GroundStationManager::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 
 void ACPP_GroundStationManager::UpdateSatelliteInfo()
 {
-    //TArray<AActor*> Satellites;
-    //UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_Satellite::StaticClass(), Satellites);
-    //for (AActor* Actor : Satellites)
-    //{
-    //    ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(Actor);
-    //    ClientUpdateSatelliteInfo(Satellite->GetSatelliteID(), Satellite->GetSatelliteInfo());
-    //}
-
     for (const TPair<int, ACPP_Satellite*>& Elem : OverpassingSatellites)
     {
         ClientUpdateSatelliteInfo(Elem.Key, Elem.Value->GetSatelliteInfo());
@@ -139,23 +131,6 @@ void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const i
 
     TrackedSatellites.Emplace(SatelliteID, SatelliteInfo);
     OnNewSatelliteDetected.Broadcast(SatelliteID, SatelliteInfo);
-
-    // Create the orbit spline of the satellite
-    ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
-
-    FOrbitalState OrbitalState = FOrbitalState(SatelliteInfo.Position, SatelliteInfo.Velocity);
-    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
-
-    OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
-    if (SatelliteInfo.OwnerID == OwnerPlayerID)
-    {
-        OrbitSpline->SetColor(FLinearColor::Green);
-    }
-    else
-    {
-        OrbitSpline->SetColor(FLinearColor::Red);
-    }
-    SatelliteOrbits.Emplace(SatelliteID, OrbitSpline);
 }
 
 void ACPP_GroundStationManager::ClientUpdateSatelliteInfo_Implementation(const int SatelliteID, const FSatelliteInfo& SatelliteInfo)
@@ -167,14 +142,6 @@ void ACPP_GroundStationManager::ClientUpdateSatelliteInfo_Implementation(const i
     }
 
     TrackedSatellites[SatelliteID] = SatelliteInfo;
-
-    FOrbitalState OrbitalState = FOrbitalState(SatelliteInfo.Position, SatelliteInfo.Velocity);
-    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
-
-    if (SatelliteOrbits.Contains(SatelliteID) && SatelliteOrbits[SatelliteID]->bIsVisualizationEnabled)
-    {
-        SatelliteOrbits[SatelliteID]->UpdateOrbit(OrbitalElements, Planet);
-    }
 }
 
 void ACPP_GroundStationManager::ClientSatelliteDestroyed_Implementation(const int SatelliteID)
@@ -196,23 +163,26 @@ void ACPP_GroundStationManager::ClientUpdateSatelliteFuelLevel_Implementation(co
 
 void ACPP_GroundStationManager::EnableOrbitVisualization(const int SatelliteID)
 {
-    if (SatelliteOrbits.Contains(SatelliteID))
+    if (GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites.Contains(SatelliteID))
     {
+        ACPP_OrbitSpline* OrbitSpline = GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites[SatelliteID]->OrbitSpline;
         FOrbitalState OrbitalState = FOrbitalState(TrackedSatellites[SatelliteID].Position, TrackedSatellites[SatelliteID].Velocity);
         FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
-        SatelliteOrbits[SatelliteID]->UpdateOrbit(OrbitalElements, Planet);
+        OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
 
-        SatelliteOrbits[SatelliteID]->bIsVisualizationEnabled = true;
-        SatelliteOrbits[SatelliteID]->SetActorHiddenInGame(false);
+        OrbitSpline->bIsVisualizationEnabled = true;
+        OrbitSpline->SetActorHiddenInGame(false);
     }
 }
 
 void ACPP_GroundStationManager::DisableOrbitVisualization(const int SatelliteID)
 {
-    if (SatelliteOrbits.Contains(SatelliteID))
+    if (GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites.Contains(SatelliteID))
     {
-        SatelliteOrbits[SatelliteID]->bIsVisualizationEnabled = false;
-        SatelliteOrbits[SatelliteID]->SetActorHiddenInGame(true);
+        ACPP_OrbitSpline* OrbitSpline = GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites[SatelliteID]->OrbitSpline;
+
+        OrbitSpline->bIsVisualizationEnabled = false;
+        OrbitSpline->SetActorHiddenInGame(true);
     }
 }
 
