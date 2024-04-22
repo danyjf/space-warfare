@@ -115,8 +115,14 @@ void ACPP_Satellite::Destroyed()
     for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
     {
         GroundStationManager->ClientSatelliteDestroyed(GetSatelliteID());
-        GroundStationManager->TrackedSatellites.Remove(GetSatelliteID());
-        GroundStationManager->OverpassingSatellites.Remove(GetSatelliteID());
+        if (GroundStationManager->TrackedSatellites.Contains(GetSatelliteID()))
+        {
+            GroundStationManager->TrackedSatellites.Remove(GetSatelliteID());
+        }
+        if (GroundStationManager->OverpassingSatellites.Contains(GetSatelliteID()))
+        {
+            GroundStationManager->OverpassingSatellites.Remove(GetSatelliteID());
+        }
     }
 }
 

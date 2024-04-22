@@ -83,10 +83,14 @@ void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Sat
 {
     FSatelliteInfo SatelliteInfo = Satellite->GetSatelliteInfo();
 
-    if (Satellite->OwnerPlayerID == OwnerPlayerID)
+    if (!OverpassingSatellites.Contains(Satellite->GetSatelliteID()))
     {
         OverpassingSatellites.Emplace(Satellite->GetSatelliteID(), Satellite);
     }
+    //if (Satellite->OwnerPlayerID == OwnerPlayerID)
+    //{
+    //    OverpassingSatellites.Emplace(Satellite->GetSatelliteID(), Satellite);
+    //}
 
     if (!TrackedSatellites.Contains(Satellite->GetSatelliteID()))
     {
@@ -98,10 +102,14 @@ void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Sat
 
 void ACPP_GroundStationManager::SatelliteExitedOverpassArea(ACPP_Satellite* Satellite)
 {
-    if (Satellite->OwnerPlayerID == OwnerPlayerID)
+    if (OverpassingSatellites.Contains(Satellite->GetSatelliteID()))
     {
         OverpassingSatellites.Remove(Satellite->GetSatelliteID());
     }
+    //if (Satellite->OwnerPlayerID == OwnerPlayerID)
+    //{
+    //    OverpassingSatellites.Remove(Satellite->GetSatelliteID());
+    //}
 }
 
 void ACPP_GroundStationManager::ClientNewAsteroidTracked_Implementation(const FName& AsteroidID, const FVector& Location, const FVector& Velocity)
