@@ -27,7 +27,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int NumberOfPoints;
 
-    UPROPERTY()
+    UPROPERTY(BlueprintReadWrite)
     bool bIsVisualizationEnabled;
 
     UFUNCTION(BlueprintCallable)

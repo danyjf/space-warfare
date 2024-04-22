@@ -87,8 +87,11 @@ void ACPP_Satellite::Tick(float DeltaTime)
     }
 
     // Update the satellite orbit
-    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, OrbitingPlanet->GravityComponent->GetGravitationalParameter());
-    OrbitSpline->UpdateOrbit(OrbitalElements, OrbitingPlanet);
+    if (OrbitSpline->bIsVisualizationEnabled)
+    {
+        FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, OrbitingPlanet->GravityComponent->GetGravitationalParameter());
+        OrbitSpline->UpdateOrbit(OrbitalElements, OrbitingPlanet);
+    }
 }
 
 void ACPP_Satellite::Destroyed()
