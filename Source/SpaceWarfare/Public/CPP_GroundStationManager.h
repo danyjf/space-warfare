@@ -38,9 +38,6 @@ public:
     TMap<int, FSatelliteInfo> TrackedSatellites;
 
     UPROPERTY(BlueprintReadOnly)
-    TMap<int, class ACPP_OrbitSpline*> SatelliteOrbits;
-
-    UPROPERTY(BlueprintReadOnly)
     TMap<FName, class ACPP_OrbitSpline*> AsteroidOrbits;
 
     UPROPERTY(BlueprintAssignable)

@@ -151,8 +151,8 @@ void ACPP_GroundStationManager::ClientSatelliteDestroyed_Implementation(const in
     if (TrackedSatellites.Contains(SatelliteID))
     {
         TrackedSatellites.Remove(SatelliteID);
-        SatelliteOrbits[SatelliteID]->Destroy();
-        SatelliteOrbits.Remove(SatelliteID);
+        //SatelliteOrbits[SatelliteID]->Destroy();
+        //SatelliteOrbits.Remove(SatelliteID);
     }
 }
 

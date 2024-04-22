@@ -99,6 +99,8 @@ void ACPP_Satellite::Destroyed()
     if (GetWorld()->GetGameState<ACPP_GameState>())
     {
         GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites.Remove(SatelliteID);
+
+        OrbitSpline->Destroy();
     }
 
     if (!HasAuthority() || !MultiplayerGameMode)
