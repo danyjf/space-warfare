@@ -65,10 +65,10 @@ public:
     void ClientNewAsteroidTracked(const FName& AsteroidID, const FVector& Location, const FVector& Velocity);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientNewSatelliteTracked(const int SatelliteID, const FSatelliteInfo& SatelliteInfo);
+    void ClientNewSatelliteTracked(const int SatelliteID, int OwnerID, const FString& Label, float Mass, const FVector& Position, const FRotator& Rotation, const FVector& Velocity, const FDateTime& Epoch);
 
     UFUNCTION(BlueprintCallable, Client, Unreliable)
-    void ClientUpdateSatelliteInfo(const int SatelliteID, const FSatelliteInfo& SatelliteInfo);
+    void ClientUpdateSatelliteInfo(const int SatelliteID, const FVector& Position, const FRotator& Rotation, const FVector& Velocity, const FDateTime& Epoch);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientSatelliteDestroyed(const int SatelliteID);

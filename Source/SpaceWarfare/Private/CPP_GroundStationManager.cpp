@@ -71,17 +71,32 @@ void ACPP_GroundStationManager::GetLifetimeReplicatedProps(TArray<FLifetimePrope
     DOREPLIFETIME_CONDITION(ACPP_GroundStationManager, OwnerPlayerID, COND_InitialOnly);
 }
 
+/**
+ * Send updated info of the satellites overpassing the ground stations 
+ * to the clients
+*/
 void ACPP_GroundStationManager::UpdateSatelliteInfo()
 {
     for (const TPair<int, ACPP_Satellite*>& Elem : OverpassingSatellites)
     {
-        ClientUpdateSatelliteInfo(Elem.Key, Elem.Value->GetSatelliteInfo());
+        const ACPP_Satellite* Satellite = Elem.Value;
+        ClientUpdateSatelliteInfo(
+            Elem.Key, 
+            Satellite->GetActorLocation(), 
+            Satellite->GetActorRotation(), 
+            Satellite->GetVelocity(), 
+            MultiplayerGameMode->GetGameState<ACPP_GameState>()->CurrentEpoch
+        );
     }
 }
 
+/**
+ * Called on the server to decide what to do with a satellite that entered
+ * the overpassing area of a ground station
+*/
 void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite)
 {
-    FSatelliteInfo SatelliteInfo = Satellite->GetSatelliteInfo();
+    //FSatelliteInfo SatelliteInfo = Satellite->GetSatelliteInfo();
 
     if (!OverpassingSatellites.Contains(Satellite->GetSatelliteID()))
     {
@@ -90,12 +105,25 @@ void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Sat
 
     if (!TrackedSatellites.Contains(Satellite->GetSatelliteID()))
     {
-        ClientNewSatelliteTracked(Satellite->GetSatelliteID(), SatelliteInfo);
+        ClientNewSatelliteTracked(
+            Satellite->GetSatelliteID(),
+            Satellite->OwnerPlayerID,
+            Satellite->Label,
+            Satellite->StaticMeshComponent->GetMass(),
+            Satellite->GetActorLocation(),
+            Satellite->GetActorRotation(),
+            Satellite->GetVelocity(),
+            MultiplayerGameMode->GetGameState<ACPP_GameState>()->CurrentEpoch
+        );
     }
 
     SatelliteCommandManager->SendPendingCommandsToSatellite(Satellite->GetSatelliteID());
 }
 
+/**
+ * Called on the server to decide what to do with a satellite that left 
+ * the overpassing area of a ground station
+*/
 void ACPP_GroundStationManager::SatelliteExitedOverpassArea(ACPP_Satellite* Satellite)
 {
     if (OverpassingSatellites.Contains(Satellite->GetSatelliteID()))
@@ -122,26 +150,45 @@ void ACPP_GroundStationManager::ClientAsteroidDestroyed_Implementation(const FNa
     AsteroidOrbits.Remove(AsteroidID);
 }
 
-void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const int SatelliteID, const FSatelliteInfo& SatelliteInfo)
+/**
+ * Called on the client every time a new satellite is detected by the ground stations
+ * to store the information of this satellite on the client
+*/
+void ACPP_GroundStationManager::ClientNewSatelliteTracked_Implementation(const int SatelliteID, int OwnerID, const FString& Label, float Mass, const FVector& Position, const FRotator& Rotation, const FVector& Velocity, const FDateTime& Epoch)
 {
     if (TrackedSatellites.Contains(SatelliteID))
     {
         return;
     }
 
+    FSatelliteInfo SatelliteInfo;
+    SatelliteInfo.OwnerID = OwnerID;
+    SatelliteInfo.Label = Label;
+    SatelliteInfo.Mass = Mass;
+    SatelliteInfo.Position = Position;
+    SatelliteInfo.Rotation = Rotation;
+    SatelliteInfo.Velocity = Velocity;
+    SatelliteInfo.Epoch = Epoch;
+
     TrackedSatellites.Emplace(SatelliteID, SatelliteInfo);
     OnNewSatelliteDetected.Broadcast(SatelliteID, SatelliteInfo);
 }
 
-void ACPP_GroundStationManager::ClientUpdateSatelliteInfo_Implementation(const int SatelliteID, const FSatelliteInfo& SatelliteInfo)
+/**
+ * Update the position, rotation and velocity of know satellites
+*/
+void ACPP_GroundStationManager::ClientUpdateSatelliteInfo_Implementation(const int SatelliteID, const FVector& Position, const FRotator& Rotation, const FVector& Velocity, const FDateTime& Epoch)
 {
     if (!TrackedSatellites.Contains(SatelliteID))
     {
-        ClientNewSatelliteTracked(SatelliteID, SatelliteInfo);
         return;
     }
 
-    TrackedSatellites[SatelliteID] = SatelliteInfo;
+    FSatelliteInfo& SatelliteInfo = TrackedSatellites[SatelliteID];
+    SatelliteInfo.Position = Position;
+    SatelliteInfo.Rotation = Rotation;
+    SatelliteInfo.Velocity = Velocity;
+    SatelliteInfo.Epoch = Epoch;
 }
 
 void ACPP_GroundStationManager::ClientSatelliteDestroyed_Implementation(const int SatelliteID)

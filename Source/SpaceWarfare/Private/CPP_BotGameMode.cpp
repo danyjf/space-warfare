@@ -6,6 +6,7 @@
 #include "CPP_GroundStationManager.h"
 #include "CPP_Planet.h"
 #include "CPP_Satellite.h"
+#include "CPP_GameState.h"
 #include "JsonReadWrite.h"
 
 #include "Kismet/KismetSystemLibrary.h"
@@ -77,7 +78,16 @@ void ACPP_BotGameMode::CheckAllPlayersFinishedPlacingGroundStations()
         for (AActor* SatelliteActor : Satellites)
         {
             ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(SatelliteActor);
-            GroundStationManager->ClientNewSatelliteTracked(Satellite->GetSatelliteID(), Satellite->GetSatelliteInfo());
+            GroundStationManager->ClientNewSatelliteTracked(
+                Satellite->GetSatelliteID(), 
+                Satellite->OwnerPlayerID,
+                Satellite->Label,
+                Satellite->StaticMeshComponent->GetMass(),
+                Satellite->GetActorLocation(),
+                Satellite->GetActorRotation(),
+                Satellite->GetVelocity(),
+                GameState->CurrentEpoch
+            );
         }
     }
 

@@ -165,19 +165,6 @@ const FGeographicCoordinates& ACPP_Satellite::GetGeographicCoordinates() const
 	return GeographicCoordinates;
 }
 
-const FSatelliteInfo& ACPP_Satellite::GetSatelliteInfo()
-{
-    SatelliteInfo.OwnerID = OwnerPlayerID;
-    SatelliteInfo.Label = Label;
-    SatelliteInfo.Position = GetActorLocation();
-    SatelliteInfo.Rotation = GetActorRotation();
-    SatelliteInfo.Velocity = GetVelocity();
-    SatelliteInfo.Mass = StaticMeshComponent->GetMass();
-    SatelliteInfo.Epoch = MultiplayerGameMode->GetGameState<ACPP_GameState>()->CurrentEpoch;
-
-	return SatelliteInfo;
-}
-
 void ACPP_Satellite::AddCommand(UCPP_SatelliteCommand* Command)
 {
     Commands.Add(Command);

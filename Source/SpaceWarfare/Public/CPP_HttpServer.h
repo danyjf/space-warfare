@@ -37,6 +37,9 @@ struct FSatelliteResponse
 
     UPROPERTY()
     FDateTime Epoch;
+
+    UPROPERTY()
+    bool IsTargeted;
 };
 
 USTRUCT(BlueprintType)
