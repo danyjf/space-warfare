@@ -74,13 +74,13 @@ struct FSatelliteInfo
 	GENERATED_BODY()
 
     UPROPERTY(BlueprintReadWrite)
-    int OwnerID;
+    int OwnerID = -1;
 
     UPROPERTY(BlueprintReadWrite)
-    FString Label;
+    FString Label = "";
 
     UPROPERTY(BlueprintReadWrite)
-    float Mass;
+    float Mass = -1.0f;
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector Position;
@@ -93,6 +93,9 @@ struct FSatelliteInfo
 
     UPROPERTY(BlueprintReadWrite)
     FDateTime Epoch;
+
+    UPROPERTY(BlueprintReadWrite)
+    bool IsTargeted = false;
 };
 
 /**

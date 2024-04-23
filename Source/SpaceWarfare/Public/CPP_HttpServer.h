@@ -37,6 +37,9 @@ struct FSatelliteResponse
 
     UPROPERTY()
     FDateTime Epoch;
+
+    UPROPERTY()
+    bool IsTargeted;
 };
 
 USTRUCT(BlueprintType)
@@ -49,6 +52,9 @@ struct FSatelliteListResponse
 
     UPROPERTY()
     int Count;
+
+    UPROPERTY()
+    FDateTime RequestTime;
 
 	UPROPERTY()
 	TArray<FSatelliteResponse> Satellites;

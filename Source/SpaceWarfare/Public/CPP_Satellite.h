@@ -48,9 +48,6 @@ public:
 	const FGeographicCoordinates& GetGeographicCoordinates() const;
 
     UFUNCTION(BlueprintCallable)
-    const FSatelliteInfo& GetSatelliteInfo();
-
-    UFUNCTION(BlueprintCallable)
     void AddCommand(UCPP_SatelliteCommand* Command);
 
     UFUNCTION(BlueprintCallable)

@@ -5,6 +5,7 @@
 #include "CPP_MultiplayerGameMode.h"
 #include "CPP_SatelliteCommandManager.h"
 #include "CPP_SatelliteCommands.h"
+#include "CPP_GameState.h"
 #include "SatelliteCommandDataStructs.h"
 
 #include "HttpPath.h"
@@ -91,6 +92,7 @@ bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const 
     FSatelliteListResponse SatelliteListResponse;
     SatelliteListResponse.ClientID = GroundStationManager->OwnerPlayerID;
     SatelliteListResponse.Count = GroundStationManager->TrackedSatellites.Num();
+    SatelliteListResponse.RequestTime = GetWorld()->GetGameState<ACPP_GameState>()->CurrentEpoch;
     for (const TPair<int, FSatelliteInfo>& Elem : GroundStationManager->TrackedSatellites)
     {
         const int& SatelliteID = Elem.Key;
@@ -105,6 +107,7 @@ bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const 
         SatelliteResponse.Rotation = SatelliteInfo.Rotation;
         SatelliteResponse.Velocity = SatelliteInfo.Velocity;
         SatelliteResponse.Epoch = SatelliteInfo.Epoch;
+        SatelliteResponse.IsTargeted = SatelliteInfo.IsTargeted;
 
         SatelliteListResponse.Satellites.Add(SatelliteResponse);
     }
