@@ -96,8 +96,6 @@ void ACPP_GroundStationManager::UpdateSatelliteInfo()
 */
 void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite)
 {
-    //FSatelliteInfo SatelliteInfo = Satellite->GetSatelliteInfo();
-
     if (!OverpassingSatellites.Contains(Satellite->GetSatelliteID()))
     {
         OverpassingSatellites.Emplace(Satellite->GetSatelliteID(), Satellite);
