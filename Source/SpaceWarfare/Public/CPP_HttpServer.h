@@ -50,6 +50,9 @@ struct FSatelliteListResponse
     UPROPERTY()
     int Count;
 
+    UPROPERTY()
+    FDateTime RequestTime;
+
 	UPROPERTY()
 	TArray<FSatelliteResponse> Satellites;
 };
