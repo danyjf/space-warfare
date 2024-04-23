@@ -107,7 +107,7 @@ bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const 
         SatelliteResponse.Rotation = SatelliteInfo.Rotation;
         SatelliteResponse.Velocity = SatelliteInfo.Velocity;
         SatelliteResponse.Epoch = SatelliteInfo.Epoch;
-        SatelliteResponse.IsTargeted = false;
+        SatelliteResponse.IsTargeted = SatelliteInfo.IsTargeted;
 
         SatelliteListResponse.Satellites.Add(SatelliteResponse);
     }
