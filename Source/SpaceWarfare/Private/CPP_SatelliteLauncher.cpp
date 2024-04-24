@@ -98,8 +98,6 @@ FVector ACPP_SatelliteLauncher::GetVelocityFromAngle(float Angle, float Value)
 void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, const FString& Label, TSubclassOf<ACPP_Satellite> SatelliteClass)
 {
     SatelliteBlueprintClass = SatelliteClass;
-    //float Mass = 1500.0f;
-    //float Size = 100.0f;
 
     ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
     if (PlayerController->Currency < LaunchCost)
@@ -117,7 +115,6 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
     Satellite->OwnerPlayerID = OwnerPlayerID;
     Satellite->SetOwner(PlayerController);
     Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
-    //Satellite->GravityComponent->SetMass(Mass);
     Satellite->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * Satellite->StaticMeshComponent->GetMass());
     Satellite->FinishSpawning(SpawnLocation);
 
@@ -137,8 +134,6 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
 void ACPP_SatelliteLauncher::ServerLaunchSatelliteWithOrbitalState_Implementation(FOrbitalState OrbitalState, const FString& Label, TSubclassOf<ACPP_Satellite> SatelliteClass)
 {
     SatelliteBlueprintClass = SatelliteClass;
-    //float Mass = 1500.0f;
-    //float Size = 100.0f;
 
     ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
     if (PlayerController->Currency < LaunchCost)
@@ -154,7 +149,6 @@ void ACPP_SatelliteLauncher::ServerLaunchSatelliteWithOrbitalState_Implementatio
     Satellite->OwnerPlayerID = OwnerPlayerID;
     Satellite->SetOwner(PlayerController);
     Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
-    //Satellite->GravityComponent->SetMass(Mass);
     Satellite->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * Satellite->StaticMeshComponent->GetMass());
     Satellite->FinishSpawning(SpawnLocation);
 
