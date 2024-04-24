@@ -95,8 +95,12 @@ FVector ACPP_SatelliteLauncher::GetVelocityFromAngle(float Angle, float Value)
     return Velocity;
 }
 
-void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Label)
+void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, const FString& Label, TSubclassOf<ACPP_Satellite> SatelliteClass)
 {
+    SatelliteBlueprintClass = SatelliteClass;
+    //float Mass = 1500.0f;
+    //float Size = 100.0f;
+
     ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
     if (PlayerController->Currency < LaunchCost)
     {
@@ -106,15 +110,15 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
 
     FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
 
-    FTransform SpawnLocation(FRotator(0.0f, 0.0f, 0.0f), OrbitalState.Location, FVector(Size));
+    FTransform SpawnLocation(FRotator(0.0f, 0.0f, 0.0f), OrbitalState.Location);
     ACPP_Satellite* Satellite = GetWorld()->SpawnActorDeferred<ACPP_Satellite>(SatelliteBlueprintClass, SpawnLocation, PlayerController);
     Satellite->OrbitingPlanet = Planet;
     Satellite->Label = Label;
     Satellite->OwnerPlayerID = OwnerPlayerID;
     Satellite->SetOwner(PlayerController);
     Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
-    Satellite->GravityComponent->SetMass(Mass);
-    Satellite->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * Mass);
+    //Satellite->GravityComponent->SetMass(Mass);
+    Satellite->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * Satellite->StaticMeshComponent->GetMass());
     Satellite->FinishSpawning(SpawnLocation);
 
     PlayerController->SpendCurrency(LaunchCost);
@@ -130,8 +134,12 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
     }
 }
 
-void ACPP_SatelliteLauncher::ServerLaunchSatelliteWithOrbitalState_Implementation(FOrbitalState OrbitalState, float Size, float Mass, const FString& Label)
+void ACPP_SatelliteLauncher::ServerLaunchSatelliteWithOrbitalState_Implementation(FOrbitalState OrbitalState, const FString& Label, TSubclassOf<ACPP_Satellite> SatelliteClass)
 {
+    SatelliteBlueprintClass = SatelliteClass;
+    //float Mass = 1500.0f;
+    //float Size = 100.0f;
+
     ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
     if (PlayerController->Currency < LaunchCost)
     {
@@ -139,15 +147,15 @@ void ACPP_SatelliteLauncher::ServerLaunchSatelliteWithOrbitalState_Implementatio
         return;
     }
 
-    FTransform SpawnLocation(FRotator(0.0f, 0.0f, 0.0f), OrbitalState.Location, FVector(Size));
+    FTransform SpawnLocation(FRotator(0.0f, 0.0f, 0.0f), OrbitalState.Location);
     ACPP_Satellite* Satellite = GetWorld()->SpawnActorDeferred<ACPP_Satellite>(SatelliteBlueprintClass, SpawnLocation, PlayerController);
     Satellite->OrbitingPlanet = Planet;
     Satellite->Label = Label;
     Satellite->OwnerPlayerID = OwnerPlayerID;
     Satellite->SetOwner(PlayerController);
     Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
-    Satellite->GravityComponent->SetMass(Mass);
-    Satellite->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * Mass);
+    //Satellite->GravityComponent->SetMass(Mass);
+    Satellite->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * Satellite->StaticMeshComponent->GetMass());
     Satellite->FinishSpawning(SpawnLocation);
 
     PlayerController->SpendCurrency(LaunchCost);
