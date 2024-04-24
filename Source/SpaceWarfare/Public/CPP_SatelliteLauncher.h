@@ -42,10 +42,10 @@ public:
     FVector GetVelocityFromAngle(float Angle, float Value);
     
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerLaunchSatellite(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Label);
+    void ServerLaunchSatellite(FOrbitalElements OrbitalElements, const FString& Label, TSubclassOf<class ACPP_Satellite> Satellite);
 
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerLaunchSatelliteWithOrbitalState(FOrbitalState OrbitalState, float Size, float Mass, const FString& Label);
+    void ServerLaunchSatelliteWithOrbitalState(FOrbitalState OrbitalState, const FString& Label, TSubclassOf<class ACPP_Satellite> Satellite);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
