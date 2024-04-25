@@ -60,12 +60,57 @@ struct FSatelliteListResponse
 	TArray<FSatelliteResponse> Satellites;
 };
 
+USTRUCT(BlueprintType)
+struct FGroundStationResponse
+{
+    GENERATED_BODY();
+
+    UPROPERTY()
+    int OwnerID;
+
+    UPROPERTY()
+    FString Label;
+
+    UPROPERTY()
+    float FOV;
+
+    UPROPERTY()
+    float Altitude;
+
+    UPROPERTY()
+    float Latitude;
+
+    UPROPERTY()
+    float Longitude;
+};
+
+USTRUCT(BlueprintType)
+struct FGroundStationListResponse
+{
+	GENERATED_BODY();
+
+    UPROPERTY()
+    int ClientID;
+
+    UPROPERTY()
+    int Count;
+
+    UPROPERTY()
+    FDateTime RequestTime;
+
+	UPROPERTY()
+	TArray<FGroundStationResponse> GroundStations;
+};
+
 UCLASS()
 class SPACEWARFARE_API ACPP_HttpServer : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
+    UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Http")
+    FString GroundStationListPath = TEXT("/ground-stations");
+
     UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Http")
 	FString SatelliteListPath = TEXT("/satellites");
 
@@ -95,6 +140,7 @@ private:
 	void StopServer();
 
 	// Callbacks for HttpRequests
+	bool GetGroundStationList(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
 	bool GetSatelliteList(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
 	bool CreateThrustCommand(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
 

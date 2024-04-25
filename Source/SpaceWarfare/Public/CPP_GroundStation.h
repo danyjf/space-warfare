@@ -18,13 +18,13 @@ public:
     UPROPERTY(BlueprintReadWrite)
     class ACPP_GroundStationManager* GroundStationManager;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
     FString Name;
 
     UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
     int OwnerPlayerID;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
     float DetectionFieldOfView;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)

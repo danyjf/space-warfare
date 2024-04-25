@@ -79,19 +79,17 @@ void ACPP_GroundStation::BeginPlay()
     if (!HasAuthority())
     {
         SetActorHiddenInGame(false);
+
+        GroundStationManager = Cast<ACPP_GroundStationManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_GroundStationManager::StaticClass()));
+        GroundStationManager->GroundStations.Add(this);
+
         return;
     }
 
 	MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
-    // Find the ground station manager responsible for this ground station
-    for(ACPP_GroundStationManager* Manager : MultiplayerGameMode->GetGroundStationManagers())
-    {
-        if (Manager->OwnerPlayerID == OwnerPlayerID)
-        {
-            GroundStationManager = Manager;
-        }
-    }
+    GroundStationManager = MultiplayerGameMode->GetGroundStationManagers()[OwnerPlayerID];
+    GroundStationManager->GroundStations.Add(this);
 
     DetectionCone->OnComponentBeginOverlap.AddDynamic(this, &ACPP_GroundStation::OnComponentBeginOverlap);
     DetectionCone->OnComponentEndOverlap.AddDynamic(this, &ACPP_GroundStation::OnComponentEndOverlap);
@@ -114,6 +112,8 @@ void ACPP_GroundStation::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME_CONDITION(ACPP_GroundStation, OwnerPlayerID, COND_InitialOnly);
+    DOREPLIFETIME_CONDITION(ACPP_GroundStation, Name, COND_InitialOnly);
+    DOREPLIFETIME_CONDITION(ACPP_GroundStation, DetectionFieldOfView, COND_InitialOnly);
 }
 
 void ACPP_GroundStation::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)

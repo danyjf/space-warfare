@@ -97,7 +97,13 @@ void ACPP_SatelliteLauncherSpawner::ServerSpawnSatelliteLauncher_Implementation(
     GeographicCoordinates.Altitude = 0.0f;
     SatelliteLauncher->SetGeographicCoordinates(GeographicCoordinates);
 
-    // When not on casual game mode create ground station on same location as satellite launcher
+    /**
+     * When on casual game mode create just a ground station representation, since the
+     * ground stations are not used in this game mode
+     * 
+     * When not on casual game mode create and actual ground station on same location 
+     * as satellite launcher
+    */
     if (Cast<ACPP_CasualGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
     {
         ACPP_GroundStationRepresentation* GroundStation = GetWorld()->SpawnActorDeferred<ACPP_GroundStationRepresentation>(GroundStationRepresentationBlueprint, SpawnLocation, PlayerController);
@@ -112,10 +118,10 @@ void ACPP_SatelliteLauncherSpawner::ServerSpawnSatelliteLauncher_Implementation(
         ACPP_GroundStation* GroundStation = GetWorld()->SpawnActorDeferred<ACPP_GroundStation>(GroundStationBlueprint, SpawnLocation, PlayerController);
         GroundStation->Planet = Planet;
         GroundStation->OwnerPlayerID = OwnerPlayerID;
+        GroundStation->Name = "Satellite Launcher Station";
         GroundStation->AttachToActor(Planet, FAttachmentTransformRules::KeepWorldTransform);
-        GroundStation->FinishSpawning(SpawnLocation);
-
         GroundStation->SetGeographicCoordinates(GeographicCoordinates);
+        GroundStation->FinishSpawning(SpawnLocation);
     }
 
     if (Cast<ACPP_BotGameMode>(UGameplayStatics::GetGameMode(GetWorld())))

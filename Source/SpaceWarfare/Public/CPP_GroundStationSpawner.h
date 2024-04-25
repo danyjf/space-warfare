@@ -36,6 +36,9 @@ public:
     FGroundStationRepresentationUpdate OnUpdateGroundStationRepresentation;
 
     UFUNCTION()
+    int GetGroundStationID() { return CurrentGroundStationNumber++; }
+
+    UFUNCTION()
     void DestroyGroundStationRepresentation();
 
     UFUNCTION(BlueprintCallable)
@@ -62,4 +65,6 @@ protected:
 
 private:
     class ACPP_CameraOrbitController* CameraOrbitController;
+
+    int CurrentGroundStationNumber;
 };

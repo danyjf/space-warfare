@@ -18,6 +18,7 @@ ACPP_GroundStationSpawner::ACPP_GroundStationSpawner()
 	PrimaryActorTick.bCanEverTick = false;
 
     bIsChoosingLocation = false;
+    CurrentGroundStationNumber = 0;
 }
 
 // Called when the game starts or when spawned
@@ -70,16 +71,18 @@ void ACPP_GroundStationSpawner::ServerSpawnGroundStation_Implementation(FVector 
         return;
     }
     
+    FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
+    GeographicCoordinates.Altitude = 0.0f;
+
     FTransform SpawnLocation(FVector(0.0f, 0.0f, 0.0f));
     ACPP_GroundStation* GroundStation = GetWorld()->SpawnActorDeferred<ACPP_GroundStation>(GroundStationBlueprint, SpawnLocation, PlayerController);
     GroundStation->Planet = Planet;
     GroundStation->OwnerPlayerID = OwnerPlayerID;
+    GroundStation->Name = "Ground Station " + FString::FromInt(CurrentGroundStationNumber);
     GroundStation->AttachToActor(Planet, FAttachmentTransformRules::KeepWorldTransform);
-    GroundStation->FinishSpawning(SpawnLocation);
-
-    FGeographicCoordinates GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(Planet, Location);
-    GeographicCoordinates.Altitude = 0.0f;
     GroundStation->SetGeographicCoordinates(GeographicCoordinates);
+    GroundStation->FinishSpawning(SpawnLocation);
+    CurrentGroundStationNumber++;
 
     GroundStation->UpdateCost();
 
@@ -87,6 +90,7 @@ void ACPP_GroundStationSpawner::ServerSpawnGroundStation_Implementation(FVector 
     {
         UKismetSystemLibrary::PrintString(GetWorld(), "Not enough money to purchase ground station!!!");
         GroundStation->Destroy();
+        CurrentGroundStationNumber--;
         return;
     }
 

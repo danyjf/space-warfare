@@ -30,6 +30,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
+
+    UPROPERTY(BlueprintReadOnly)
+    TArray<class ACPP_GroundStation*> GroundStations;
     
     UPROPERTY(BlueprintReadOnly)
     TMap<int, ACPP_Satellite*> OverpassingSatellites;

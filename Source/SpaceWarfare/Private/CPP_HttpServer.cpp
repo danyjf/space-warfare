@@ -2,6 +2,7 @@
 
 #include "CPP_HttpServer.h"
 #include "CPP_GroundStationManager.h"
+#include "CPP_GroundStation.h"
 #include "CPP_MultiplayerGameMode.h"
 #include "CPP_SatelliteCommandManager.h"
 #include "CPP_SatelliteCommands.h"
@@ -62,6 +63,8 @@ void ACPP_HttpServer::StartServer()
 
 	if (HttpRouter.IsValid())
 	{
+		HttpRouter->BindRoute(FHttpPath(GroundStationListPath), EHttpServerRequestVerbs::VERB_GET,
+			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return GetGroundStationList(Request, OnComplete); });
 		HttpRouter->BindRoute(FHttpPath(SatelliteListPath), EHttpServerRequestVerbs::VERB_GET,
 			[this](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) { return GetSatelliteList(Request, OnComplete); });
 		HttpRouter->BindRoute(FHttpPath(ThrustCommandPath), EHttpServerRequestVerbs::VERB_POST,
@@ -83,6 +86,36 @@ void ACPP_HttpServer::StopServer()
 {
     FHttpServerModule& HttpServerModule = FHttpServerModule::Get();
 	HttpServerModule.StopAllListeners();
+}
+
+bool ACPP_HttpServer::GetGroundStationList(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
+{
+    RequestPrint(Request);
+
+    FGroundStationListResponse GroundStationListResponse;
+    GroundStationListResponse.ClientID = GroundStationManager->OwnerPlayerID;
+    GroundStationListResponse.Count = GroundStationManager->GroundStations.Num();
+    GroundStationListResponse.RequestTime = GetWorld()->GetGameState<ACPP_GameState>()->CurrentEpoch;
+    for (ACPP_GroundStation* GroundStation : GroundStationManager->GroundStations)
+    {
+        FGroundStationResponse GroundStationResponse;
+        GroundStationResponse.OwnerID = GroundStation->OwnerPlayerID;
+        GroundStationResponse.Label = GroundStation->Name;
+        GroundStationResponse.FOV = GroundStation->DetectionFieldOfView;
+        GroundStationResponse.Altitude = GroundStation->GeographicCoordinates.Altitude;
+        GroundStationResponse.Latitude = GroundStation->GeographicCoordinates.Latitude;
+        GroundStationResponse.Longitude = GroundStation->GeographicCoordinates.Longitude;
+
+        GroundStationListResponse.GroundStations.Add(GroundStationResponse);
+    }
+
+    FString JsonGroundStationList;
+    FJsonObjectConverter::UStructToJsonObjectString<FGroundStationListResponse>(GroundStationListResponse, JsonGroundStationList);
+
+	TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonGroundStationList, TEXT("application/json"));
+    
+	OnComplete(MoveTemp(Response));
+	return true;
 }
 
 bool ACPP_HttpServer::GetSatelliteList(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
