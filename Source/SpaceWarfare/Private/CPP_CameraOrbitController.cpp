@@ -22,6 +22,7 @@ ACPP_CameraOrbitController::ACPP_CameraOrbitController()
 
     PlayerID = -1;
     bHasNecessaryReplicatedVariables = false;
+    bMouseInputEnabled = true;
     PlayerStatus = EPlayerStatus::WAITING;
 }
 
@@ -108,6 +109,11 @@ void ACPP_CameraOrbitController::SpendCurrency(int Amount)
 
 void ACPP_CameraOrbitController::MouseSelect(const FInputActionValue& Value)
 {
+    if (!bMouseInputEnabled)
+    {
+        return;
+    }
+
     FHitResult HitResult;
     GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, HitResult);
     AActor* HitActor = HitResult.GetActor();
@@ -176,6 +182,11 @@ void ACPP_CameraOrbitController::MouseSelect(const FInputActionValue& Value)
 
 void ACPP_CameraOrbitController::MouseDrag(const FInputActionValue& Value)
 {
+    if (!bMouseInputEnabled)
+    {
+        return;
+    }
+
     PlayerPawn->AddControllerYawInput(Value.Get<FInputActionValue::Axis2D>().X);
     PlayerPawn->AddControllerPitchInput(-Value.Get<FInputActionValue::Axis2D>().Y);
 }

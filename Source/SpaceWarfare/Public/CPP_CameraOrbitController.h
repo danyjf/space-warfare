@@ -37,6 +37,9 @@ public:
     EPlayerStatus PlayerStatus;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bMouseInputEnabled;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bHasNecessaryReplicatedVariables;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
