@@ -128,6 +128,10 @@ void ACPP_SatelliteLauncherSpawner::ServerSpawnSatelliteLauncher_Implementation(
     {
         PlayerController->PlayerStatus = EPlayerStatus::PLACING_GROUND_STATIONS;
     }
+    else
+    {
+        PlayerController->PlayerStatus = EPlayerStatus::WAITING;
+    }
 }
 
 void ACPP_SatelliteLauncherSpawner::DestroyRepresentations()
