@@ -26,7 +26,7 @@ void ACPP_AsteroidSpawner::BeginPlay()
 	Super::BeginPlay();
 
 	MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-    SpawnAtPlanet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
+    Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
 }
 
 // Called every frame
@@ -51,18 +51,14 @@ void ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit()
     OrbitalElements.ArgumentOfPeriapsis = UKismetMathLibrary::RandomFloatInRange(0.0f, 360.0f);
     OrbitalElements.MeanAnomaly = UKismetMathLibrary::RandomFloatInRange(0.0f, 360.0f);
     
-    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, SpawnAtPlanet->GravityComponent->GetGravitationalParameter());
+    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
 
     double AsteroidMass = 10000.0;
-    ACPP_Asteroid* Asteroid = Cast<ACPP_Asteroid>(GetWorld()->SpawnActor(AsteroidBlueprintClass));
-    Asteroid->SetActorLocation(OrbitalState.Location);
+    FTransform SpawnLocation(FRotator(0.0f, 0.0f, 0.0f), OrbitalState.Location);
+    ACPP_Asteroid* Asteroid = GetWorld()->SpawnActorDeferred<ACPP_Asteroid>(AsteroidBlueprintClass, SpawnLocation);
+    Asteroid->OrbitingPlanet = Planet;
     Asteroid->GravityComponent->SetVelocity(OrbitalState.Velocity);
-    Asteroid->GravityComponent->SetMass(10000.0);
+    Asteroid->GravityComponent->SetMass(AsteroidMass);
     Asteroid->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * AsteroidMass);
-
-    // TODO: Change later, this is just to show the satellite on all players when it is launched
-    for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
-    {
-        GroundStationManager->ClientNewAsteroidTracked(Asteroid->GetFName(), Asteroid->GetActorLocation(), Asteroid->GetVelocity());
-    }
+    Asteroid->FinishSpawning(SpawnLocation);
 }

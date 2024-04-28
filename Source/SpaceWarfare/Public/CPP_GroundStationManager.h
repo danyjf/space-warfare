@@ -11,6 +11,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FNewSatelliteDetected, int, SatelliteID, FSatelliteInfo, SatelliteInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSatelliteDestroyed, int, SatelliteID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FNewAsteroidDetected, FName, AsteroidID, class ACPP_Asteroid*, Asteroid);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FFuelLevelUpdatedSignature, int, SatelliteID, float, FuelPercentage);
 
 UCLASS()
@@ -40,14 +41,14 @@ public:
     UPROPERTY(BlueprintReadOnly)
     TMap<int, FSatelliteInfo> TrackedSatellites;
 
-    UPROPERTY(BlueprintReadOnly)
-    TMap<FName, class ACPP_OrbitSpline*> AsteroidOrbits;
-
     UPROPERTY(BlueprintAssignable)
     FNewSatelliteDetected OnNewSatelliteDetected;
 
     UPROPERTY(BlueprintAssignable)
     FSatelliteDestroyed OnSatelliteDestroyed;
+
+    UPROPERTY(BlueprintAssignable)
+    FNewAsteroidDetected OnNewAsteroidDetected;
 
     UPROPERTY(BlueprintAssignable)
     FFuelLevelUpdatedSignature OnFuelLevelUpdated;
@@ -65,7 +66,7 @@ public:
     void UpdateSatelliteInfo();
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
-    void ClientNewAsteroidTracked(const FName& AsteroidID, const FVector& Location, const FVector& Velocity);
+    void ClientNewAsteroidTracked(const FName& AsteroidID, class ACPP_Asteroid* Asteroid);
 
     UFUNCTION(BlueprintCallable, Client, Reliable)
     void ClientNewSatelliteTracked(const int SatelliteID, int OwnerID, const FString& Label, float Mass, const FVector& Position, const FRotator& Rotation, const FVector& Velocity, const FDateTime& Epoch);

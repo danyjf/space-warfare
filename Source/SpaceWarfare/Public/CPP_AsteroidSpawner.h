@@ -15,7 +15,7 @@ class SPACEWARFARE_API ACPP_AsteroidSpawner : public AActor
 	
 public:	
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    class ACPP_Planet* SpawnAtPlanet;
+    class ACPP_Planet* Planet;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class ACPP_Asteroid> AsteroidBlueprintClass;

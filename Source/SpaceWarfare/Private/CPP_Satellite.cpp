@@ -17,7 +17,6 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
-
 ACPP_Satellite::ACPP_Satellite()
 {
     PrimaryActorTick.bCanEverTick = true;
