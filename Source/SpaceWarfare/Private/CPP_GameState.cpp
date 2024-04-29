@@ -2,6 +2,8 @@
 
 #include "CPP_GameState.h"
 #include "CPP_MultiplayerGameMode.h"
+#include "CPP_Satellite.h"
+#include "CPP_Asteroid.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"

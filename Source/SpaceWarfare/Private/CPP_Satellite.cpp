@@ -11,12 +11,12 @@
 #include "CPP_SatelliteCommands.h"
 #include "CPP_SatelliteCommandManager.h"
 #include "CPP_GameState.h"
+#include "CPP_CameraOrbitController.h"
 #include "Universe.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
-
 
 ACPP_Satellite::ACPP_Satellite()
 {
@@ -45,7 +45,6 @@ void ACPP_Satellite::BeginPlay()
 	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
         SatelliteCommandManager = MultiplayerGameMode->GetGroundStationManagers()[OwnerPlayerID]->SatelliteCommandManager;
         SatelliteID = MultiplayerGameMode->NewSatelliteID();
-        //MultiplayerGameMode->AllSatellites.Emplace(SatelliteID, this);
         StaticMeshComponent->OnComponentHit.AddDynamic(this, &ACPP_Satellite::OnComponentHit);
     }
     
@@ -156,6 +155,7 @@ void ACPP_Satellite::OnComponentHit(UPrimitiveComponent* HitComp, AActor* OtherA
     }
     else if (ACPP_Asteroid* HitAsteroid = Cast<ACPP_Asteroid>(OtherActor))
     {
+        Cast<ACPP_CameraOrbitController>(GetOwner())->Currency += HitAsteroid->Currency;
         HitAsteroid->Destroy();
     }
 }

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Universe.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "CPP_Asteroid.generated.h"
@@ -12,6 +14,18 @@ class SPACEWARFARE_API ACPP_Asteroid : public AActor
 	GENERATED_BODY()
 	
 public:	
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
+	class ACPP_Planet* OrbitingPlanet;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int Currency;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    class ACPP_OrbitSpline* OrbitSpline;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     UStaticMeshComponent* StaticMeshComponent;
 
@@ -32,4 +46,11 @@ protected:
 
 private:
     class ACPP_MultiplayerGameMode* MultiplayerGameMode;
+
+    /** 
+     * Variable used to replicate the state of the asteroid to the clients 
+     * so that the orbit display can be updated
+    */
+    UPROPERTY(Replicated)
+    FOrbitalState OrbitalState;
 };

@@ -6,6 +6,7 @@
 #include "CPP_Thruster.h"
 #include "CPP_OrbitSpline.h"
 #include "CPP_Planet.h"
+#include "CPP_Asteroid.h"
 #include "Universe.h"
 #include "CPP_GravityComponent.h"
 #include "CPP_MultiplayerGameMode.h"
@@ -130,22 +131,14 @@ void ACPP_GroundStationManager::SatelliteExitedOverpassArea(ACPP_Satellite* Sate
     }
 }
 
-void ACPP_GroundStationManager::ClientNewAsteroidTracked_Implementation(const FName& AsteroidID, const FVector& Location, const FVector& Velocity)
+void ACPP_GroundStationManager::ClientNewAsteroidTracked_Implementation(const FName& AsteroidID, ACPP_Asteroid* Asteroid)
 {
-    ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
-
-    FOrbitalState OrbitalState = FOrbitalState(Location, Velocity);
-    FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
-
-    OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
-    OrbitSpline->SetColor(FLinearColor::Yellow);
-    AsteroidOrbits.Emplace(AsteroidID, OrbitSpline);
+    OnNewAsteroidDetected.Broadcast(AsteroidID, Asteroid);
 }
 
 void ACPP_GroundStationManager::ClientAsteroidDestroyed_Implementation(const FName& AsteroidID)
 {
-    AsteroidOrbits[AsteroidID]->Destroy();
-    AsteroidOrbits.Remove(AsteroidID);
+    OnAsteroidDestroyed.Broadcast(AsteroidID);
 }
 
 /**

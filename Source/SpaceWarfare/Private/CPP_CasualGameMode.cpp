@@ -4,6 +4,7 @@
 #include "CPP_Satellite.h"
 #include "CPP_CameraOrbitController.h"
 #include "CPP_GroundStationManager.h"
+#include "CPP_AsteroidSpawner.h"
 #include "JsonReadWrite.h"
 
 #include "Kismet/KismetSystemLibrary.h"
@@ -68,6 +69,9 @@ void ACPP_CasualGameMode::CheckAllPlayersFinishedPlacingGroundStations()
         PlayerController->PlayerStatus = EPlayerStatus::GROUND_STATION_CONTROL;
         PlayerController->ClientAllPlayersFinishedPlacingGroundStations();
     }
+
+    ACPP_AsteroidSpawner* AsteroidSpawner = Cast<ACPP_AsteroidSpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_AsteroidSpawner::StaticClass()));
+    AsteroidSpawner->StartSpawning();
 
     GetWorld()->GetTimerManager().ClearTimer(CheckPlayersReadyTimerHandle);
 }

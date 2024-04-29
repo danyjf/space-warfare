@@ -15,10 +15,21 @@ class SPACEWARFARE_API ACPP_AsteroidSpawner : public AActor
 	
 public:	
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    class ACPP_Planet* SpawnAtPlanet;
+    class ACPP_Planet* Planet;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class ACPP_Asteroid> AsteroidBlueprintClass;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float DelayBetweenAsteroidSpawn;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int MaxNumberOfAsteroids;
+
+    int AsteroidCount;
+
+    UFUNCTION(BlueprintCallable)
+    void StartSpawning();
 
     UFUNCTION(BlueprintCallable)
     void SpawnAsteroidAtRandomOrbit();
@@ -35,4 +46,5 @@ protected:
 
 private:
     class ACPP_MultiplayerGameMode* MultiplayerGameMode;
+    FTimerHandle SpawnAsteroidsTimerHandle;
 };
