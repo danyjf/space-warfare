@@ -21,6 +21,9 @@ public:
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int Currency;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class ACPP_OrbitSpline* OrbitSpline;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

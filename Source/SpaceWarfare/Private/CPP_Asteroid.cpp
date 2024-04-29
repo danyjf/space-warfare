@@ -28,6 +28,8 @@ ACPP_Asteroid::ACPP_Asteroid()
     RootComponent = StaticMeshComponent;
 
     GravityComponent = CreateDefaultSubobject<UCPP_GravityComponent>(TEXT("Gravity"));
+
+    Currency = 50;
 }
 
 // Called when the game starts or when spawned
