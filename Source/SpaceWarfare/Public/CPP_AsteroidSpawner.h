@@ -20,6 +20,14 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class ACPP_Asteroid> AsteroidBlueprintClass;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float DelayBetweenAsteroidSpawn;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int MaxNumberOfAsteroids;
+
+    int AsteroidCount;
+
     UFUNCTION(BlueprintCallable)
     void StartSpawning();
 

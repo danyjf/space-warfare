@@ -7,6 +7,7 @@
 #include "CPP_GravityManager.h"
 #include "CPP_OrbitSpline.h"
 #include "CPP_Planet.h"
+#include "CPP_AsteroidSpawner.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -81,6 +82,9 @@ void ACPP_Asteroid::Destroyed()
     {
         return;
     }
+
+    ACPP_AsteroidSpawner* AsteroidSpawner = Cast<ACPP_AsteroidSpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_AsteroidSpawner::StaticClass()));
+    AsteroidSpawner->AsteroidCount--;
 
     // TODO: Change later, this is to remove the satellite on all players when it is destroyed
     for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())

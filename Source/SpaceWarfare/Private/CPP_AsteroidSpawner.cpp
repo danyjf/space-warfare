@@ -27,6 +27,9 @@ void ACPP_AsteroidSpawner::BeginPlay()
 
 	MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
+    AsteroidCount = 0;
+    MaxNumberOfAsteroids = 5;
+    DelayBetweenAsteroidSpawn = 5.0f;
 }
 
 // Called every frame
@@ -37,12 +40,17 @@ void ACPP_AsteroidSpawner::Tick(float DeltaTime)
 
 void ACPP_AsteroidSpawner::StartSpawning()
 {
-    GetWorld()->GetTimerManager().SetTimer(SpawnAsteroidsTimerHandle, this, &ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit, 5.0f, true);
+    GetWorld()->GetTimerManager().SetTimer(SpawnAsteroidsTimerHandle, this, &ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit, DelayBetweenAsteroidSpawn, true);
 }
 
 void ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit()
 {
     if (MultiplayerGameMode->GameState->bWaitingForPlayers)
+    {
+        return;
+    }
+
+    if (AsteroidCount >= MaxNumberOfAsteroids)
     {
         return;
     }
@@ -66,4 +74,6 @@ void ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit()
     Asteroid->GravityComponent->SetMass(AsteroidMass);
     Asteroid->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * AsteroidMass);
     Asteroid->FinishSpawning(SpawnLocation);
+
+    AsteroidCount++;
 }
