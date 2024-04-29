@@ -35,6 +35,11 @@ void ACPP_AsteroidSpawner::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ACPP_AsteroidSpawner::StartSpawning()
+{
+    GetWorld()->GetTimerManager().SetTimer(SpawnAsteroidsTimerHandle, this, &ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit, 5.0f, true);
+}
+
 void ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit()
 {
     if (MultiplayerGameMode->GameState->bWaitingForPlayers)

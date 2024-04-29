@@ -21,6 +21,9 @@ public:
     TSubclassOf<class ACPP_Asteroid> AsteroidBlueprintClass;
 
     UFUNCTION(BlueprintCallable)
+    void StartSpawning();
+
+    UFUNCTION(BlueprintCallable)
     void SpawnAsteroidAtRandomOrbit();
 
 	// Sets default values for this actor's properties
@@ -35,4 +38,5 @@ protected:
 
 private:
     class ACPP_MultiplayerGameMode* MultiplayerGameMode;
+    FTimerHandle SpawnAsteroidsTimerHandle;
 };
