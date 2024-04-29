@@ -134,21 +134,11 @@ void ACPP_GroundStationManager::SatelliteExitedOverpassArea(ACPP_Satellite* Sate
 void ACPP_GroundStationManager::ClientNewAsteroidTracked_Implementation(const FName& AsteroidID, ACPP_Asteroid* Asteroid)
 {
     OnNewAsteroidDetected.Broadcast(AsteroidID, Asteroid);
-
-    //ACPP_OrbitSpline* OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
-
-    //FOrbitalState OrbitalState = FOrbitalState(Location, Velocity);
-    //FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, Planet->GravityComponent->GetGravitationalParameter());
-
-    //OrbitSpline->UpdateOrbit(OrbitalElements, Planet);
-    //OrbitSpline->SetColor(FLinearColor::Yellow);
-    //AsteroidOrbits.Emplace(AsteroidID, OrbitSpline);
 }
 
 void ACPP_GroundStationManager::ClientAsteroidDestroyed_Implementation(const FName& AsteroidID)
 {
-    //AsteroidOrbits[AsteroidID]->Destroy();
-    //AsteroidOrbits.Remove(AsteroidID);
+    OnAsteroidDestroyed.Broadcast(AsteroidID);
 }
 
 /**

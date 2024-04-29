@@ -12,6 +12,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FNewSatelliteDetected, int, SatelliteID, FSatelliteInfo, SatelliteInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSatelliteDestroyed, int, SatelliteID);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FNewAsteroidDetected, FName, AsteroidID, class ACPP_Asteroid*, Asteroid);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAsteroidDestroyed, FName, AsteroidID);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FFuelLevelUpdatedSignature, int, SatelliteID, float, FuelPercentage);
 
 UCLASS()
@@ -49,6 +50,9 @@ public:
 
     UPROPERTY(BlueprintAssignable)
     FNewAsteroidDetected OnNewAsteroidDetected;
+
+    UPROPERTY(BlueprintAssignable)
+    FAsteroidDestroyed OnAsteroidDestroyed;
 
     UPROPERTY(BlueprintAssignable)
     FFuelLevelUpdatedSignature OnFuelLevelUpdated;
