@@ -44,7 +44,6 @@ void ACPP_Satellite::BeginPlay()
 	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
         SatelliteCommandManager = MultiplayerGameMode->GetGroundStationManagers()[OwnerPlayerID]->SatelliteCommandManager;
         SatelliteID = MultiplayerGameMode->NewSatelliteID();
-        //MultiplayerGameMode->AllSatellites.Emplace(SatelliteID, this);
         StaticMeshComponent->OnComponentHit.AddDynamic(this, &ACPP_Satellite::OnComponentHit);
     }
     
