@@ -54,8 +54,6 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     class UInputAction* DragAction;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    AActor* OrbitingActor;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     APawn* PlayerPawn;
@@ -93,6 +91,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void MouseDrag(const FInputActionValue& Value);
 
+    UFUNCTION(BlueprintCallable)
+    void SetOrbitingActor(AActor* ActorToOrbit);
+
 	// Sets default values for this actor's properties
 	ACPP_PlayerController();
 
@@ -106,4 +107,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+private:
+    UPROPERTY()
+    AActor* OrbitingActor;
 };

@@ -34,6 +34,7 @@ void ACPP_PlayerController::BeginPlay()
     PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
     SpringArmComponent = Cast<USpringArmComponent>(PlayerPawn->GetComponentByClass(USpringArmComponent::StaticClass()));
     OrbitingActor = UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass());
+    PlayerPawn->AttachToActor(OrbitingActor, FAttachmentTransformRules::KeepRelativeTransform);
     CameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(OrbitingActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
     PlayerPawn->SetActorLocation(OrbitingActor->GetActorLocation());
 }
@@ -65,8 +66,6 @@ void ACPP_PlayerController::Tick(float DeltaTime)
             bHasNecessaryReplicatedVariables = true;
         }
     }
-
-    PlayerPawn->SetActorLocation(OrbitingActor->GetActorLocation());
 }
 
 void ACPP_PlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -167,13 +166,7 @@ void ACPP_PlayerController::MouseSelect(const FInputActionValue& Value)
             return;
         }
 
-        UCPP_CameraOrbitableComponent* HitCameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(HitActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
-        if (IsValid(HitCameraOrbitableComponent))
-        {
-            CameraOrbitableComponent = HitCameraOrbitableComponent;
-            SpringArmComponent->TargetArmLength = CameraOrbitableComponent->StartOrbitDistance;
-            OrbitingActor = HitActor;
-        }
+        SetOrbitingActor(HitActor);
 
         break;
     }
@@ -189,4 +182,16 @@ void ACPP_PlayerController::MouseDrag(const FInputActionValue& Value)
 
     PlayerPawn->AddControllerYawInput(Value.Get<FInputActionValue::Axis2D>().X);
     PlayerPawn->AddControllerPitchInput(-Value.Get<FInputActionValue::Axis2D>().Y);
+}
+
+void ACPP_PlayerController::SetOrbitingActor(AActor* ActorToOrbit)
+{
+    UCPP_CameraOrbitableComponent* OrbitCameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(ActorToOrbit->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
+    if (IsValid(OrbitCameraOrbitableComponent))
+    {
+        OrbitingActor = ActorToOrbit;
+        PlayerPawn->AttachToActor(OrbitingActor, FAttachmentTransformRules::KeepRelativeTransform);
+        CameraOrbitableComponent = OrbitCameraOrbitableComponent;
+        SpringArmComponent->TargetArmLength = CameraOrbitableComponent->StartOrbitDistance;
+    }
 }
