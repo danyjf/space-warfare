@@ -92,7 +92,7 @@ void ACPP_Asteroid::EndPlay(const EEndPlayReason::Type EndPlayReason)
         GroundStationManager->ClientAsteroidDestroyed(GetFName());
     }
 
-    Super::EndPlay();
+    Super::EndPlay(EndPlayReason);
 }
 
 void ACPP_Asteroid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
