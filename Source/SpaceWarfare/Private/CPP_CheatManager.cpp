@@ -5,7 +5,7 @@
 #include "CPP_PlayerController.h"
 #include "CPP_GameHUD.h"
 #include "CPP_Satellite.h"
-#include "CPP_GroundStationPawn.h"
+#include "CPP_PlayerPawn.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -17,7 +17,7 @@ void UCPP_CheatManager::ServerView()
     //ACPP_PlayerController* CameraOrbitController = Cast<ACPP_PlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
     //CameraOrbitController->InputMode = EInputMode::GODMODEINPUT;
 
-    //ACPP_GroundStationPawn* GroundStationPawn = Cast<ACPP_GroundStationPawn>(CameraOrbitController->GetPawn());
+    //ACPP_PlayerPawn* GroundStationPawn = Cast<ACPP_PlayerPawn>(CameraOrbitController->GetPawn());
     //GroundStationPawn->GetComponentByClass(UCameraComponent::StaticClass())->Activate();
 
     //ACPP_GameHUD* GameHUD = Cast<ACPP_GameHUD>(CameraOrbitController->GetHUD());

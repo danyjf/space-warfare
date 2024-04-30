@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "CPP_GroundStationPawn.generated.h"
+#include "CPP_PlayerPawn.generated.h"
 
 UCLASS()
-class SPACEWARFARE_API ACPP_GroundStationPawn : public APawn
+class SPACEWARFARE_API ACPP_PlayerPawn : public APawn
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this pawn's properties
-	ACPP_GroundStationPawn();
+	ACPP_PlayerPawn();
 
 protected:
 	// Called when the game starts or when spawned
