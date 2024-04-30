@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CPP_BotGameMode.h"
-#include "CPP_CameraOrbitController.h"
+#include "CPP_PlayerController.h"
 #include "CPP_GroundStationSpawner.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_Planet.h"
@@ -29,7 +29,7 @@ void ACPP_BotGameMode::StartGameplay()
     }
     InitializeSimulation(SimulationConfig);
 
-    for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
+    for (ACPP_PlayerController* PlayerController : CameraOrbitControllers)
     {
         PlayerController->PlayerStatus = EPlayerStatus::PLACING_SATELLITE_LAUNCHER;
         //PlayerController->PlayerStatus = EPlayerStatus::PLACING_GROUND_STATIONS;
@@ -42,7 +42,7 @@ void ACPP_BotGameMode::PostLogin(APlayerController* NewPlayer)
 {
     Super::PostLogin(NewPlayer);
 
-    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(NewPlayer);
+    ACPP_PlayerController* PlayerController = Cast<ACPP_PlayerController>(NewPlayer);
 
     // Create a GroundStationSpawner for each player
     FActorSpawnParameters SpawnParameters;
@@ -54,7 +54,7 @@ void ACPP_BotGameMode::PostLogin(APlayerController* NewPlayer)
 
 void ACPP_BotGameMode::CheckAllPlayersFinishedPlacingGroundStations()
 {
-    for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
+    for (ACPP_PlayerController* PlayerController : CameraOrbitControllers)
     {
         if (!PlayerController->bFinishedPlacingGroundStations)
         {
@@ -91,7 +91,7 @@ void ACPP_BotGameMode::CheckAllPlayersFinishedPlacingGroundStations()
         }
     }
 
-    for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
+    for (ACPP_PlayerController* PlayerController : CameraOrbitControllers)
     {
         PlayerController->PlayerStatus = EPlayerStatus::GROUND_STATION_CONTROL;
         PlayerController->ClientAllPlayersFinishedPlacingGroundStations();

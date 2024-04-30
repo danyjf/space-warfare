@@ -64,7 +64,7 @@ public:
 
 protected:
     TArray<class ACPP_GroundStationManager*> GroundStationManagers;
-    TArray<class ACPP_CameraOrbitController*> CameraOrbitControllers;
+    TArray<class ACPP_PlayerController*> CameraOrbitControllers;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

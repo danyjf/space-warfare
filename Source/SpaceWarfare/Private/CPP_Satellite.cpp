@@ -11,7 +11,7 @@
 #include "CPP_SatelliteCommands.h"
 #include "CPP_SatelliteCommandManager.h"
 #include "CPP_GameState.h"
-#include "CPP_CameraOrbitController.h"
+#include "CPP_PlayerController.h"
 #include "Universe.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -155,7 +155,7 @@ void ACPP_Satellite::OnComponentHit(UPrimitiveComponent* HitComp, AActor* OtherA
     }
     else if (ACPP_Asteroid* HitAsteroid = Cast<ACPP_Asteroid>(OtherActor))
     {
-        Cast<ACPP_CameraOrbitController>(GetOwner())->Currency += HitAsteroid->Currency;
+        Cast<ACPP_PlayerController>(GetOwner())->Currency += HitAsteroid->Currency;
         HitAsteroid->Destroy();
     }
 }

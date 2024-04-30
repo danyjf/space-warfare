@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "CPP_CameraOrbitController.generated.h"
+#include "CPP_PlayerController.generated.h"
 
 UENUM(BlueprintType)
 enum class EPlayerStatus : uint8 
@@ -22,7 +22,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAllPlayersReady);
  * 
  */
 UCLASS()
-class SPACEWARFARE_API ACPP_CameraOrbitController : public APlayerController
+class SPACEWARFARE_API ACPP_PlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
@@ -94,7 +94,7 @@ public:
     void MouseDrag(const FInputActionValue& Value);
 
 	// Sets default values for this actor's properties
-	ACPP_CameraOrbitController();
+	ACPP_PlayerController();
 
     virtual void SetupInputComponent() override;
 

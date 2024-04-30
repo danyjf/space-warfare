@@ -3,7 +3,7 @@
 #include "CPP_GroundStationSpawner.h"
 #include "CPP_GroundStation.h"
 #include "CPP_GroundStationRepresentation.h"
-#include "CPP_CameraOrbitController.h"
+#include "CPP_PlayerController.h"
 #include "CPP_Planet.h"
 #include "Universe.h"
 
@@ -29,11 +29,11 @@ void ACPP_GroundStationSpawner::BeginPlay()
     Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
     if (!HasAuthority())
     {
-        CameraOrbitController = Cast<ACPP_CameraOrbitController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+        CameraOrbitController = Cast<ACPP_PlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
     }
     else
     {
-        CameraOrbitController = Cast<ACPP_CameraOrbitController>(GetOwner());
+        CameraOrbitController = Cast<ACPP_PlayerController>(GetOwner());
     }
 
     if (CameraOrbitController->IsLocalPlayerController())
@@ -64,7 +64,7 @@ void ACPP_GroundStationSpawner::SpawnGroundStationAtRepresentationLocation()
 
 void ACPP_GroundStationSpawner::ServerSpawnGroundStation_Implementation(FVector Location)
 {
-    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
+    ACPP_PlayerController* PlayerController = Cast<ACPP_PlayerController>(GetOwner());
 
     if (PlayerController->PlayerStatus != EPlayerStatus::PLACING_GROUND_STATIONS)
     {
@@ -99,7 +99,7 @@ void ACPP_GroundStationSpawner::ServerSpawnGroundStation_Implementation(FVector 
 
 void ACPP_GroundStationSpawner::SpawnGroundStationRepresentation(FVector Location)
 {
-    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
+    ACPP_PlayerController* PlayerController = Cast<ACPP_PlayerController>(GetOwner());
 
     bIsChoosingLocation = true;
 

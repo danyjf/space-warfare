@@ -2,7 +2,7 @@
 
 
 #include "CPP_CheatManager.h"
-#include "CPP_CameraOrbitController.h"
+#include "CPP_PlayerController.h"
 #include "CPP_GameHUD.h"
 #include "CPP_Satellite.h"
 #include "CPP_GroundStationPawn.h"
@@ -14,7 +14,7 @@
 
 void UCPP_CheatManager::ServerView()
 {
-    //ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+    //ACPP_PlayerController* CameraOrbitController = Cast<ACPP_PlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
     //CameraOrbitController->InputMode = EInputMode::GODMODEINPUT;
 
     //ACPP_GroundStationPawn* GroundStationPawn = Cast<ACPP_GroundStationPawn>(CameraOrbitController->GetPawn());
@@ -34,7 +34,7 @@ void UCPP_CheatManager::ServerView()
 
 void UCPP_CheatManager::ClientView()
 {
-    //ACPP_CameraOrbitController* CameraOrbitController = Cast<ACPP_CameraOrbitController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+    //ACPP_PlayerController* CameraOrbitController = Cast<ACPP_PlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
     //CameraOrbitController->InputMode = EInputMode::GROUNDSTATIONINPUT;
 
     //ACPP_GroundStationPawn* GroundStationPawn = Cast<ACPP_GroundStationPawn>(CameraOrbitController->GetPawn());
