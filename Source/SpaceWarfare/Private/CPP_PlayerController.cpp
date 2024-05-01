@@ -161,12 +161,12 @@ void ACPP_PlayerController::MouseSelect(const FInputActionValue& Value)
     }
     case EPlayerStatus::GROUND_STATION_CONTROL:
     {
-        if (!IsValid(HitActor) || HitActor == OrbitingActor)
-        {
-            return;
-        }
+        //if (!IsValid(HitActor) || HitActor == OrbitingActor)
+        //{
+        //    return;
+        //}
 
-        SetOrbitingActor(HitActor);
+        //SetOrbitingActor(HitActor);
 
         break;
     }
@@ -180,8 +180,11 @@ void ACPP_PlayerController::MouseDrag(const FInputActionValue& Value)
         return;
     }
 
-    PlayerPawn->AddControllerYawInput(Value.Get<FInputActionValue::Axis2D>().X);
-    PlayerPawn->AddControllerPitchInput(-Value.Get<FInputActionValue::Axis2D>().Y);
+    //PlayerPawn->AddControllerYawInput(Value.Get<FInputActionValue::Axis2D>().X);
+    //PlayerPawn->AddControllerPitchInput(-Value.Get<FInputActionValue::Axis2D>().Y);
+    //FRotator DeltaRotation(Value.Get<FInputActionValue::Axis2D>().Y, Value.Get<FInputActionValue::Axis2D>().X, 0.0f);
+    //PlayerPawn->SetActorRotation(PlayerPawn->GetActorRotation() + DeltaRotation);
+    SpringArmComponent->AddLocalRotation(FRotator(Value.Get<FInputActionValue::Axis2D>().Y, Value.Get<FInputActionValue::Axis2D>().X, 0.0f));
 }
 
 void ACPP_PlayerController::SetOrbitingActor(AActor* ActorToOrbit)
@@ -191,6 +194,7 @@ void ACPP_PlayerController::SetOrbitingActor(AActor* ActorToOrbit)
     {
         OrbitingActor = ActorToOrbit;
         PlayerPawn->AttachToActor(OrbitingActor, FAttachmentTransformRules::KeepRelativeTransform);
+        SpringArmComponent->SetRelativeRotation(FRotator(0.0f));
         CameraOrbitableComponent = OrbitCameraOrbitableComponent;
         SpringArmComponent->TargetArmLength = CameraOrbitableComponent->StartOrbitDistance;
     }
