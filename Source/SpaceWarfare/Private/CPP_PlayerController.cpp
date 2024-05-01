@@ -10,6 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -24,6 +25,7 @@ ACPP_PlayerController::ACPP_PlayerController()
     bHasNecessaryReplicatedVariables = false;
     bMouseInputEnabled = true;
     PlayerStatus = EPlayerStatus::WAITING;
+    CameraRotationSpeed = 2.0f;
 }
 
 // Called when the game starts or when spawned
@@ -182,9 +184,15 @@ void ACPP_PlayerController::MouseDrag(const FInputActionValue& Value)
 
     //PlayerPawn->AddControllerYawInput(Value.Get<FInputActionValue::Axis2D>().X);
     //PlayerPawn->AddControllerPitchInput(-Value.Get<FInputActionValue::Axis2D>().Y);
-    //FRotator DeltaRotation(Value.Get<FInputActionValue::Axis2D>().Y, Value.Get<FInputActionValue::Axis2D>().X, 0.0f);
-    //PlayerPawn->SetActorRotation(PlayerPawn->GetActorRotation() + DeltaRotation);
-    SpringArmComponent->AddLocalRotation(FRotator(Value.Get<FInputActionValue::Axis2D>().Y, Value.Get<FInputActionValue::Axis2D>().X, 0.0f));
+
+    FRotator NewSpringArmRotation = SpringArmComponent->GetRelativeRotation() + FRotator(CameraRotationSpeed * Value.Get<FInputActionValue::Axis2D>().Y, 0.0f, 0.0f);
+    if (abs(NewSpringArmRotation.Pitch) >= 89.0f)
+    {
+        return;
+    }
+
+    SpringArmComponent->SetRelativeRotation(NewSpringArmRotation);
+    PlayerPawn->GetRootComponent()->AddRelativeRotation(FRotator(0.0f, CameraRotationSpeed * Value.Get<FInputActionValue::Axis2D>().X, 0.0f));
 }
 
 void ACPP_PlayerController::SetOrbitingActor(AActor* ActorToOrbit)
@@ -194,6 +202,7 @@ void ACPP_PlayerController::SetOrbitingActor(AActor* ActorToOrbit)
     {
         OrbitingActor = ActorToOrbit;
         PlayerPawn->AttachToActor(OrbitingActor, FAttachmentTransformRules::KeepRelativeTransform);
+        PlayerPawn->SetActorRelativeRotation(FRotator(0.0f));
         SpringArmComponent->SetRelativeRotation(FRotator(0.0f));
         CameraOrbitableComponent = OrbitCameraOrbitableComponent;
         SpringArmComponent->TargetArmLength = CameraOrbitableComponent->StartOrbitDistance;

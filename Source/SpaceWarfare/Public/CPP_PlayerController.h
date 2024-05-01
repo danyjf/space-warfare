@@ -30,6 +30,9 @@ public:
     UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
     int PlayerID;
 
+    UPROPERTY(EditAnywhere)
+    float CameraRotationSpeed;
+
     UPROPERTY(ReplicatedUsing=OnRep_Currency, EditAnywhere, BlueprintReadWrite)
     int Currency;
 
@@ -53,7 +56,6 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     class UInputAction* DragAction;
-
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     APawn* PlayerPawn;
