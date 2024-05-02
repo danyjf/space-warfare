@@ -96,6 +96,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void SetOrbitingActor(AActor* ActorToOrbit);
 
+    UFUNCTION(BlueprintCallable)
+    AActor* GetOrbitingActor() {return OrbitingActor;}
+
 	// Sets default values for this actor's properties
 	ACPP_PlayerController();
 
