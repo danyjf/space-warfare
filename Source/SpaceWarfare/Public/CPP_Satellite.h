@@ -33,6 +33,15 @@ public:
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int MaxTorqueLevel;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int HorizontalTorqueLevel;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int VerticalTorqueLevel;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class ACPP_OrbitSpline* OrbitSpline;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

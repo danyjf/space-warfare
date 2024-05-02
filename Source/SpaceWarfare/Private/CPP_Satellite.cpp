@@ -34,6 +34,9 @@ ACPP_Satellite::ACPP_Satellite()
     GravityComponent = CreateDefaultSubobject<UCPP_GravityComponent>(TEXT("Gravity"));
 
     SatelliteInfo = FSatelliteInfo();
+    MaxTorqueLevel = 3;
+    HorizontalTorqueLevel = 0;
+    VerticalTorqueLevel = 0;
 }
 
 // Called when the game starts or when spawned
