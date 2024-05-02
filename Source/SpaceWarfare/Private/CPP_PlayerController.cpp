@@ -26,6 +26,7 @@ ACPP_PlayerController::ACPP_PlayerController()
     bMouseInputEnabled = true;
     PlayerStatus = EPlayerStatus::WAITING;
     CameraRotationSpeed = 2.0f;
+    bIsFollowingSatellite = false;
 }
 
 // Called when the game starts or when spawned
@@ -182,17 +183,30 @@ void ACPP_PlayerController::MouseDrag(const FInputActionValue& Value)
         return;
     }
 
-    //PlayerPawn->AddControllerYawInput(Value.Get<FInputActionValue::Axis2D>().X);
-    //PlayerPawn->AddControllerPitchInput(-Value.Get<FInputActionValue::Axis2D>().Y);
-
-    FRotator NewSpringArmRotation = SpringArmComponent->GetRelativeRotation() + FRotator(CameraRotationSpeed * Value.Get<FInputActionValue::Axis2D>().Y, 0.0f, 0.0f);
-    if (abs(NewSpringArmRotation.Pitch) >= 89.0f)
+    if (bIsFollowingSatellite)
     {
-        return;
-    }
+        PlayerPawn->bUseControllerRotationPitch = false;
+        PlayerPawn->bUseControllerRotationYaw = false;
+        PlayerPawn->bUseControllerRotationRoll = false;
+        
+        FRotator NewSpringArmRotation = SpringArmComponent->GetRelativeRotation() + FRotator(CameraRotationSpeed * Value.Get<FInputActionValue::Axis2D>().Y, 0.0f, 0.0f);
+        if (abs(NewSpringArmRotation.Pitch) >= 89.0f)
+        {
+            return;
+        }
 
-    SpringArmComponent->SetRelativeRotation(NewSpringArmRotation);
-    PlayerPawn->GetRootComponent()->AddRelativeRotation(FRotator(0.0f, CameraRotationSpeed * Value.Get<FInputActionValue::Axis2D>().X, 0.0f));
+        SpringArmComponent->SetRelativeRotation(NewSpringArmRotation);
+        PlayerPawn->GetRootComponent()->AddRelativeRotation(FRotator(0.0f, CameraRotationSpeed * Value.Get<FInputActionValue::Axis2D>().X, 0.0f));
+    }
+    else
+    {
+        PlayerPawn->bUseControllerRotationPitch = true;
+        PlayerPawn->bUseControllerRotationYaw = true;
+        PlayerPawn->bUseControllerRotationRoll = true;
+
+        PlayerPawn->AddControllerYawInput(Value.Get<FInputActionValue::Axis2D>().X);
+        PlayerPawn->AddControllerPitchInput(-Value.Get<FInputActionValue::Axis2D>().Y);
+    }
 }
 
 void ACPP_PlayerController::SetOrbitingActor(AActor* ActorToOrbit)
@@ -203,6 +217,7 @@ void ACPP_PlayerController::SetOrbitingActor(AActor* ActorToOrbit)
         OrbitingActor = ActorToOrbit;
         PlayerPawn->AttachToActor(OrbitingActor, FAttachmentTransformRules::KeepRelativeTransform);
         PlayerPawn->SetActorRelativeRotation(FRotator(0.0f));
+        SetControlRotation(PlayerPawn->GetActorRotation());
         SpringArmComponent->SetRelativeRotation(FRotator(0.0f));
         CameraOrbitableComponent = OrbitCameraOrbitableComponent;
         SpringArmComponent->TargetArmLength = CameraOrbitableComponent->StartOrbitDistance;

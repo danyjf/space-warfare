@@ -48,6 +48,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bFinishedPlacingGroundStations;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bIsFollowingSatellite;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     class UInputMappingContext* InputMapping;
 
