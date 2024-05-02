@@ -64,7 +64,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-    class ACPP_CameraOrbitController* CameraOrbitController;
+    class ACPP_PlayerController* CameraOrbitController;
 
     int CurrentGroundStationNumber;
 };

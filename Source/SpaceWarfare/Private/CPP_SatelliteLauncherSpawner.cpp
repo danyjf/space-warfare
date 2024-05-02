@@ -3,7 +3,7 @@
 #include "CPP_SatelliteLauncherSpawner.h"
 #include "CPP_SatelliteLauncher.h"
 #include "CPP_Planet.h"
-#include "CPP_CameraOrbitController.h"
+#include "CPP_PlayerController.h"
 #include "CPP_BotGameMode.h"
 #include "CPP_CasualGameMode.h"
 #include "CPP_GroundStation.h"
@@ -29,11 +29,11 @@ void ACPP_SatelliteLauncherSpawner::BeginPlay()
     Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
     if (!HasAuthority())
     {
-        PlayerController = Cast<ACPP_CameraOrbitController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+        PlayerController = Cast<ACPP_PlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
     }
     else
     {
-        PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
+        PlayerController = Cast<ACPP_PlayerController>(GetOwner());
     }
 
     if (PlayerController->IsLocalPlayerController())

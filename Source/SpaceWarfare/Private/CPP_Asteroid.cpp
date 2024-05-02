@@ -76,10 +76,8 @@ void ACPP_Asteroid::Tick(float DeltaTime)
     }
 }
 
-void ACPP_Asteroid::Destroyed()
+void ACPP_Asteroid::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-    Super::Destroyed();
-
     if (!HasAuthority() || !MultiplayerGameMode)
     {
         return;
@@ -93,6 +91,8 @@ void ACPP_Asteroid::Destroyed()
     {
         GroundStationManager->ClientAsteroidDestroyed(GetFName());
     }
+
+    Super::EndPlay(EndPlayReason);
 }
 
 void ACPP_Asteroid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

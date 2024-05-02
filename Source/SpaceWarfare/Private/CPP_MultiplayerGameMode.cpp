@@ -5,7 +5,7 @@
 #include "CPP_Satellite.h"
 #include "CPP_GravityManager.h"
 #include "CPP_GravityComponent.h"
-#include "CPP_CameraOrbitController.h"
+#include "CPP_PlayerController.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_GroundStation.h"
 #include "CPP_SatelliteLauncher.h"
@@ -57,7 +57,7 @@ void ACPP_MultiplayerGameMode::Tick(float DeltaTime)
             return;
         }
 
-        for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
+        for (ACPP_PlayerController* PlayerController : CameraOrbitControllers)
         {
             if (!PlayerController->bHasNecessaryReplicatedVariables)
             {
@@ -75,7 +75,7 @@ void ACPP_MultiplayerGameMode::PostLogin(APlayerController* NewPlayer)
 {
     Super::PostLogin(NewPlayer);
 
-    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(NewPlayer);
+    ACPP_PlayerController* PlayerController = Cast<ACPP_PlayerController>(NewPlayer);
     PlayerController->PlayerID = CurrentPlayerID;
     CurrentPlayerID++;
     PlayerController->Currency = StartingCurrency;
@@ -115,17 +115,17 @@ void ACPP_MultiplayerGameMode::InitializeSatellites(TArray<FSatelliteStruct>& Sa
 {
     ACPP_Planet* Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
     TArray<AActor*> PlayerControllers;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_CameraOrbitController::StaticClass(), PlayerControllers);
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACPP_PlayerController::StaticClass(), PlayerControllers);
 
     ShuffleArray(SatellitesConfigs);
     int AssignedPlayerID = 0;   // PlayerID that will be assigned to each satellite
     for (const FSatelliteStruct& SatelliteConfig : SatellitesConfigs)
     {
         // Find the PlayerController that will own this satellite
-        ACPP_CameraOrbitController* OwnerPlayerController = Cast<ACPP_CameraOrbitController>(PlayerControllers[0]);
+        ACPP_PlayerController* OwnerPlayerController = Cast<ACPP_PlayerController>(PlayerControllers[0]);
         for (AActor* Actor : PlayerControllers)
         {
-            OwnerPlayerController = Cast<ACPP_CameraOrbitController>(Actor);
+            OwnerPlayerController = Cast<ACPP_PlayerController>(Actor);
             if (OwnerPlayerController->PlayerID == AssignedPlayerID)
             {
                 break;

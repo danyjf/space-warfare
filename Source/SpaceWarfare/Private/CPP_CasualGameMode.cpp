@@ -2,7 +2,7 @@
 
 #include "CPP_CasualGameMode.h"
 #include "CPP_Satellite.h"
-#include "CPP_CameraOrbitController.h"
+#include "CPP_PlayerController.h"
 #include "CPP_GroundStationManager.h"
 #include "CPP_AsteroidSpawner.h"
 #include "JsonReadWrite.h"
@@ -26,7 +26,7 @@ void ACPP_CasualGameMode::StartGameplay()
     }
     InitializeSimulation(SimulationConfig);
 
-    for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
+    for (ACPP_PlayerController* PlayerController : CameraOrbitControllers)
     {
         PlayerController->PlayerStatus = EPlayerStatus::PLACING_SATELLITE_LAUNCHER;
     }
@@ -36,7 +36,7 @@ void ACPP_CasualGameMode::StartGameplay()
 
 void ACPP_CasualGameMode::CheckAllPlayersFinishedPlacingGroundStations()
 {
-    for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
+    for (ACPP_PlayerController* PlayerController : CameraOrbitControllers)
     {
         if (!PlayerController->bFinishedPlacingGroundStations)
         {
@@ -64,7 +64,7 @@ void ACPP_CasualGameMode::CheckAllPlayersFinishedPlacingGroundStations()
         }
     }
 
-    for (ACPP_CameraOrbitController* PlayerController : CameraOrbitControllers)
+    for (ACPP_PlayerController* PlayerController : CameraOrbitControllers)
     {
         PlayerController->PlayerStatus = EPlayerStatus::GROUND_STATION_CONTROL;
         PlayerController->ClientAllPlayersFinishedPlacingGroundStations();

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "CPP_CameraOrbitController.generated.h"
+#include "CPP_PlayerController.generated.h"
 
 UENUM(BlueprintType)
 enum class EPlayerStatus : uint8 
@@ -22,13 +22,16 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAllPlayersReady);
  * 
  */
 UCLASS()
-class SPACEWARFARE_API ACPP_CameraOrbitController : public APlayerController
+class SPACEWARFARE_API ACPP_PlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
 public:
     UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
     int PlayerID;
+
+    UPROPERTY(EditAnywhere)
+    float CameraRotationSpeed;
 
     UPROPERTY(ReplicatedUsing=OnRep_Currency, EditAnywhere, BlueprintReadWrite)
     int Currency;
@@ -45,6 +48,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bFinishedPlacingGroundStations;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bIsFollowingSatellite;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     class UInputMappingContext* InputMapping;
 
@@ -53,9 +59,6 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     class UInputAction* DragAction;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    AActor* OrbitingActor;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     APawn* PlayerPawn;
@@ -93,8 +96,14 @@ public:
     UFUNCTION(BlueprintCallable)
     void MouseDrag(const FInputActionValue& Value);
 
+    UFUNCTION(BlueprintCallable)
+    void SetOrbitingActor(AActor* ActorToOrbit);
+
+    UFUNCTION(BlueprintCallable)
+    AActor* GetOrbitingActor() {return OrbitingActor;}
+
 	// Sets default values for this actor's properties
-	ACPP_CameraOrbitController();
+	ACPP_PlayerController();
 
     virtual void SetupInputComponent() override;
 
@@ -106,4 +115,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+private:
+    UPROPERTY()
+    AActor* OrbitingActor;
 };

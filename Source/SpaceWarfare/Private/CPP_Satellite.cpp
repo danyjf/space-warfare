@@ -11,7 +11,8 @@
 #include "CPP_SatelliteCommands.h"
 #include "CPP_SatelliteCommandManager.h"
 #include "CPP_GameState.h"
-#include "CPP_CameraOrbitController.h"
+#include "CPP_PlayerController.h"
+#include "CPP_PlayerPawn.h"
 #include "Universe.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -33,6 +34,9 @@ ACPP_Satellite::ACPP_Satellite()
     GravityComponent = CreateDefaultSubobject<UCPP_GravityComponent>(TEXT("Gravity"));
 
     SatelliteInfo = FSatelliteInfo();
+    MaxTorqueLevel = 3;
+    HorizontalTorqueLevel = 0;
+    VerticalTorqueLevel = 0;
 }
 
 // Called when the game starts or when spawned
@@ -93,16 +97,25 @@ void ACPP_Satellite::Tick(float DeltaTime)
     }
 }
 
-void ACPP_Satellite::Destroyed()
+void ACPP_Satellite::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-    Super::Destroyed();
+    GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites.Remove(SatelliteID);
 
-    // Do this check because the Destroyed event gets called by the editor when compiling
-    if (GetWorld()->GetGameState<ACPP_GameState>())
+    OrbitSpline->Destroy();
+
+    TArray<AActor*> AttachedActors;
+    GetAttachedActors(AttachedActors);
+    if (!AttachedActors.IsEmpty())
     {
-        GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites.Remove(SatelliteID);
-
-        OrbitSpline->Destroy();
+        for (AActor* Actor : AttachedActors)
+        {
+            ACPP_PlayerPawn* PlayerPawn = Cast<ACPP_PlayerPawn>(Actor);
+            if (PlayerPawn && PlayerPawn->IsLocallyControlled())
+            {
+                PlayerPawn->GetController<ACPP_PlayerController>()->SetOrbitingActor(OrbitingPlanet);
+                continue;
+            }
+        }
     }
 
     if (!HasAuthority() || !MultiplayerGameMode)
@@ -123,6 +136,8 @@ void ACPP_Satellite::Destroyed()
             GroundStationManager->OverpassingSatellites.Remove(GetSatelliteID());
         }
     }
+
+    Super::EndPlay(EndPlayReason);
 }
 
 void ACPP_Satellite::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -155,7 +170,7 @@ void ACPP_Satellite::OnComponentHit(UPrimitiveComponent* HitComp, AActor* OtherA
     }
     else if (ACPP_Asteroid* HitAsteroid = Cast<ACPP_Asteroid>(OtherActor))
     {
-        Cast<ACPP_CameraOrbitController>(GetOwner())->Currency += HitAsteroid->Currency;
+        Cast<ACPP_PlayerController>(GetOwner())->Currency += HitAsteroid->Currency;
         HitAsteroid->Destroy();
     }
 }

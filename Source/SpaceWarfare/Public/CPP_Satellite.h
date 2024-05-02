@@ -33,6 +33,15 @@ public:
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int MaxTorqueLevel;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int HorizontalTorqueLevel;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int VerticalTorqueLevel;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class ACPP_OrbitSpline* OrbitSpline;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -63,7 +72,7 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-    virtual void Destroyed() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 protected:
 	// Called when the game starts or when spawned

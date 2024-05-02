@@ -8,7 +8,7 @@
 #include "CPP_MultiplayerGameMode.h"
 #include "CPP_BotGameMode.h"
 #include "CPP_GroundStationManager.h"
-#include "CPP_CameraOrbitController.h"
+#include "CPP_PlayerController.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -99,7 +99,7 @@ void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElemen
 {
     SatelliteBlueprintClass = SatelliteClass;
 
-    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
+    ACPP_PlayerController* PlayerController = Cast<ACPP_PlayerController>(GetOwner());
     if (PlayerController->Currency < LaunchCost)
     {
         UKismetSystemLibrary::PrintString(GetWorld(), "Not enough money to launch!!!");
@@ -135,7 +135,7 @@ void ACPP_SatelliteLauncher::ServerLaunchSatelliteWithOrbitalState_Implementatio
 {
     SatelliteBlueprintClass = SatelliteClass;
 
-    ACPP_CameraOrbitController* PlayerController = Cast<ACPP_CameraOrbitController>(GetOwner());
+    ACPP_PlayerController* PlayerController = Cast<ACPP_PlayerController>(GetOwner());
     if (PlayerController->Currency < LaunchCost)
     {
         UKismetSystemLibrary::PrintString(GetWorld(), "Not enough money to launch!!!");

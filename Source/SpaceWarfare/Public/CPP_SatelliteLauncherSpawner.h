@@ -61,7 +61,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-    class ACPP_CameraOrbitController* PlayerController;
+    class ACPP_PlayerController* PlayerController;
 
     UFUNCTION()
     void DestroyRepresentations();
