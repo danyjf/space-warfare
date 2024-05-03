@@ -112,12 +112,12 @@ void ACPP_OrbitSpline::CreateSplineMeshComponent(const FVector& StartPoint, cons
 void ACPP_OrbitSpline::UpdateOrbit(FOrbitalElements OrbitalElements, ACPP_Planet* Planet)
 {
     // Hide orbit when it is hyperbolic
-    if (OrbitalElements.Eccentricity >= 1.0f || !bIsVisualizationEnabled)
-    {
-        bIsHyperbolic = true;
-        SetActorHiddenInGame(true);
-        return;
-    }
+    //if (OrbitalElements.Eccentricity >= 1.0f || !bIsVisualizationEnabled)
+    //{
+        //bIsHyperbolic = true;
+        //SetActorHiddenInGame(true);
+        //return;
+    //}
 
     // Show orbit after is no longer hyperbolic
     if (bIsHyperbolic)
