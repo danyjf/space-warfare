@@ -5,13 +5,14 @@
 #include "CPP_Thruster.h"
 
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Torque command
 void UCPP_TorqueCommand::Execute(ACPP_Satellite* Satellite)
 {
     FVector LocalTorque = UKismetMathLibrary::TransformDirection(Satellite->GetActorTransform(), Torque);
 
-    Satellite->StaticMeshComponent->AddTorqueInDegrees(LocalTorque, NAME_None, true);
+    Satellite->StaticMeshComponent->AddAngularImpulseInDegrees(LocalTorque, NAME_None, true);
 }
 
 void UCPP_TorqueCommand::DeserializeFromStruct(const FTorqueCommandData& CommandData)

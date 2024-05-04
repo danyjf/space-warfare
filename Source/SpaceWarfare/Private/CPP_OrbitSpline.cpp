@@ -30,7 +30,7 @@ void ACPP_OrbitSpline::OnConstruction(const FTransform& Transform)
 {
     Super::OnConstruction(Transform);
 
-    if (!SplineMesh)
+    if (!SplineMesh || !SplineComponent)
     {
         return;
     }
