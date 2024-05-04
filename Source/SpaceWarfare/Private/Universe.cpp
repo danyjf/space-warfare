@@ -8,63 +8,6 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Math/UnrealMathUtility.h"
 
-//FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(const FOrbitalElements& OrbitalElements, double GM)
-//{
-//	float e = OrbitalElements.Eccentricity;
-//	float a = OrbitalElements.SemiMajorAxis;
-//	float i = UKismetMathLibrary::DegreesToRadians(OrbitalElements.Inclination);
-//	float O = UKismetMathLibrary::DegreesToRadians(OrbitalElements.LongitudeOfAscendingNode);
-//	float w = UKismetMathLibrary::DegreesToRadians(OrbitalElements.ArgumentOfPeriapsis);
-//	float M = UKismetMathLibrary::DegreesToRadians(OrbitalElements.MeanAnomaly);
-//
-//	// Solve Keplers Equation for the eccentric anomaly using Newton's method
-//    float E = M;
-//    float F = E - e * sin(E) - M;
-//	float Delta = 0.000001;
-//    for (int j = 0; j < 30; j++)
-//    {
-//    	E = E - F / (1 - e * cos(E));
-//    	F = E - e * sin(E) - M;
-//    	if (abs(F) < Delta)
-//    	{
-//    		break;
-//    	}
-//    }
-//
-//	// Obtain the true anomaly
-//	float v = 2 * atan2(sqrt(1 + e) * sin(E / 2), sqrt(1 - e) * cos(E / 2));
-//
-//	// Use the eccentric anomaly to get the distance to the central body
-//	float rc = a * (1 - e * cos(E));
-//
-//	// Obtain the position and velocity vectors in the orbital frame
-//	FVector OrbitalPosition(rc * cos(v), rc * sin(v), 0);
-//	FVector OrbitalVelocity(-sin(E), sqrt(1 - e * e) * cos(E), 0);
-//	OrbitalVelocity = (sqrt(GM * a) / rc) * OrbitalVelocity;
-//
-//	// Transform the position and velocity vectors to the inertial frame
-//	FOrbitalState OrbitalState;
-//
-//	OrbitalState.Location.X = OrbitalPosition.X * (cos(w) * cos(O) - sin(w) * cos(i) * sin(O)) -
-//		OrbitalPosition.Y * (sin(w) * cos(O) + cos(w) * cos(i) * sin(O));
-//	OrbitalState.Location.Y = OrbitalPosition.X * (cos(w) * sin(O) + sin(w) * cos(i) * cos(O)) +
-//		OrbitalPosition.Y * (cos(w) * cos(i) * cos(O) - sin(w) * sin(O));
-//	OrbitalState.Location.Z = OrbitalPosition.X * (sin(w) * sin(i)) + 
-//		OrbitalPosition.Y * (cos(w) * sin(i));
-//
-//	OrbitalState.Velocity.X = OrbitalVelocity.X * (cos(w) * cos(O) - sin(w) * cos(i) * sin(O)) -
-//		OrbitalVelocity.Y * (sin(w) * cos(O) + cos(w) * cos(i) * sin(O));
-//	OrbitalState.Velocity.Y = OrbitalVelocity.X * (cos(w) * sin(O) + sin(w) * cos(i) * cos(O)) +
-//		OrbitalVelocity.Y * (cos(w) * cos(i) * cos(O) - sin(w) * sin(O));
-//	OrbitalState.Velocity.Z = OrbitalVelocity.X * (sin(w) * sin(i)) +
-//		OrbitalVelocity.Y * (cos(w) * sin(i));
-//
-//    OrbitalState.Location = ToLeftHandSystem(OrbitalState.Location);
-//    OrbitalState.Velocity = ToLeftHandSystem(OrbitalState.Velocity);
-//
-//	return OrbitalState;
-//}
-
 FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(const FOrbitalElements& OrbitalElements, double GM)
 {
     float e = OrbitalElements.Eccentricity;
@@ -81,7 +24,7 @@ FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(const FOrbitalElem
     FOrbitalState OrbitalState;
     if (e < 1.0)
     {
-        // For elliptical orbits, use the existing method
+        // Calculate the eccentric anomaly with newton's method
         float E = M;
         F = E - e * sin(E) - M;
         float Delta = 0.000001;
@@ -314,7 +257,7 @@ FVector UUniverse::ConvertGeographicCoordinatesToECILocation(ACPP_Planet* Planet
 
 double UUniverse::GetEarthRotationAngle(double JulianDay)
 {
-	// Is negative because of unreal's left handed system
+	// It's negative because of unreal's left handed system
 	return -UKismetMathLibrary::RadiansToDegrees(2 * PI * (0.7790572732640 + 1.00273781191135448 * (JulianDay - 2451545.0)));
 }
 
@@ -331,11 +274,11 @@ FVector UUniverse::ToLeftHandSystem(const FVector& Vector)
 float UUniverse::GetMeanAnomaly(float Eccentricity, float TrueAnomaly)
 {
     float MeanAnomaly;
-    if (Eccentricity < 1.0f)
+    if (Eccentricity < 1.0f)    // Elliptical orbits
     {
         MeanAnomaly = atan2(-sqrt(1 - pow(Eccentricity, 2.0f)) * sin(TrueAnomaly), -Eccentricity - cos(TrueAnomaly)) + PI - Eccentricity * (sqrt(1 - pow(Eccentricity, 2.0f)) * sin(TrueAnomaly)) / (1 + Eccentricity * cos(TrueAnomaly));
     }
-    else
+    else                        // Hyperbolic orbits
     {
         float F = log((sqrt(Eccentricity + 1) + sqrt(Eccentricity - 1) * tan(TrueAnomaly / 2.0f)) / (sqrt(Eccentricity + 1) - sqrt(Eccentricity - 1) * tan(TrueAnomaly / 2.0f)));
         MeanAnomaly = Eccentricity * sinh(F) - F;
