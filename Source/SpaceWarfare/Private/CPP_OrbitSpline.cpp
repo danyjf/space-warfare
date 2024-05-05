@@ -120,14 +120,30 @@ void ACPP_OrbitSpline::UpdateOrbit(FOrbitalElements OrbitalElements, ACPP_Planet
     //}
 
     // Show orbit after is no longer hyperbolic
-    if (bIsHyperbolic)
-    {
-        bIsHyperbolic = false;
-        SetActorHiddenInGame(false);
-    }
+    //if (bIsHyperbolic)
+    //{
+    //    bIsHyperbolic = false;
+    //    SetActorHiddenInGame(false);
+    //}
 
-    OrbitalElements.MeanAnomaly = -180.0f;
-    float IncrementAngle = 360.0f / NumberOfPoints;
+    float TrueAnomaly;
+    float IncrementAngle;
+    if (OrbitalElements.Eccentricity > 1.0f)
+    {
+        SplineComponent->SetClosedLoop(false);
+        // This is the limit for the true anomaly, I some degrees so that it doesn't get 
+        // too close to infinity when the eccentricity is too high
+        TrueAnomaly = UKismetMathLibrary::RadiansToDegrees(-acos(-1.0f / OrbitalElements.Eccentricity)) + 40.0f;
+        OrbitalElements.MeanAnomaly = UKismetMathLibrary::RadiansToDegrees(UUniverse::GetMeanAnomaly(OrbitalElements.Eccentricity, UKismetMathLibrary::DegreesToRadians(TrueAnomaly)));
+        IncrementAngle = (2 * -TrueAnomaly) / NumberOfPoints;
+    }
+    else
+    {
+        SplineComponent->SetClosedLoop(true);
+        IncrementAngle = 360.0f / NumberOfPoints;
+        TrueAnomaly = 0.0f;
+        OrbitalElements.MeanAnomaly = 0.0f;
+    }
 
     for (int i = 0; i < SplineComponent->GetNumberOfSplinePoints(); i++)
     {
@@ -135,7 +151,8 @@ void ACPP_OrbitSpline::UpdateOrbit(FOrbitalElements OrbitalElements, ACPP_Planet
 
         SplineComponent->SetWorldLocationAtSplinePoint(i, OrbitalState.Location);
 
-        OrbitalElements.MeanAnomaly += IncrementAngle;
+        TrueAnomaly += IncrementAngle;
+        OrbitalElements.MeanAnomaly = UKismetMathLibrary::RadiansToDegrees(UUniverse::GetMeanAnomaly(OrbitalElements.Eccentricity, UKismetMathLibrary::DegreesToRadians(TrueAnomaly)));
     }
     
     for (int i = 0; i < SplineMeshComponents.Num() - 1; i++)
@@ -148,11 +165,19 @@ void ACPP_OrbitSpline::UpdateOrbit(FOrbitalElements OrbitalElements, ACPP_Planet
         SplineMeshComponents[i]->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent);
     }
 
-    const FVector StartPoint = SplineComponent->GetLocationAtSplinePoint(SplineMeshComponents.Num() - 1, ESplineCoordinateSpace::Local);
-    const FVector StartTangent = SplineComponent->GetTangentAtSplinePoint(SplineMeshComponents.Num() - 1, ESplineCoordinateSpace::Local);
-    const FVector EndPoint = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::Local);
-    const FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(0, ESplineCoordinateSpace::Local);
-    SplineMeshComponents[SplineMeshComponents.Num() - 1]->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent);
+    if (SplineComponent->IsClosedLoop())
+    {
+        SplineMeshComponents[SplineMeshComponents.Num() - 1]->SetHiddenInGame(false);
+        const FVector StartPoint = SplineComponent->GetLocationAtSplinePoint(SplineMeshComponents.Num() - 1, ESplineCoordinateSpace::Local);
+        const FVector StartTangent = SplineComponent->GetTangentAtSplinePoint(SplineMeshComponents.Num() - 1, ESplineCoordinateSpace::Local);
+        const FVector EndPoint = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::Local);
+        const FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(0, ESplineCoordinateSpace::Local);
+        SplineMeshComponents[SplineMeshComponents.Num() - 1]->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent);
+    }
+    else
+    {
+        SplineMeshComponents[SplineMeshComponents.Num() - 1]->SetHiddenInGame(true);
+    }
 }
 
 void ACPP_OrbitSpline::SetColor(FLinearColor Color)
