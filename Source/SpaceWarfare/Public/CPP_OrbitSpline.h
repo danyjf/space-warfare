@@ -24,8 +24,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float SplineMeshScale;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int NumberOfPoints;
+
+    UPROPERTY(BlueprintReadWrite)
+    bool bIsVisualizationEnabled;
+
     UFUNCTION(BlueprintCallable)
     void UpdateOrbit(FOrbitalElements OrbitalElements, class ACPP_Planet* Planet);
+
+    UFUNCTION(BlueprintCallable)
+    void SetColor(FLinearColor Color);
 
     virtual void OnConstruction(const FTransform& Transform) override;
 
@@ -47,6 +56,8 @@ protected:
 
 private:
     TArray<USplineMeshComponent*> SplineMeshComponents;
+    UMaterialInstanceDynamic* DynamicMaterial;
+    bool bIsHyperbolic;
 
     void CreateSplineMeshComponent(const FVector& StartPoint, const FVector& StartTangent, const FVector& EndPoint, const FVector& EndTangent);
 };

@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "CPP_Thruster.generated.h"
 
-
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPACEWARFARE_API UCPP_Thruster : public UActorComponent
 {
@@ -14,16 +13,23 @@ class SPACEWARFARE_API UCPP_Thruster : public UActorComponent
 
 public:	
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float ThrusterStrength;
+    float MaxThrusterStrength;
 
-    UPROPERTY(BlueprintReadWrite)
-    UStaticMeshComponent* StaticMeshComponent;
-
-    UFUNCTION(BlueprintCallable)
-    void ActivateThruster() { bThrusterIsActive = true; }
+    /** Consumption of fuel for this thruster in liters per second */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float FuelConsumption;
 
     UFUNCTION(BlueprintCallable)
-    void DeactivateThruster() { bThrusterIsActive = false; }
+    void SetThrusterDirectionInECICoordinates(FVector Direction);
+
+    UFUNCTION(BlueprintCallable)
+    void SetThrusterDirectionInLocalCoordinates(FVector Direction);
+
+    UFUNCTION(BlueprintCallable)
+    void ActivateThruster(float Strength, float Duration = 0.0f);
+
+    UFUNCTION(BlueprintCallable)
+    void DeactivateThruster();
 
 	// Sets default values for this component's properties
 	UCPP_Thruster();
@@ -37,4 +43,10 @@ protected:
 
 private:
     bool bThrusterIsActive;
+    FVector ThrusterDirection;  // Thruster direction in local space
+    float ThrusterDuration;
+    float ThrusterTimer;
+    float ThrusterStrength;
+    class UStaticMeshComponent* StaticMeshComponent;
+    class UCPP_FuelTank* FuelTank;
 };

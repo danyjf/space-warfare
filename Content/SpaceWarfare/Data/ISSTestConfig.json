@@ -1,0 +1,60 @@
+{
+    "satellites": [
+        {
+            "name": "ISS",
+            "mass": 420000,
+            "size": 100,
+            "orbitalElements": {
+                "eccentricity": 0.0000779,
+                "semiMajorAxis": 6787,
+                "inclination": 51.6439,
+                "longitudeOfAscendingNode": 52.8975,
+                "argumentOfPeriapsis": 104.7676,
+                "meanAnomaly": 353.6048,
+                "epoch": "2023-10-23T12:19:42.000Z"
+            }
+        },
+        {
+            "name": "Test1",
+            "mass": 1500,
+            "size": 100,
+            "orbitalElements": {
+                "eccentricity": 0.09131,
+                "semiMajorAxis": 7726,
+                "inclination": 51.792,
+                "longitudeOfAscendingNode": 144.79,
+                "argumentOfPeriapsis": 299.325,
+                "meanAnomaly": 42.976,
+                "epoch": "2023-10-23T12:19:42.000Z"
+            }
+        },
+        {
+            "name": "Test2",
+            "mass": 1500,
+            "size": 100,
+            "orbitalElements": {
+                "eccentricity": 0.008,
+                "semiMajorAxis": 7000,
+                "inclination": 170,
+                "longitudeOfAscendingNode": 30,
+                "argumentOfPeriapsis": 70,
+                "meanAnomaly": -30,
+                "epoch": "2023-10-23T12:19:42.000Z"
+            }
+        },
+        {
+            "name": "Test3",
+            "mass": 1500,
+            "size": 100,
+            "orbitalElements": {
+                "eccentricity": 0.0002,
+                "semiMajorAxis": 8000,
+                "inclination": 100,
+                "longitudeOfAscendingNode": 170,
+                "argumentOfPeriapsis": 27,
+                "meanAnomaly": 2,
+                "epoch": "2023-10-23T12:19:42.000Z"
+            }
+        }
+    ]
+}

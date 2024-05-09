@@ -6,11 +6,6 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Universe.generated.h"
 
-
-// Forward Declarations
-class ACPP_Planet;
-
-
 USTRUCT(BlueprintType)
 struct FOrbitalState
 {
@@ -21,6 +16,8 @@ struct FOrbitalState
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector Velocity;
+
+    const FString ToString() const {return FString::Printf(TEXT("Location: %s; Velocity: %s;"), *Location.ToString(), *Velocity.ToString());}
 };
 
 /** Group of orbital elements necessary to uniquely describe an orbit */
@@ -56,6 +53,8 @@ struct FOrbitalElements
 	/** Time at which the body starts orbiting in ISO 8601 */
 	UPROPERTY(BlueprintReadWrite)
 	FString Epoch;
+
+    const FString ToString() const {return FString::Printf(TEXT("Eccentricity: %f; SemiMajorAxis: %f; Inclination: %f; LongitudeOfAscendingNode: %f; ArgumentOfPeriapsis: %f; MeanAnomaly: %f"), Eccentricity, SemiMajorAxis, Inclination, LongitudeOfAscendingNode, ArgumentOfPeriapsis, MeanAnomaly);}
 };
 
 USTRUCT(BlueprintType)
@@ -74,20 +73,34 @@ struct FGeographicCoordinates
 };
 
 USTRUCT(BlueprintType)
-struct FSatelliteStatus
+struct FSatelliteInfo
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadOnly)
+    UPROPERTY(BlueprintReadWrite)
+    int OwnerID = -1;
+
+    UPROPERTY(BlueprintReadWrite)
+    FString Label = "";
+
+    UPROPERTY(BlueprintReadWrite)
+    float Mass = -1.0f;
+
+	UPROPERTY(BlueprintReadWrite)
 	FVector Position;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	FRotator Rotation;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	FVector Velocity;
-};
 
+    UPROPERTY(BlueprintReadWrite)
+    FDateTime Epoch;
+
+    UPROPERTY(BlueprintReadWrite)
+    bool IsTargeted = false;
+};
 
 /**
  * 
@@ -102,11 +115,29 @@ public:
 	static FOrbitalState ConvertOrbitalElementsToOrbitalState(const FOrbitalElements& OrbitalElements, double GM);
 
     UFUNCTION(BlueprintCallable)
-	static double GetEarthRotationAngle(double JulianDay);
+	static FOrbitalElements ConvertOrbitalStateToOrbitalElements(const FOrbitalState& OrbitalState, double GM);
 
 	UFUNCTION(BlueprintCallable)
-	static FGeographicCoordinates ConvertECILocationToGeographicCoordinates(ACPP_Planet* Planet, FVector Location);
+	static FGeographicCoordinates ConvertECILocationToGeographicCoordinates(class ACPP_Planet* Planet, FVector Location);
 
     UFUNCTION(BlueprintCallable)
-    static FVector ConvertGeographicCoordinatesToECILocation(ACPP_Planet* Planet, const FGeographicCoordinates& GeographicCoordinates);
+    static FVector ConvertGeographicCoordinatesToECILocation(class ACPP_Planet* Planet, const FGeographicCoordinates& GeographicCoordinates);
+
+    UFUNCTION(BlueprintCallable)
+	static double GetEarthRotationAngle(double JulianDay);
+
+    UFUNCTION(BlueprintCallable)
+    static FVector ToRightHandSystem(const FVector& Vector);
+
+    UFUNCTION(BlueprintCallable)
+    static FVector ToLeftHandSystem(const FVector& Vector);
+
+    UFUNCTION(BlueprintCallable)
+    static float GetMeanAnomaly(float Eccentricity, float TrueAnomaly);
+
+    UFUNCTION(BlueprintCallable)
+    static FString OrbitalElementsToString(const FOrbitalElements& OrbitalElements);
+
+    UFUNCTION(BlueprintCallable)
+    static FString OrbitalStateToString(const FOrbitalState& OrbitalState);
 };

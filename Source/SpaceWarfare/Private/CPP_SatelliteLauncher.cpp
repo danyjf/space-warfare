@@ -1,32 +1,50 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CPP_SatelliteLauncher.h"
 #include "CPP_Satellite.h"
 #include "CPP_Planet.h"
 #include "CPP_GravityComponent.h"
 #include "CPP_GravityManager.h"
-#include "CPP_SimulationGameMode.h"
+#include "CPP_MultiplayerGameMode.h"
+#include "CPP_BotGameMode.h"
+#include "CPP_GroundStationManager.h"
+#include "CPP_PlayerController.h"
 
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACPP_SatelliteLauncher::ACPP_SatelliteLauncher()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
-    PlayerNumber = 0;
+    Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+    RootComponent = Root;
+    Root->SetIsReplicated(true);
+
+    OwnerPlayerID = 0;
+    LaunchCost = 50;    // Millions
 }
 
 void ACPP_SatelliteLauncher::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (HasAuthority())
+    if (!HasAuthority())
     {
-        GravityManager = Cast<ACPP_SimulationGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->GravityManager;
+        SetActorHiddenInGame(false);
+    }
+    else if (HasAuthority())
+    {
+        MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+        // Hide enemy satellite launcher on listen server
+        if (UGameplayStatics::GetPlayerController(GetWorld(), 0) != GetOwner())
+        {
+            SetActorHiddenInGame(true);
+        }
     }
 }
 
@@ -36,23 +54,113 @@ void ACPP_SatelliteLauncher::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Name)
+void ACPP_SatelliteLauncher::SetGeographicCoordinates(const FGeographicCoordinates& Value)
 {
-    UCPP_GravityComponent* PlanetGravityComponent = Planet->FindComponentByClass<UCPP_GravityComponent>();
-    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, PlanetGravityComponent->GetGravitationalParameter());
+    GeographicCoordinates = Value;
 
-    ACPP_Satellite* Satellite = Cast<ACPP_Satellite>(GetWorld()->SpawnActor(SatelliteBlueprintClass));
-    Satellite->SetActorLocation(OrbitalState.Location);
-    Satellite->SetActorScale3D(FVector(Size));
+    // Set the location from the latitude and longitude
+    FVector ECILocation = UUniverse::ConvertGeographicCoordinatesToECILocation(Planet, GeographicCoordinates);
+    ECILocation.Y = -ECILocation.Y;     // convert coordinates to left handed system
+    SetActorLocation(ECILocation);
+
+    // Set the rotation to be orthogonal to earths surface
+    SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Planet->GetActorLocation(), GetActorLocation()));
+}
+
+FVector ACPP_SatelliteLauncher::GetLocationFromHeight(float Height)
+{
+    if (!Planet)
+    {
+        Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
+    }
+
+    // Add radius of earth to heigth
+    Height += Planet->GetActorScale().X / 2;
+    return GetActorForwardVector() * Height;
+}
+
+FVector ACPP_SatelliteLauncher::GetVelocityFromAngle(float Angle, float Value)
+{
+    if (GetActorForwardVector() == FVector(0.0f, 0.0f, 1.0f))
+    {
+        FVector Velocity = FVector(1.0f, 0.0f, 0.0f) * Value;
+        Velocity = Velocity.RotateAngleAxis(Angle, GetActorForwardVector());
+        return Velocity;
+    }
+
+    FVector PerpendicularToLaunchDirection = UKismetMathLibrary::Cross_VectorVector(GetActorForwardVector(), FVector(0.0f, 0.0f, 1.0f));
+    PerpendicularToLaunchDirection.Normalize();
+    FVector Velocity = PerpendicularToLaunchDirection * Value;
+    Velocity = Velocity.RotateAngleAxis(Angle, GetActorForwardVector());
+    return Velocity;
+}
+
+void ACPP_SatelliteLauncher::ServerLaunchSatellite_Implementation(FOrbitalElements OrbitalElements, const FString& Label, TSubclassOf<ACPP_Satellite> SatelliteClass)
+{
+    SatelliteBlueprintClass = SatelliteClass;
+
+    ACPP_PlayerController* PlayerController = Cast<ACPP_PlayerController>(GetOwner());
+    if (PlayerController->Currency < LaunchCost)
+    {
+        UKismetSystemLibrary::PrintString(GetWorld(), "Not enough money to launch!!!");
+        return;
+    }
+
+    FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
+
+    FTransform SpawnLocation(FRotator(0.0f, 0.0f, 0.0f), OrbitalState.Location);
+    ACPP_Satellite* Satellite = GetWorld()->SpawnActorDeferred<ACPP_Satellite>(SatelliteBlueprintClass, SpawnLocation, PlayerController);
     Satellite->OrbitingPlanet = Planet;
-    Satellite->Name = Name;
-    Satellite->PlayerNumber = PlayerNumber;
-    Satellite->SetOwner(GetOwner());
+    Satellite->Label = Label;
+    Satellite->OwnerPlayerID = OwnerPlayerID;
+    Satellite->SetOwner(PlayerController);
+    Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
+    Satellite->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * Satellite->StaticMeshComponent->GetMass());
+    Satellite->FinishSpawning(SpawnLocation);
 
-    UCPP_GravityComponent* SatelliteGravityComponent = Satellite->FindComponentByClass<UCPP_GravityComponent>();
-    SatelliteGravityComponent->SetVelocity(OrbitalState.Velocity);
-    SatelliteGravityComponent->SetMass(Mass);
-    SatelliteGravityComponent->SetGravitationalParameter(GravityManager->GravitationalConstant * Mass);
+    PlayerController->SpendCurrency(LaunchCost);
 
-    GravityManager->GravityComponents.Add(SatelliteGravityComponent);
+    // TODO: Change later, this is just to show the satellite on all players when it is launched
+    for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
+    {
+        GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
+        if (Cast<ACPP_BotGameMode>(MultiplayerGameMode))
+        {
+            GroundStationManager->SatelliteExitedOverpassArea(Satellite);
+        }
+    }
+}
+
+void ACPP_SatelliteLauncher::ServerLaunchSatelliteWithOrbitalState_Implementation(FOrbitalState OrbitalState, const FString& Label, TSubclassOf<ACPP_Satellite> SatelliteClass)
+{
+    SatelliteBlueprintClass = SatelliteClass;
+
+    ACPP_PlayerController* PlayerController = Cast<ACPP_PlayerController>(GetOwner());
+    if (PlayerController->Currency < LaunchCost)
+    {
+        UKismetSystemLibrary::PrintString(GetWorld(), "Not enough money to launch!!!");
+        return;
+    }
+
+    FTransform SpawnLocation(FRotator(0.0f, 0.0f, 0.0f), OrbitalState.Location);
+    ACPP_Satellite* Satellite = GetWorld()->SpawnActorDeferred<ACPP_Satellite>(SatelliteBlueprintClass, SpawnLocation, PlayerController);
+    Satellite->OrbitingPlanet = Planet;
+    Satellite->Label = Label;
+    Satellite->OwnerPlayerID = OwnerPlayerID;
+    Satellite->SetOwner(PlayerController);
+    Satellite->GravityComponent->SetVelocity(OrbitalState.Velocity);
+    Satellite->GravityComponent->SetGravitationalParameter(MultiplayerGameMode->GravityManager->GravitationalConstant * Satellite->StaticMeshComponent->GetMass());
+    Satellite->FinishSpawning(SpawnLocation);
+
+    PlayerController->SpendCurrency(LaunchCost);
+
+    // TODO: Change later, this is just to show the satellite on all players when it is launched
+    for (ACPP_GroundStationManager* GroundStationManager : MultiplayerGameMode->GetGroundStationManagers())
+    {
+        GroundStationManager->SatelliteEnteredOverpassArea(Satellite);
+        if (Cast<ACPP_BotGameMode>(MultiplayerGameMode))
+        {
+            GroundStationManager->SatelliteExitedOverpassArea(Satellite);
+        }
+    }
 }

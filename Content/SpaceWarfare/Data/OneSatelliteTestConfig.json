@@ -1,0 +1,18 @@
+﻿{
+    "satellites": [
+        {
+            "name": "Test3",
+            "mass": 1500,
+            "size": 100,
+            "orbitalElements": {
+                "eccentricity": 0.0002,
+                "semiMajorAxis": 8000,
+                "inclination": 100,
+                "longitudeOfAscendingNode": 170,
+                "argumentOfPeriapsis": 27,
+                "meanAnomaly": 2,
+                "epoch": "2023-10-23T12:19:42.000Z"
+            }
+        }
+    ]
+}

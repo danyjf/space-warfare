@@ -15,6 +15,7 @@ public class SpaceWarfare : ModuleRules
 				"CoreUObject", 
 				"Engine", 
 				"InputCore",
+                "EnhancedInput",
                 "UMG"
 			}
 		);
@@ -23,7 +24,10 @@ public class SpaceWarfare : ModuleRules
             new string[] 
             { 
                 "Chaos",
+                "HTTP",
+                "HTTPServer",
                 "FileReadWrite",
+                "Json",
 				"JsonUtilities"
             }
         );

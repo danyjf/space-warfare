@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CPP_OrbitSpline.h"
 #include "CPP_Planet.h"
 #include "CPP_GravityComponent.h"
 
 #include "Components/SplineComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ACPP_OrbitSpline::ACPP_OrbitSpline()
@@ -20,14 +20,38 @@ ACPP_OrbitSpline::ACPP_OrbitSpline()
     SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
     SplineComponent->SetupAttachment(Root);
 
-    SplineMeshScale = 1.0f;
+    SplineMeshScale = 0.25f;
+    NumberOfPoints = 24;
+    bIsHyperbolic = false;
+    bIsVisualizationEnabled = false;
 }
 
 void ACPP_OrbitSpline::OnConstruction(const FTransform& Transform)
 {
-    if (!SplineMesh)
+    Super::OnConstruction(Transform);
+
+    if (!SplineMesh || !SplineComponent)
     {
         return;
+    }
+
+    UMaterialInterface* Material = SplineMesh->GetMaterial(0);
+    DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
+    
+    SplineComponent->ClearSplinePoints();
+
+    float Angle = 0.0f;
+    float IncrementAngle = 360.0f / NumberOfPoints;
+    float Radius = 300.0f;
+    for (int i = 0; i < NumberOfPoints; i++)
+    {
+        FVector PointPosition;
+        PointPosition.X = cos(UKismetMathLibrary::DegreesToRadians(Angle)) * Radius;
+        PointPosition.Y = sin(UKismetMathLibrary::DegreesToRadians(Angle)) * Radius;
+
+        SplineComponent->AddSplinePoint(PointPosition, ESplineCoordinateSpace::World);
+
+        Angle += IncrementAngle;
     }
 
     for (int i = 0; i < (SplineComponent->GetNumberOfSplinePoints() - 1); i++)
@@ -74,6 +98,7 @@ void ACPP_OrbitSpline::CreateSplineMeshComponent(const FVector& StartPoint, cons
     SplineMeshComponent->RegisterComponentWithWorld(GetWorld());
     SplineMeshComponent->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
     SplineMeshComponent->SetCastShadow(false);
+    SplineMeshComponent->SetMaterial(0, DynamicMaterial);
 
     SplineMeshComponent->SetForwardAxis(ForwardAxis);
     SplineMeshComponent->SetStartScale(FVector2D(SplineMeshScale));
@@ -86,7 +111,39 @@ void ACPP_OrbitSpline::CreateSplineMeshComponent(const FVector& StartPoint, cons
 
 void ACPP_OrbitSpline::UpdateOrbit(FOrbitalElements OrbitalElements, ACPP_Planet* Planet)
 {
-    OrbitalElements.MeanAnomaly = 0.0f;
+    // Hide orbit when it is hyperbolic
+    //if (OrbitalElements.Eccentricity >= 1.0f || !bIsVisualizationEnabled)
+    //{
+        //bIsHyperbolic = true;
+        //SetActorHiddenInGame(true);
+        //return;
+    //}
+
+    // Show orbit after is no longer hyperbolic
+    //if (bIsHyperbolic)
+    //{
+    //    bIsHyperbolic = false;
+    //    SetActorHiddenInGame(false);
+    //}
+
+    float TrueAnomaly;
+    float IncrementAngle;
+    if (OrbitalElements.Eccentricity > 1.0f)
+    {
+        SplineComponent->SetClosedLoop(false);
+        // This is the limit for the true anomaly, I some degrees so that it doesn't get 
+        // too close to infinity when the eccentricity is too high
+        TrueAnomaly = UKismetMathLibrary::RadiansToDegrees(-acos(-1.0f / OrbitalElements.Eccentricity)) + 40.0f;
+        OrbitalElements.MeanAnomaly = UKismetMathLibrary::RadiansToDegrees(UUniverse::GetMeanAnomaly(OrbitalElements.Eccentricity, UKismetMathLibrary::DegreesToRadians(TrueAnomaly)));
+        IncrementAngle = (2 * -TrueAnomaly) / NumberOfPoints;
+    }
+    else
+    {
+        SplineComponent->SetClosedLoop(true);
+        IncrementAngle = 360.0f / NumberOfPoints;
+        TrueAnomaly = 0.0f;
+        OrbitalElements.MeanAnomaly = 0.0f;
+    }
 
     for (int i = 0; i < SplineComponent->GetNumberOfSplinePoints(); i++)
     {
@@ -94,7 +151,8 @@ void ACPP_OrbitSpline::UpdateOrbit(FOrbitalElements OrbitalElements, ACPP_Planet
 
         SplineComponent->SetWorldLocationAtSplinePoint(i, OrbitalState.Location);
 
-        OrbitalElements.MeanAnomaly += 15.0f;
+        TrueAnomaly += IncrementAngle;
+        OrbitalElements.MeanAnomaly = UKismetMathLibrary::RadiansToDegrees(UUniverse::GetMeanAnomaly(OrbitalElements.Eccentricity, UKismetMathLibrary::DegreesToRadians(TrueAnomaly)));
     }
     
     for (int i = 0; i < SplineMeshComponents.Num() - 1; i++)
@@ -107,9 +165,22 @@ void ACPP_OrbitSpline::UpdateOrbit(FOrbitalElements OrbitalElements, ACPP_Planet
         SplineMeshComponents[i]->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent);
     }
 
-    const FVector StartPoint = SplineComponent->GetLocationAtSplinePoint(SplineMeshComponents.Num() - 1, ESplineCoordinateSpace::Local);
-    const FVector StartTangent = SplineComponent->GetTangentAtSplinePoint(SplineMeshComponents.Num() - 1, ESplineCoordinateSpace::Local);
-    const FVector EndPoint = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::Local);
-    const FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(0, ESplineCoordinateSpace::Local);
-    SplineMeshComponents[SplineMeshComponents.Num() - 1]->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent);
+    if (SplineComponent->IsClosedLoop())
+    {
+        SplineMeshComponents[SplineMeshComponents.Num() - 1]->SetHiddenInGame(false);
+        const FVector StartPoint = SplineComponent->GetLocationAtSplinePoint(SplineMeshComponents.Num() - 1, ESplineCoordinateSpace::Local);
+        const FVector StartTangent = SplineComponent->GetTangentAtSplinePoint(SplineMeshComponents.Num() - 1, ESplineCoordinateSpace::Local);
+        const FVector EndPoint = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::Local);
+        const FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(0, ESplineCoordinateSpace::Local);
+        SplineMeshComponents[SplineMeshComponents.Num() - 1]->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent);
+    }
+    else
+    {
+        SplineMeshComponents[SplineMeshComponents.Num() - 1]->SetHiddenInGame(true);
+    }
+}
+
+void ACPP_OrbitSpline::SetColor(FLinearColor Color)
+{
+    DynamicMaterial->SetVectorParameterValue(TEXT("Color"), Color);
 }

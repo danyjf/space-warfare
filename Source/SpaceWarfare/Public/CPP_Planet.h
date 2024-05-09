@@ -20,9 +20,28 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRotator RotationSpeed;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UMaterialInterface* GroundStationCostMaterial;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    class UStaticMeshComponent* StaticMeshComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    class UCPP_GravityComponent* GravityComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    class UCPP_CameraOrbitableComponent* CameraOrbitableComponent;
+
     UFUNCTION(BlueprintCallable)
     void SetRotationAtEpoch(const FDateTime& Epoch);
 
     ACPP_Planet();    
 	virtual void Tick(float DeltaTime) override;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+private:
+    class ACPP_MultiplayerGameMode* MultiplayerGameMode;
 };

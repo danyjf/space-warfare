@@ -8,11 +8,6 @@
 #include "GameFramework/Actor.h"
 #include "CPP_SatelliteLauncher.generated.h"
 
-// Forward Declarations
-class ACPP_Satellite;
-class ACPP_Planet;
-class ACPP_GravityManager;
-
 UCLASS()
 class SPACEWARFARE_API ACPP_SatelliteLauncher : public AActor
 {
@@ -20,16 +15,37 @@ class SPACEWARFARE_API ACPP_SatelliteLauncher : public AActor
 	
 public:	
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int PlayerNumber;
+    int OwnerPlayerID;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    ACPP_Planet* Planet;
+    FGeographicCoordinates GeographicCoordinates;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<ACPP_Satellite> SatelliteBlueprintClass;
+    int LaunchCost;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    class ACPP_Planet* Planet;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class ACPP_Satellite> SatelliteBlueprintClass;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+    USceneComponent* Root;
+
+    UFUNCTION(BlueprintCallable)
+    void SetGeographicCoordinates(const FGeographicCoordinates& Value);
+
+    UFUNCTION(BlueprintCallable)
+    FVector GetLocationFromHeight(float Height);
+
+    UFUNCTION(BlueprintCallable)
+    FVector GetVelocityFromAngle(float Angle, float Value);
     
     UFUNCTION(BlueprintCallable, Server, Reliable)
-    void ServerLaunchSatellite(FOrbitalElements OrbitalElements, float Size, float Mass, const FString& Name);
+    void ServerLaunchSatellite(FOrbitalElements OrbitalElements, const FString& Label, TSubclassOf<class ACPP_Satellite> Satellite);
+
+    UFUNCTION(BlueprintCallable, Server, Reliable)
+    void ServerLaunchSatelliteWithOrbitalState(FOrbitalState OrbitalState, const FString& Label, TSubclassOf<class ACPP_Satellite> Satellite);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -42,5 +58,5 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-    ACPP_GravityManager* GravityManager;
+    class ACPP_MultiplayerGameMode* MultiplayerGameMode;
 };
