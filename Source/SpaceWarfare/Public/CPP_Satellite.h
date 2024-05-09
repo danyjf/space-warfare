@@ -42,6 +42,9 @@ public:
     int VerticalTorqueLevel;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int RollTorqueLevel;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     class ACPP_OrbitSpline* OrbitSpline;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

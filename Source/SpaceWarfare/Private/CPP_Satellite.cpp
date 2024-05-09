@@ -37,6 +37,7 @@ ACPP_Satellite::ACPP_Satellite()
     MaxTorqueLevel = 3;
     HorizontalTorqueLevel = 0;
     VerticalTorqueLevel = 0;
+    RollTorqueLevel = 0;
 }
 
 // Called when the game starts or when spawned

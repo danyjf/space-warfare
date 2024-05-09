@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Universe.h"
+
 #include "CoreMinimal.h"
 #include "SimulationConfigStructs.generated.h"
 
