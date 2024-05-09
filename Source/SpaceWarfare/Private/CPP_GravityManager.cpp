@@ -7,6 +7,7 @@
 
 #include "PhysicsProxy/SingleParticlePhysicsProxy.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 ACPP_GravityManager::ACPP_GravityManager()

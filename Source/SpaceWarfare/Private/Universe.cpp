@@ -10,6 +10,8 @@
 
 FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(const FOrbitalElements& OrbitalElements, double GM)
 {
+    //UE_LOG(LogTemp, Warning, TEXT("%s"), *OrbitalElements.ToString());
+
     float e = OrbitalElements.Eccentricity;
     float a = OrbitalElements.SemiMajorAxis;
     float i = UKismetMathLibrary::DegreesToRadians(OrbitalElements.Inclination);
@@ -115,6 +117,8 @@ FOrbitalState UUniverse::ConvertOrbitalElementsToOrbitalState(const FOrbitalElem
 
 FOrbitalElements UUniverse::ConvertOrbitalStateToOrbitalElements(const FOrbitalState& OrbitalState, double GM)
 {
+    //UE_LOG(LogTemp, Warning, TEXT("%s"), *OrbitalState.ToString());
+
     FOrbitalElements OrbitalElements;
 
     FVector r = ToRightHandSystem(OrbitalState.Location);

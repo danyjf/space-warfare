@@ -16,6 +16,8 @@ struct FOrbitalState
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector Velocity;
+
+    const FString ToString() const {return FString::Printf(TEXT("Location: %s; Velocity: %s;"), *Location.ToString(), *Velocity.ToString());}
 };
 
 /** Group of orbital elements necessary to uniquely describe an orbit */
@@ -51,6 +53,8 @@ struct FOrbitalElements
 	/** Time at which the body starts orbiting in ISO 8601 */
 	UPROPERTY(BlueprintReadWrite)
 	FString Epoch;
+
+    const FString ToString() const {return FString::Printf(TEXT("Eccentricity: %f; SemiMajorAxis: %f; Inclination: %f; LongitudeOfAscendingNode: %f; ArgumentOfPeriapsis: %f; MeanAnomaly: %f"), Eccentricity, SemiMajorAxis, Inclination, LongitudeOfAscendingNode, ArgumentOfPeriapsis, MeanAnomaly);}
 };
 
 USTRUCT(BlueprintType)

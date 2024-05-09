@@ -90,7 +90,7 @@ void ACPP_Satellite::Tick(float DeltaTime)
     }
 
     // Update the satellite orbit
-    if (OrbitSpline->bIsVisualizationEnabled)
+    if (OrbitSpline->bIsVisualizationEnabled && !FMath::IsNearlyZero(OrbitalState.Velocity.Length(), 0.5f))
     {
         FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, OrbitingPlanet->GravityComponent->GetGravitationalParameter());
         OrbitSpline->UpdateOrbit(OrbitalElements, OrbitingPlanet);
