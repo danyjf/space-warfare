@@ -51,6 +51,7 @@ void ACPP_Satellite::BeginPlay()
         SatelliteCommandManager = MultiplayerGameMode->GetGroundStationManagers()[OwnerPlayerID]->SatelliteCommandManager;
         SatelliteID = MultiplayerGameMode->NewSatelliteID();
         StaticMeshComponent->OnComponentHit.AddDynamic(this, &ACPP_Satellite::OnComponentHit);
+        StaticMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &ACPP_Satellite::OnComponentBeginOverlap);
     }
     
     GetWorld()->GetGameState<ACPP_GameState>()->AllSatellites.Emplace(SatelliteID, this);
@@ -169,7 +170,11 @@ void ACPP_Satellite::OnComponentHit(UPrimitiveComponent* HitComp, AActor* OtherA
     {
         this->Destroy();
     }
-    else if (ACPP_Asteroid* HitAsteroid = Cast<ACPP_Asteroid>(OtherActor))
+}
+
+void ACPP_Satellite::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    if (ACPP_Asteroid* HitAsteroid = Cast<ACPP_Asteroid>(OtherActor))
     {
         Cast<ACPP_PlayerController>(GetOwner())->Currency += HitAsteroid->Currency;
         HitAsteroid->Destroy();
