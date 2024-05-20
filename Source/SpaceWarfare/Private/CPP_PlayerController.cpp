@@ -40,6 +40,9 @@ void ACPP_PlayerController::BeginPlay()
     PlayerPawn->AttachToActor(OrbitingActor, FAttachmentTransformRules::KeepRelativeTransform);
     CameraOrbitableComponent = Cast<UCPP_CameraOrbitableComponent>(OrbitingActor->GetComponentByClass(UCPP_CameraOrbitableComponent::StaticClass()));
     PlayerPawn->SetActorLocation(OrbitingActor->GetActorLocation());
+    PlayerPawn->bUseControllerRotationPitch = true;
+    PlayerPawn->bUseControllerRotationYaw = true;
+    PlayerPawn->bUseControllerRotationRoll = true;
 }
 
 void ACPP_PlayerController::SetupInputComponent() 
