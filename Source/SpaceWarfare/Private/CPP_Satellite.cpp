@@ -59,7 +59,9 @@ void ACPP_Satellite::BeginPlay()
     // Create the orbit spline of the satellite
     OrbitSpline = Cast<ACPP_OrbitSpline>(GetWorld()->SpawnActor(OrbitSplineBlueprint));
 
-    OrbitalState = FOrbitalState(GetActorLocation(), GetVelocity());
+    OrbitalState = FOrbitalState();
+    OrbitalState.Location = GetActorLocation();
+    OrbitalState.Velocity = GetVelocity();
     FOrbitalElements OrbitalElements = UUniverse::ConvertOrbitalStateToOrbitalElements(OrbitalState, OrbitingPlanet->GravityComponent->GetGravitationalParameter());
 
     if (IsOwnedBy(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
