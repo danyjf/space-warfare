@@ -201,6 +201,19 @@ bool ACPP_HttpServer::CreateThrustCommand(const FHttpServerRequest& Request, con
         return true;
     }
 
+    // Check if the date is valid
+    FDateTime ParsedTime;
+    if (!FDateTime::ParseIso8601(*ThrustCommandData.ExecutionTime, ParsedTime))
+    {
+        // Generate a bad request response
+        FString JsonResponse = "{\"message\": \"The provided date is not in the correct format, yyyy-mm-ddT14:10:00.000Z\"}";
+	    TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(JsonResponse, TEXT("application/json"));
+        Response->Code = EHttpServerResponseCodes::Forbidden;
+
+	    OnComplete(MoveTemp(Response));
+        return true;
+    }
+
     // Add the command locally and send it to the server
     if (!HasAuthority())
     {
