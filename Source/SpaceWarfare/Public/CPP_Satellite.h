@@ -32,6 +32,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class ACPP_OrbitSpline> OrbitSplineBlueprint;
 
+    UPROPERTY()
+    int NumberOfOverpassingGroundStations;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int MaxTorqueLevel;
 

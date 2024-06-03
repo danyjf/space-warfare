@@ -97,6 +97,7 @@ void ACPP_GroundStationManager::UpdateSatelliteInfo()
 */
 void ACPP_GroundStationManager::SatelliteEnteredOverpassArea(ACPP_Satellite* Satellite)
 {
+    Satellite->NumberOfOverpassingGroundStations++;
     if (!OverpassingSatellites.Contains(Satellite->GetSatelliteID()))
     {
         OverpassingSatellites.Emplace(Satellite->GetSatelliteID(), Satellite);
@@ -127,7 +128,11 @@ void ACPP_GroundStationManager::SatelliteExitedOverpassArea(ACPP_Satellite* Sate
 {
     if (OverpassingSatellites.Contains(Satellite->GetSatelliteID()))
     {
-        OverpassingSatellites.Remove(Satellite->GetSatelliteID());
+        Satellite->NumberOfOverpassingGroundStations--;
+        if (Satellite->NumberOfOverpassingGroundStations <= 0)
+        {
+            OverpassingSatellites.Remove(Satellite->GetSatelliteID());
+        }
     }
 }
 

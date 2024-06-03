@@ -63,7 +63,8 @@ void ACPP_BotGameMode::CheckAllPlayersFinishedPlacingGroundStations()
     }
 
     FSatellitesConfig SatellitesConfig;
-    FString SatellitesJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSTestConfig.json");
+    //FString SatellitesJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSTestConfig.json");
+    FString SatellitesJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/NoSatellitesConfig.json");
     if (FPaths::FileExists(SatellitesJsonPath))
     {
         UJsonReadWrite::ReadStructFromJsonFile<FSatellitesConfig>(SatellitesJsonPath, &SatellitesConfig);
