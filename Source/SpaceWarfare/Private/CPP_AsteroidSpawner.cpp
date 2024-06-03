@@ -18,6 +18,9 @@ ACPP_AsteroidSpawner::ACPP_AsteroidSpawner()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+    MaxNumberOfAsteroids = 5;
+    DelayBetweenAsteroidSpawn = 5.0f;
 }
 
 // Called when the game starts or when spawned
@@ -28,8 +31,6 @@ void ACPP_AsteroidSpawner::BeginPlay()
 	MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     Planet = Cast<ACPP_Planet>(UGameplayStatics::GetActorOfClass(GetWorld(), ACPP_Planet::StaticClass()));
     AsteroidCount = 0;
-    MaxNumberOfAsteroids = 5;
-    DelayBetweenAsteroidSpawn = 5.0f;
 }
 
 // Called every frame
@@ -66,7 +67,7 @@ void ACPP_AsteroidSpawner::SpawnAsteroidAtRandomOrbit()
     
     FOrbitalState OrbitalState = UUniverse::ConvertOrbitalElementsToOrbitalState(OrbitalElements, Planet->GravityComponent->GetGravitationalParameter());
 
-    double AsteroidMass = 10000.0;
+    double AsteroidMass = 1000.0;
     FTransform SpawnLocation(FRotator(0.0f, 0.0f, 0.0f), OrbitalState.Location);
     ACPP_Asteroid* Asteroid = GetWorld()->SpawnActorDeferred<ACPP_Asteroid>(AsteroidBlueprintClass, SpawnLocation);
     Asteroid->OrbitingPlanet = Planet;

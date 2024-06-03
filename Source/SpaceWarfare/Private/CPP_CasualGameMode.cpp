@@ -43,9 +43,18 @@ void ACPP_CasualGameMode::CheckAllPlayersFinishedPlacingGroundStations()
             return;
         }
     }
+    // TODO: Remove this, it's just for testing
+    FSimulationConfig SimulationConfig;
+    FString SimulationJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/EarthSimulationConfig.json");
+    if (FPaths::FileExists(SimulationJsonPath))
+    {
+        UJsonReadWrite::ReadStructFromJsonFile<FSimulationConfig>(SimulationJsonPath, &SimulationConfig);
+    }
+    InitializeSimulation(SimulationConfig);
 
     FSatellitesConfig SatellitesConfig;
-    FString SatellitesJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/NoSatellitesConfig.json");
+    //FString SatellitesJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/NoSatellitesConfig.json");
+    FString SatellitesJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/ISSTestConfig.json");
     //FString SatellitesJsonPath = FPaths::Combine(FPaths::ProjectContentDir(), "SpaceWarfare/Data/OneSatelliteTestConfig.json");
     if (FPaths::FileExists(SatellitesJsonPath))
     {

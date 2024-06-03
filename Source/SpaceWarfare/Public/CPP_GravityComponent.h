@@ -18,6 +18,12 @@ public:
     UPROPERTY(Replicated, BlueprintReadWrite)
     double GravitationalParameter;  // gravitational constant multiplied by mass
 
+    UPROPERTY()
+    FVector Acceleration;
+
+    UPROPERTY()
+    FVector Velocity;
+
     UFUNCTION(BlueprintCallable)
     void AddGravityForce(const FVector& Force);
 

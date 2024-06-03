@@ -50,6 +50,8 @@ void ACPP_Satellite::BeginPlay()
 	    MultiplayerGameMode = Cast<ACPP_MultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
         SatelliteCommandManager = MultiplayerGameMode->GetGroundStationManagers()[OwnerPlayerID]->SatelliteCommandManager;
         SatelliteID = MultiplayerGameMode->NewSatelliteID();
+	    GeographicCoordinates = UUniverse::ConvertECILocationToGeographicCoordinates(OrbitingPlanet, GetActorLocation());
+        PrintGeographicCoordinates();
         StaticMeshComponent->OnComponentHit.AddDynamic(this, &ACPP_Satellite::OnComponentHit);
         StaticMeshComponent->OnComponentBeginOverlap.AddDynamic(this, &ACPP_Satellite::OnComponentBeginOverlap);
     }

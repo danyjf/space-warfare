@@ -71,11 +71,12 @@ void UCPP_GravityComponent::SetMass(double Value)
 
 void UCPP_GravityComponent::SetVelocity(const FVector& Value)
 {
-    if (!StaticMeshComponent)
-    {
-        StaticMeshComponent = GetOwner()->GetComponentByClass<UStaticMeshComponent>();
-    }
-	StaticMeshComponent->SetPhysicsLinearVelocity(Value);
+    //if (!StaticMeshComponent)
+    //{
+        //StaticMeshComponent = GetOwner()->GetComponentByClass<UStaticMeshComponent>();
+    //}
+	//StaticMeshComponent->SetPhysicsLinearVelocity(Value);
+    Velocity = Value;
 }
 
 void UCPP_GravityComponent::AddGravityForce(const FVector& Force)

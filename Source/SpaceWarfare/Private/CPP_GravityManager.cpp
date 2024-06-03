@@ -35,7 +35,7 @@ void ACPP_GravityManager::Tick(float DeltaTime)
 
 void ACPP_GravityManager::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
-	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
+	Super::AsyncPhysicsTickActor(DeltaTime * MultiplayerGameMode->GameState->TimeScale, SimTime);
 
     if (MultiplayerGameMode->GameState->bWaitingForPlayers)
     {
@@ -43,7 +43,7 @@ void ACPP_GravityManager::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
     }
 
     SemiImplicitEulerIntegrator(DeltaTime * MultiplayerGameMode->GameState->TimeScale);
-    //LeapFrogIntegrator(DeltaTime * GameState->TimeScale);
+    //LeapFrogIntegrator(DeltaTime * MultiplayerGameMode->GameState->TimeScale);
 }
 
 void ACPP_GravityManager::CalculateGravityForces()
@@ -89,9 +89,11 @@ void ACPP_GravityManager::SemiImplicitEulerIntegrator(float DeltaTime)
             continue;
         }
 
-        GravityComponent->RigidBody->SetAcceleration(GravityComponent->RigidBody->Acceleration() + GravityComponent->GetGravityForce() / GravityComponent->RigidBody->M());
-        GravityComponent->RigidBody->SetV(GravityComponent->RigidBody->V() + GravityComponent->RigidBody->Acceleration() * DeltaTime); 
-        GravityComponent->RigidBody->SetX(GravityComponent->RigidBody->X() + GravityComponent->RigidBody->V() * DeltaTime);
+        //GravityComponent->RigidBody->SetAcceleration(GravityComponent->RigidBody->Acceleration() + GravityComponent->GetGravityForce() / GravityComponent->RigidBody->M());
+        //GravityComponent->RigidBody->SetV(GravityComponent->RigidBody->V() + GravityComponent->RigidBody->Acceleration() * DeltaTime); 
+        GravityComponent->Acceleration = GravityComponent->GetGravityForce() / GravityComponent->RigidBody->M();
+        GravityComponent->Velocity += GravityComponent->Acceleration * DeltaTime; 
+        GravityComponent->RigidBody->SetX(GravityComponent->RigidBody->X() + GravityComponent->Velocity * DeltaTime);
 
         GravityComponent->ClearGravityForce();
     }
